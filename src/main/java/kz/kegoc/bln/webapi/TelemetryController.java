@@ -1,5 +1,6 @@
-package kz.kegoc.bln;
+package kz.kegoc.bln.webapi;
 
+import kz.kegoc.bln.entity.Telemetry;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;

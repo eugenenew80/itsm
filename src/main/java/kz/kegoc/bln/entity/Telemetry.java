@@ -1,4 +1,4 @@
-package kz.kegoc.bln;
+package kz.kegoc.bln.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
