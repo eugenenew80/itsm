@@ -19,6 +19,12 @@ public class TelemetryController {
         telemetry.setVal(123d);
         list.add(telemetry);
 
+        telemetry = new Telemetry();
+        telemetry.setMeteringPointId(1l);
+        telemetry.setMeteringDate(LocalDateTime.now());
+        telemetry.setVal(456d);
+        list.add(telemetry);
+
         return list;
     }
 
