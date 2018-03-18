@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     basePackageClasses = { App.class, Jsr310JpaConverters.class }
 )
 @SpringBootApplication
-@EnableScheduling
+//@EnableScheduling
 public class App {
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
