@@ -11,6 +11,8 @@ import javax.persistence.*;
 public class MeteringPoint {
 
     @Id
+    @SequenceGenerator(name="metering_points_s", sequenceName = "metering_points_s", schema = "apps", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "metering_points_s")
     private Long id;
 
     @Column

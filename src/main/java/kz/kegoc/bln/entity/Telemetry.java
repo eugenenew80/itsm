@@ -17,8 +17,9 @@ public class Telemetry {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "telemetry_s")
     private Long id;
 
-    @Column(name = "metering_point_id")
-    private Long meteringPointId;
+    @ManyToOne
+    @JoinColumn(name = "metering_point_id")
+    private MeteringPoint meteringPoint;
 
     @Column(name = "metering_date")
     private LocalDateTime meteringDate;
