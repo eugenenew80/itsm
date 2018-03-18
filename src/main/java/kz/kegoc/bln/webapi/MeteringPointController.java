@@ -58,7 +58,6 @@ public class MeteringPointController {
     @RequestMapping(method = RequestMethod.DELETE, value = "/meteringPoints/{id}")
     public void delete(@PathVariable Long id) {
         repo.delete(id);
-        return;
     }
 
 
