@@ -6,7 +6,7 @@
 
   <mapping map-null="false" map-empty-string="false" trim-strings="true">
     <class-a>kz.kegoc.bln.entity.LogPoint</class-a>
-    <class-b>kz.kegoc.bln.webapi.dto.MeteringPointDto</class-b>
+    <class-b>kz.kegoc.bln.webapi.dto.LogPointDto</class-b>
 
   </mapping> 
 </mappings> 

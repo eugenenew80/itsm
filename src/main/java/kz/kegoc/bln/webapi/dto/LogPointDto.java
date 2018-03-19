@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(of= {"id"})
-public class MeteringPointRelDto {
+public class LogPointDto {
     private Long id;
+    private String name;
 }

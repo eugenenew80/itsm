@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of= {"id"})
 public class TelemetryDto {
     private Long id;
-    private MeteringPointRelDto meteringPoint;
+    private LogPointRelDto meteringPoint;
     private LocalDateTime meteringDate;
     private Double val;
 }
