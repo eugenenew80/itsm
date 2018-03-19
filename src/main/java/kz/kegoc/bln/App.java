@@ -1,8 +1,9 @@
 package kz.kegoc.bln;
 
-import kz.kegoc.bln.gateway.oic.OicConfig;
 import kz.kegoc.bln.gateway.oic.OicDataGatewayImpl;
 import kz.kegoc.bln.gateway.oic.TelemetryRaw;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -12,6 +13,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static kz.kegoc.bln.gateway.oic.OicConfig.defaultConfig;
 
 @EntityScan(
     basePackageClasses = { App.class, Jsr310JpaConverters.class }
@@ -19,30 +23,25 @@ import java.util.List;
 @SpringBootApplication
 @EnableScheduling
 public class App {
-    public static void main(String[] args) {
+    private static final Logger logger = LoggerFactory.getLogger(App.class);
 
-        OicConfig config = new OicConfig.Builder()
-            .server1("OIC01UG.CORP.KEGOC.KZ")
-            .server2("OIC02UG.CORP.KEGOC.KZ")
-            .port(1433)
-            .user("bln")
-            .pass("123456")
-            .masterDb("MASTER")
-            .oicDb("OICDB")
-            .build();
+    public static void main(String[] args) {
 
         List<Long> points = Arrays.asList(1L, 2L);
         LocalDateTime requestedTime = LocalDateTime.parse("19.03.2018 05:05:00", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
 
         try {
             List<TelemetryRaw> telemetry = new OicDataGatewayImpl()
-                .config(config)
+                .config(defaultConfig())
                 .points(points)
                 .request(requestedTime);
+
+            telemetry.stream().forEach(t -> logger.info(telemetry.toString()) );
         }
         catch (Exception e) {
             e.printStackTrace();
         }
+
 
         SpringApplication.run(App.class, args);
     }

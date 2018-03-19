@@ -1,7 +1,5 @@
 package kz.kegoc.bln.gateway.oic;
 
-import kz.kegoc.bln.entity.Telemetry;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OicDataGatewayImpl implements OicDataGateway {
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
@@ -29,13 +28,9 @@ public class OicDataGatewayImpl implements OicDataGateway {
     public List<TelemetryRaw> request(LocalDateTime requestedTime) throws Exception {
         String requestedTimeStr = requestedTime.format(timeFormatter);
 
-        String pointsStr = "";
-        for(Object state : points){
-            if (pointsStr != null)
-                pointsStr=pointsStr + ", " + state.toString();
-            else
-                pointsStr=pointsStr + state.toString();
-        }
+        String pointsStr = points.stream()
+            .map(t -> t.toString())
+            .collect(Collectors.joining(","));
 
         Connection con = null;
         PreparedStatement pst = null;
@@ -43,7 +38,7 @@ public class OicDataGatewayImpl implements OicDataGateway {
         List<TelemetryRaw> telemetry = new ArrayList<>();
         try {
             con = new OicConnection(config).getConnection();
-            pst = con.prepareStatement("exec master..xp_gettidata2 1, '" + requestedTimeStr + "', " + points);
+            pst = con.prepareStatement("exec master..xp_gettidata2 1, '" + requestedTimeStr + "', " + pointsStr);
             rs = pst.executeQuery();
 
             while (rs.next()) {
@@ -59,14 +54,10 @@ public class OicDataGatewayImpl implements OicDataGateway {
         }
 
         finally {
-            try {
-                if (rs!=null) rs.close();
-            }
+            try { if (rs!=null) rs.close(); }
             catch (Exception exc) {}
 
-            try {
-                if (con != null) con.close();
-            }
+            try { if (con != null) con.close(); }
             catch (Exception exc) {}
         }
 

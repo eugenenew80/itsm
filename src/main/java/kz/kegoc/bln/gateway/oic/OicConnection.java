@@ -1,8 +1,13 @@
 package kz.kegoc.bln.gateway.oic;
 
+import kz.kegoc.bln.App;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.sql.*;
 
 public class OicConnection {
+    private static final Logger logger = LoggerFactory.getLogger(App.class);
+
     public OicConnection(OicConfig config) {
         this.config = config;
     }
@@ -19,48 +24,24 @@ public class OicConnection {
             throw new RuntimeException("No server available");
 
         String conStr = active01 ? config.buildUrlOIC(ServerType.SERVER1) : config.buildUrlOIC(ServerType.SERVER2);
-        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         return DriverManager.getConnection(conStr);
     }
 
-
     private boolean ping(String conStr) {
-        Connection con = null;
-        try {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            con= DriverManager.getConnection(conStr);
+        try (Connection con = DriverManager.getConnection(conStr)) {
+            try (PreparedStatement pst = con.prepareStatement("select status from [dbo].sysdatabases t WHERE t.name='OICDB'")) {
+                try (ResultSet rs = pst.executeQuery()) {
+                    if (!rs.next())
+                        throw new RuntimeException("No data in sysdatabases table");
+
+                    if (rs.getInt(1) > 99)
+                        throw new RuntimeException("Database is not active");
+                }
+            }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
             return false;
-        }
-
-        PreparedStatement pst = null;
-        ResultSet rs = null;
-        try {
-            pst = con.prepareStatement("select status from [dbo].sysdatabases t WHERE t.name='OICDB'");
-            rs = pst.executeQuery();
-
-            if (!rs.next())
-                return false;
-
-            if (rs.getInt(1)>99)
-                return false;
-        }
-        catch (Exception e) {
-            return false;
-        }
-
-        finally {
-            try {
-                if (rs!=null) rs.close();
-            }
-            catch (Exception exc) {}
-
-            try {
-                if (con != null) con.close();
-            }
-            catch (Exception exc) {}
         }
 
         return true;

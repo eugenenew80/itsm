@@ -3,6 +3,19 @@ package kz.kegoc.bln.gateway.oic;
 public class OicConfig {
     private OicConfig() {}
 
+    public static OicConfig defaultConfig() {
+        return new OicConfig.Builder()
+            .server1("OIC01UG.CORP.KEGOC.KZ")
+            .server2("OIC02UG.CORP.KEGOC.KZ")
+            .port(1433)
+            .user("bln")
+            .pass("123456")
+            .masterDb("MASTER")
+            .oicDb("OICDB")
+            .build();
+    }
+
+
     public String buildUrlMaster(ServerType serverType) {
         return "jdbc:sqlserver://" + (serverType == ServerType.SERVER1 ? server1 : server2) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + masterDb;
     }
