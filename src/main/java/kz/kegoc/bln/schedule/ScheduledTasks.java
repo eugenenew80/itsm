@@ -2,8 +2,7 @@ package kz.kegoc.bln.schedule;
 
 import kz.kegoc.bln.gateway.oic.OicImpGateway;
 import kz.kegoc.bln.gateway.oic.TelemetryRaw;
-import kz.kegoc.bln.gateway.oic.impl.OicImpGatewayImpl;
-import kz.kegoc.bln.repo.MeteringPointRepo;
+import kz.kegoc.bln.repo.LogPointRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +36,13 @@ public class ScheduledTasks {
     }
 
     private List<Long> buildPoints() {
-        return stream(meteringPointRepo.findAll())
+        return stream(logPointRepo.findAll())
             .map(t -> t.getId())
             .collect(Collectors.toList());
     }
 
     @Autowired
-    private MeteringPointRepo meteringPointRepo;
+    private LogPointRepo logPointRepo;
 
     @Autowired
     private OicImpGateway oicImpGateway;

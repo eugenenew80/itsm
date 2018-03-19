@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(of= {"id"})
 @Entity
-@Table(name = "metering_points", schema = "apps")
-public class MeteringPoint {
+@Table(name = "log_points", schema = "apps")
+public class LogPoint {
     @Id
     private Long id;
 

@@ -1,8 +1,7 @@
 package kz.kegoc.bln.webapi;
 
-import kz.kegoc.bln.entity.MeteringPoint;
-import kz.kegoc.bln.entity.Telemetry;
-import kz.kegoc.bln.repo.MeteringPointRepo;
+import kz.kegoc.bln.entity.LogPoint;
+import kz.kegoc.bln.repo.LogPointRepo;
 import kz.kegoc.bln.repo.TelemetryRepo;
 import kz.kegoc.bln.webapi.dto.TelemetryDto;
 import org.dozer.DozerBeanMapper;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -22,16 +20,10 @@ public class TelemetryController {
 
     @PostConstruct
     public void init() {
-        MeteringPoint meteringPoint = new MeteringPoint();
+        LogPoint meteringPoint = new LogPoint();
         meteringPoint.setId(1l);
         meteringPoint.setName("Точка 1");
-        meteringPointRepo.save(meteringPoint);
-
-        Telemetry telemetry = new Telemetry();
-        telemetry.setMeteringPoint(meteringPointRepo.findOne(1L));
-        telemetry.setMeteringDate(LocalDateTime.now());
-        telemetry.setVal(123d);
-        repo.save(telemetry);
+        logPointRepo.save(meteringPoint);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/telemetry")
@@ -52,7 +44,7 @@ public class TelemetryController {
     private TelemetryRepo repo;
 
     @Autowired
-    private MeteringPointRepo meteringPointRepo;
+    private LogPointRepo logPointRepo;
 
     @Autowired
     private DozerBeanMapper mapper;

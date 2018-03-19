@@ -19,7 +19,7 @@ public class Telemetry {
 
     @ManyToOne
     @JoinColumn(name = "metering_point_id")
-    private MeteringPoint meteringPoint;
+    private LogPoint logPoint;
 
     @Column(name = "metering_date")
     private LocalDateTime meteringDate;
