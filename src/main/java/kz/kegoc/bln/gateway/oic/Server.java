@@ -1,6 +1,6 @@
 package kz.kegoc.bln.gateway.oic;
 
-public enum ServerType {
+public enum Server {
     ServerOne,
     ServerTwo
 }

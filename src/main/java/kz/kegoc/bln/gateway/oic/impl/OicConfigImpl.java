@@ -1,7 +1,7 @@
 package kz.kegoc.bln.gateway.oic.impl;
 
 import kz.kegoc.bln.gateway.oic.OicConfig;
-import kz.kegoc.bln.gateway.oic.ServerType;
+import kz.kegoc.bln.gateway.oic.Server;
 
 public class OicConfigImpl implements OicConfig {
     private OicConfigImpl() {}
@@ -10,16 +10,16 @@ public class OicConfigImpl implements OicConfig {
         return new Builder();
     }
 
-    public String buildUrlMaster(ServerType serverType) {
-        return "jdbc:sqlserver://" + (serverType == ServerType.ServerOne ? server1 : server2) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + masterDb;
+    public String buildUrlMaster(Server serverType) {
+        return "jdbc:sqlserver://" + (serverType == Server.ServerOne ? serverOne : serverTwo) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + masterDb;
     }
 
-    public String buildUrlOIC(ServerType serverType) {
-        return "jdbc:sqlserver://" + (serverType == ServerType.ServerOne ? server1 : server2) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + oicDb;
+    public String buildUrlOIC(Server serverType) {
+        return "jdbc:sqlserver://" + (serverType == Server.ServerOne ? serverOne : serverTwo) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + oicDb;
     }
 
-    private String server1;
-    private String server2;
+    private String serverOne;
+    private String serverTwo;
     private int port;
     private String user;
     private String pass;
@@ -30,21 +30,21 @@ public class OicConfigImpl implements OicConfig {
     public static class Builder {
         private Builder() {}
 
-        private String server1;
-        private String server2;
+        private String serverOne;
+        private String serverTwo;
         private int port;
         private String user;
         private String pass;
         private String masterDb;
         private String oicDb;
 
-        public Builder server1(String server1) {
-            this.server1 = server1;
+        public Builder serverOne(String serverOne) {
+            this.serverOne = serverOne;
             return this;
         }
 
-        public Builder server2(String server2) {
-            this.server2 = server2;
+        public Builder serverTwo(String serverTwo) {
+            this.serverTwo = serverTwo;
             return this;
         }
 
@@ -75,8 +75,8 @@ public class OicConfigImpl implements OicConfig {
 
         public OicConfigImpl build() {
             OicConfigImpl config = new OicConfigImpl();
-            config.server1 = this.server1;
-            config.server2 = this.server2;
+            config.serverOne = this.serverOne;
+            config.serverTwo = this.serverTwo;
             config.port = this.port;
             config.user = this.user;
             config.pass = this.pass;
