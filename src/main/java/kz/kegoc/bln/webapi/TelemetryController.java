@@ -1,24 +1,24 @@
 package kz.kegoc.bln.webapi;
 
 import kz.kegoc.bln.entity.Telemetry;
-import kz.kegoc.bln.repo.LogPointRepo;
 import kz.kegoc.bln.repo.TelemetryRepo;
 import kz.kegoc.bln.webapi.dto.TelemetryDto;
 import org.dozer.DozerBeanMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import static kz.kegoc.bln.util.Util.first;
-import static kz.kegoc.bln.util.Util.stream;
 
 @RestController
 public class TelemetryController {
+    private static final Logger logger = LoggerFactory.getLogger(TelemetryController.class);
 
     @PostConstruct
     private void init() {
@@ -28,8 +28,11 @@ public class TelemetryController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/telemetry", produces = "application/json")
-    public List<TelemetryDto> getAll() {
-        return stream(repo.findAll())
+    public List<TelemetryDto> getAll(
+        @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime start,
+        @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime end) {
+
+        return repo.findByDateTimeBetween(start, end).stream()
             .map(transformToDto::apply)
             .collect(Collectors.toList());
     }

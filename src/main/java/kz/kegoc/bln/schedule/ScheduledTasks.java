@@ -13,7 +13,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import static kz.kegoc.bln.gateway.oic.OicConfig.defaultConfig;
-import static kz.kegoc.bln.util.Util.stream;
 
 @Component
 public class ScheduledTasks {
@@ -36,7 +35,8 @@ public class ScheduledTasks {
     }
 
     private List<Long> buildPoints() {
-        return stream(logPointRepo.findAll())
+        return logPointRepo.findAll()
+            .stream()
             .map(t -> t.getId())
             .collect(Collectors.toList());
     }

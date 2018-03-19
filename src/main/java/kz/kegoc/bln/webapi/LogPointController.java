@@ -13,7 +13,6 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import static kz.kegoc.bln.util.Util.first;
-import static kz.kegoc.bln.util.Util.stream;
 
 @RestController
 public class LogPointController {
@@ -28,7 +27,8 @@ public class LogPointController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/logPoints", produces = "application/json")
     public List<LogPointDto> getAll() {
-        return stream(repo.findAll())
+        return repo.findAll()
+            .stream()
             .map(transformToDto::apply)
             .collect(Collectors.toList());
     }

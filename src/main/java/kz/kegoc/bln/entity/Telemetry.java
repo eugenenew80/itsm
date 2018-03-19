@@ -22,7 +22,7 @@ public class Telemetry {
     private LogPoint logPoint;
 
     @Column(name = "metering_date")
-    private LocalDateTime meteringDate;
+    private LocalDateTime dateTime;
 
     @Column
     private Double val;
