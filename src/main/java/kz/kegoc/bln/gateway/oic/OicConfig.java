@@ -20,8 +20,4 @@ public interface OicConfig {
             .oicDb("OICDB")
             .build();
     }
-
-    static List<Long> defaultPoints() {
-        return Arrays.asList(1L, 2L);
-    }
 }
