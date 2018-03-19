@@ -1,5 +1,7 @@
+
 package kz.kegoc.bln.gateway.oic.impl;
 
+import kz.kegoc.bln.gateway.oic.OicConfig;
 import kz.kegoc.bln.gateway.oic.OicImpGateway;
 import kz.kegoc.bln.gateway.oic.TelemetryRaw;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ public class OicImpGatewayImpl implements OicImpGateway {
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
     @Override
-    public OicImpGateway config(OicConfigImpl config) {
+    public OicImpGateway config(OicConfig config) {
         this.config = config;
         return this;
     }
@@ -53,6 +55,6 @@ public class OicImpGatewayImpl implements OicImpGateway {
         return telemetry;
     }
 
-    private OicConfigImpl config;
+    private OicConfig config;
     private List<Long> points;
 }

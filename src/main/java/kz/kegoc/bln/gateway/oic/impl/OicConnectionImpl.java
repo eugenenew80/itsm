@@ -1,6 +1,7 @@
 package kz.kegoc.bln.gateway.oic.impl;
 
 import kz.kegoc.bln.App;
+import kz.kegoc.bln.gateway.oic.OicConfig;
 import kz.kegoc.bln.gateway.oic.OicConnection;
 import kz.kegoc.bln.gateway.oic.ServerType;
 import org.slf4j.Logger;
@@ -10,7 +11,7 @@ import java.sql.*;
 public class OicConnectionImpl implements OicConnection {
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
-    public OicConnectionImpl(OicConfigImpl config) {
+    public OicConnectionImpl(OicConfig config) {
         this.config = config;
     }
 
@@ -45,5 +46,5 @@ public class OicConnectionImpl implements OicConnection {
         return true;
     }
 
-    private final OicConfigImpl config;
+    private final OicConfig config;
 }

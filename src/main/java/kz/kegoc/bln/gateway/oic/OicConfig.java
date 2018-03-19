@@ -9,7 +9,7 @@ public interface OicConfig {
     String buildUrlMaster(ServerType serverType);
     String buildUrlOIC(ServerType serverType);
 
-    static OicConfigImpl defaultConfig() {
+    static OicConfig defaultConfig() {
         return OicConfigImpl.builder()
             .server1("OIC01UG.CORP.KEGOC.KZ")
             .server2("OIC02UG.CORP.KEGOC.KZ")
