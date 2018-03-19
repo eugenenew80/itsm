@@ -12,6 +12,24 @@
         <java.version>1.8</java.version>
     </properties>
 
+    <profiles>
+        <profile>
+            <id>localDev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <properties>
+                <driver>org.postgresql.Driver</driver>
+                <url>jdbc:postgresql://localhost:5432/bln_oic</url>
+                <username>postgres</username>
+                <password>1</password>
+                <scripts>dev</scripts>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+    </profiles>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -108,6 +126,31 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>1.5.10.RELEASE</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>3.5.3</version>
+
+                <configuration>
+                    <changeLogFile>
+                        ${basedir}/src/main/resources/liquibase/changelog.xml
+                    </changeLogFile>
+                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+                    <driver>${driver}</driver>
+                    <url>${url}</url>
+                    <username>${username}</username>
+                    <password>${password}</password>
+                </configuration>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.liquibase.ext</groupId>
+                        <artifactId>liquibase-oracle</artifactId>
+                        <version>3.2</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>

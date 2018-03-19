@@ -18,7 +18,7 @@ public class Telemetry {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "metering_point_id")
+    @JoinColumn(name = "log_point_id")
     private LogPoint logPoint;
 
     @Column(name = "date_time")
