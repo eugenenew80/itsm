@@ -1,4 +1,7 @@
-package kz.kegoc.bln.gateway.oic;
+package kz.kegoc.bln.gateway.oic.impl;
+
+import kz.kegoc.bln.gateway.oic.OicDataGateway;
+import kz.kegoc.bln.gateway.oic.TelemetryRaw;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +16,7 @@ public class OicDataGatewayImpl implements OicDataGateway {
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
     @Override
-    public OicDataGateway config(OicConfig config) {
+    public OicDataGateway config(OicConfigImpl config) {
         this.config = config;
         return this;
     }
@@ -33,7 +36,7 @@ public class OicDataGatewayImpl implements OicDataGateway {
             .collect(Collectors.joining(","));
 
         List<TelemetryRaw> telemetry = new ArrayList<>();
-        try (Connection con = new OicConnection(config).getConnection()) {
+        try (Connection con = new OicConnectionImpl(config).getConnection()) {
             try (PreparedStatement pst = con.prepareStatement("exec master..xp_gettidata2 1, '" + requestedTimeStr + "', " + pointsStr)) {
                 try (ResultSet rs = pst.executeQuery()) {
                     while (rs.next()) {
@@ -48,6 +51,6 @@ public class OicDataGatewayImpl implements OicDataGateway {
         return telemetry;
     }
 
-    private OicConfig config;
+    private OicConfigImpl config;
     private List<Long> points;
 }
