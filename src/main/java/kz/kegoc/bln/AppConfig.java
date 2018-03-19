@@ -29,8 +29,8 @@ public class AppConfig {
         DozerBeanMapper mapper = new DozerBeanMapper();
         mapper.setMappingFiles(Arrays.asList(
             "mapper/MappingConfig.xml",
-            "mapper/def/MeteringPointDto.xml",
-            "mapper/def/TelemetryDto.xml"
+            "mapper/MeteringPointDto.xml",
+            "mapper/TelemetryDto.xml"
         ));
 
         return mapper;
