@@ -7,10 +7,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ScheduledTasks {
-    private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
+    private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
 
     @Scheduled(fixedRate = 5000)
     public void startImport() {
-        log.info("startImport");
     }
 }
