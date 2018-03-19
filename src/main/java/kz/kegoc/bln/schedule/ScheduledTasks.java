@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
-import static kz.kegoc.bln.gateway.oic.OicConfig.defaultConfig;
+import static kz.kegoc.bln.gateway.oic.OicConfig.propConfig;
 
 @Component
 public class ScheduledTasks {
@@ -23,7 +23,7 @@ public class ScheduledTasks {
         LocalDateTime requestedTime = LocalDateTime.parse("19.03.2018 05:05:00", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
         try {
             List<TelemetryRaw> telemetry = oicImpGateway
-                .config(defaultConfig())
+                .config(propConfig())
                 .points(buildPoints())
                 .request(requestedTime);
 
