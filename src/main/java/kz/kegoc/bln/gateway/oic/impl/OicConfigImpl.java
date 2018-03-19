@@ -18,6 +18,15 @@ public class OicConfigImpl implements OicConfig {
         return "jdbc:sqlserver://" + (serverType == ServerType.ServerOne ? server1 : server2) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + oicDb;
     }
 
+    private String server1;
+    private String server2;
+    private int port;
+    private String user;
+    private String pass;
+    private String masterDb;
+    private String oicDb;
+
+
     public static class Builder {
         private Builder() {}
 
@@ -76,12 +85,4 @@ public class OicConfigImpl implements OicConfig {
             return config;
         }
     }
-
-    private String server1;
-    private String server2;
-    private int port;
-    private String user;
-    private String pass;
-    private String masterDb;
-    private String oicDb;
 }

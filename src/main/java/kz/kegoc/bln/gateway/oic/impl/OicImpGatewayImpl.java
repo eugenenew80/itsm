@@ -1,6 +1,6 @@
 package kz.kegoc.bln.gateway.oic.impl;
 
-import kz.kegoc.bln.gateway.oic.OicDataGateway;
+import kz.kegoc.bln.gateway.oic.OicImpGateway;
 import kz.kegoc.bln.gateway.oic.TelemetryRaw;
 
 import java.sql.Connection;
@@ -12,17 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OicDataGatewayImpl implements OicDataGateway {
+public class OicImpGatewayImpl implements OicImpGateway {
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
     @Override
-    public OicDataGateway config(OicConfigImpl config) {
+    public OicImpGateway config(OicConfigImpl config) {
         this.config = config;
         return this;
     }
 
     @Override
-    public OicDataGateway points(List<Long> points) {
+    public OicImpGateway points(List<Long> points) {
         this.points = points;
         return this;
     }

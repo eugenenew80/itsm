@@ -1,6 +1,6 @@
 package kz.kegoc.bln;
 
-import kz.kegoc.bln.gateway.oic.impl.OicDataGatewayImpl;
+import kz.kegoc.bln.gateway.oic.impl.OicImpGatewayImpl;
 import kz.kegoc.bln.gateway.oic.TelemetryRaw;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class App {
     public static void main(String[] args) {
         LocalDateTime requestedTime = LocalDateTime.parse("19.03.2018 05:05:00", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
         try {
-            List<TelemetryRaw> telemetry = new OicDataGatewayImpl()
+            List<TelemetryRaw> telemetry = new OicImpGatewayImpl()
                 .config(defaultConfig())
                 .points(defaultPoints())
                 .request(requestedTime);
