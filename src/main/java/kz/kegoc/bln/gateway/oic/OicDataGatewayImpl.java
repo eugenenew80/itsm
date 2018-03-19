@@ -44,7 +44,6 @@ public class OicDataGatewayImpl implements OicDataGateway {
                 }
             }
         }
-        catch (Exception e) { e.printStackTrace(); }
 
         return telemetry;
     }

@@ -26,7 +26,6 @@ public class App {
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) {
-
         List<Long> points = Arrays.asList(1L, 2L);
         LocalDateTime requestedTime = LocalDateTime.parse("19.03.2018 05:05:00", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
 
@@ -39,9 +38,8 @@ public class App {
             telemetry.stream().forEach(t -> logger.info(telemetry.toString()) );
         }
         catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
-
 
         SpringApplication.run(App.class, args);
     }

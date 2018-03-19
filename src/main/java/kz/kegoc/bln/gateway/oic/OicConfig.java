@@ -4,7 +4,7 @@ public class OicConfig {
     private OicConfig() {}
 
     public static OicConfig defaultConfig() {
-        return new OicConfig.Builder()
+        return OicConfig.builder()
             .server1("OIC01UG.CORP.KEGOC.KZ")
             .server2("OIC02UG.CORP.KEGOC.KZ")
             .port(1433)
@@ -13,6 +13,10 @@ public class OicConfig {
             .masterDb("MASTER")
             .oicDb("OICDB")
             .build();
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public String buildUrlMaster(ServerType serverType) {
@@ -24,6 +28,8 @@ public class OicConfig {
     }
 
     public static class Builder {
+        private Builder() {}
+
         private String server1;
         private String server2;
         private int port;
