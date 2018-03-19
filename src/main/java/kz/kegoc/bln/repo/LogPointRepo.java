@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface LogPointRepo extends CrudRepository<LogPoint, Long> {
     List<LogPoint> findAll();
+    List<LogPoint> findByIsActiveTrue();
 }

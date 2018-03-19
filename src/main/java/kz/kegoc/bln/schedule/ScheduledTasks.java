@@ -18,7 +18,7 @@ import static kz.kegoc.bln.gateway.oic.OicConfig.propConfig;
 public class ScheduledTasks {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 60000)
     public void startImport() {
         LocalDateTime requestedTime = LocalDateTime.parse("19.03.2018 05:05:00", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
         try {
@@ -35,7 +35,7 @@ public class ScheduledTasks {
     }
 
     private List<Long> buildPoints() {
-        return logPointRepo.findAll()
+        return logPointRepo.findByIsActiveTrue()
             .stream()
             .map(t -> t.getId())
             .collect(Collectors.toList());

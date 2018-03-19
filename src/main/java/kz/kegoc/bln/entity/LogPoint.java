@@ -1,5 +1,6 @@
 package kz.kegoc.bln.entity;
 
+import kz.kegoc.bln.converter.jpa.BooleanToIntConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import javax.persistence.*;
@@ -22,4 +23,8 @@ public class LogPoint {
 
     @Column(name = "last_load_time")
     private LocalDateTime lastLoadTime;
+
+    @Column(name = "is_active")
+    @Convert(converter = BooleanToIntConverter.class)
+    private Boolean isActive;
 }

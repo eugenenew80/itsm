@@ -21,7 +21,7 @@ public class Telemetry {
     @JoinColumn(name = "metering_point_id")
     private LogPoint logPoint;
 
-    @Column(name = "metering_date")
+    @Column(name = "date_time")
     private LocalDateTime dateTime;
 
     @Column
