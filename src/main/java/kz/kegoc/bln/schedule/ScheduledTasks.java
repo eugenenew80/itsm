@@ -1,5 +1,6 @@
 package kz.kegoc.bln.schedule;
 
+import kz.kegoc.bln.gateway.oic.OicImpGateway;
 import kz.kegoc.bln.gateway.oic.TelemetryRaw;
 import kz.kegoc.bln.gateway.oic.impl.OicImpGatewayImpl;
 import kz.kegoc.bln.repo.MeteringPointRepo;
@@ -19,11 +20,11 @@ import static kz.kegoc.bln.util.Util.stream;
 public class ScheduledTasks {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 5000)
     public void startImport() {
         LocalDateTime requestedTime = LocalDateTime.parse("19.03.2018 05:05:00", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
         try {
-            List<TelemetryRaw> telemetry = new OicImpGatewayImpl()
+            List<TelemetryRaw> telemetry = oicImpGateway
                 .config(defaultConfig())
                 .points(buildPoints())
                 .request(requestedTime);
@@ -43,4 +44,7 @@ public class ScheduledTasks {
 
     @Autowired
     private MeteringPointRepo meteringPointRepo;
+
+    @Autowired
+    private OicImpGateway oicImpGateway;
 }
