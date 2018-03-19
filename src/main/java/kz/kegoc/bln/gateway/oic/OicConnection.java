@@ -13,17 +13,13 @@ public class OicConnection {
     }
 
     public Connection getConnection() throws Exception {
-        boolean active01 = false;
-        boolean active02 = false;
-
-        active01 = ping(config.buildUrlMaster(ServerType.SERVER1));
-        if (!active01)
-            active02 = ping(config.buildUrlMaster(ServerType.SERVER2));
+        boolean active01 = ping(config.buildUrlMaster(ServerType.ServerOne));
+        boolean active02 = ping(config.buildUrlMaster(ServerType.ServerTwo));
 
         if (!active01 && !active02)
             throw new RuntimeException("No server available");
 
-        String conStr = active01 ? config.buildUrlOIC(ServerType.SERVER1) : config.buildUrlOIC(ServerType.SERVER2);
+        String conStr = active01 ? config.buildUrlOIC(ServerType.ServerOne) : config.buildUrlOIC(ServerType.ServerTwo);
         return DriverManager.getConnection(conStr);
     }
 

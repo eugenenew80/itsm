@@ -32,34 +32,19 @@ public class OicDataGatewayImpl implements OicDataGateway {
             .map(t -> t.toString())
             .collect(Collectors.joining(","));
 
-        Connection con = null;
-        PreparedStatement pst = null;
-        ResultSet rs = null;
         List<TelemetryRaw> telemetry = new ArrayList<>();
-        try {
-            con = new OicConnection(config).getConnection();
-            pst = con.prepareStatement("exec master..xp_gettidata2 1, '" + requestedTimeStr + "', " + pointsStr);
-            rs = pst.executeQuery();
-
-            while (rs.next()) {
-                Long logti = rs.getLong(1);
-                Double val = rs.getDouble(2);
-                TelemetryRaw telemetryRaw = new TelemetryRaw(logti, val);
-                telemetry.add(telemetryRaw);
+        try (Connection con = new OicConnection(config).getConnection()) {
+            try (PreparedStatement pst = con.prepareStatement("exec master..xp_gettidata2 1, '" + requestedTimeStr + "', " + pointsStr)) {
+                try (ResultSet rs = pst.executeQuery()) {
+                    while (rs.next()) {
+                        Long logti = rs.getLong(1);
+                        Double val = rs.getDouble(2);
+                        telemetry.add(new TelemetryRaw(logti, val));
+                    }
+                }
             }
         }
-
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        finally {
-            try { if (rs!=null) rs.close(); }
-            catch (Exception exc) {}
-
-            try { if (con != null) con.close(); }
-            catch (Exception exc) {}
-        }
+        catch (Exception e) { e.printStackTrace(); }
 
         return telemetry;
     }

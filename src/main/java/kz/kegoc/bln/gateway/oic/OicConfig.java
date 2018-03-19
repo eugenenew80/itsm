@@ -17,11 +17,11 @@ public class OicConfig {
 
 
     public String buildUrlMaster(ServerType serverType) {
-        return "jdbc:sqlserver://" + (serverType == ServerType.SERVER1 ? server1 : server2) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + masterDb;
+        return "jdbc:sqlserver://" + (serverType == ServerType.ServerOne ? server1 : server2) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + masterDb;
     }
 
     public String buildUrlOIC(ServerType serverType) {
-        return "jdbc:sqlserver://" + (serverType == ServerType.SERVER1 ? server1 : server2) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + oicDb;
+        return "jdbc:sqlserver://" + (serverType == ServerType.ServerOne ? server1 : server2) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + oicDb;
     }
 
     public static class Builder {
