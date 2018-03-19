@@ -37,6 +37,6 @@ public class App {
             logger.error(e.getMessage());
         }
 
-        SpringApplication.run(App.class, args);
+        //SpringApplication.run(App.class, args);
     }
 }
