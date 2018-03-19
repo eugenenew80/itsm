@@ -15,7 +15,6 @@ public class OicConfig {
             .build();
     }
 
-
     public String buildUrlMaster(ServerType serverType) {
         return "jdbc:sqlserver://" + (serverType == ServerType.ServerOne ? server1 : server2) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + masterDb;
     }
