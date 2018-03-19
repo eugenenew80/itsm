@@ -3,6 +3,7 @@ package kz.kegoc.bln.schedule;
 import kz.kegoc.bln.gateway.oic.OicImpGateway;
 import kz.kegoc.bln.gateway.oic.TelemetryRaw;
 import kz.kegoc.bln.repo.LogPointRepo;
+import kz.kegoc.bln.repo.TelemetryRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,9 @@ public class ScheduledTasks {
 
     @Autowired
     private LogPointRepo logPointRepo;
+
+    @Autowired
+    private TelemetryRepo telemetryRepo;
 
     @Autowired
     private OicImpGateway oicImpGateway;
