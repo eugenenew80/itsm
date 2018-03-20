@@ -25,6 +25,8 @@ public class ScheduledTasks {
 
     @Scheduled(fixedRate = 60000)
     public void startImport() {
+        logger.info("ScheduledTasks.startImport started");
+
         LastLoadInfo lastLoadInfo = lastLoadInfoRepo.findOne("SEC-5");
         Long defStep = 5l;
         if (lastLoadInfo==null) {
@@ -36,12 +38,17 @@ public class ScheduledTasks {
 
         LocalDateTime curTime = lastLoadInfo.getLastLoadTime();
         LocalDateTime endTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+
+        logger.info("start time: " + curTime.toString());
+        logger.info("end time: " + endTime.toString());
+
         try {
             oicImpGateway
                 .config(propConfig())
                 .points(buildPoints());
 
             while (curTime.isBefore(endTime) || curTime.isEqual(endTime)) {
+
                 List<TelemetryRaw> telemetry = oicImpGateway.request(curTime);
                 save(curTime, telemetry);
                 lastLoadInfo.setLastLoadTime(curTime);
@@ -52,6 +59,8 @@ public class ScheduledTasks {
         catch (Exception e) {
             logger.error(e.getMessage());
         }
+
+        logger.info("ScheduledTasks.startImport completed");
     }
 
     private List<Long> buildPoints() {
