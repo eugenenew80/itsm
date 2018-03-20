@@ -49,12 +49,12 @@ public class OicImpGatewayImpl implements OicImpGateway {
             throw new Exception("config  must be specified");
 
         String requestedTimeStr = requestedTime.format(timeFormatter);
-        logger.trace("requestedTime: " + requestedTimeStr);
+        logger.debug("requestedTime: " + requestedTimeStr);
 
         String pointsStr = points.stream()
             .map(t -> t.toString())
             .collect(Collectors.joining(","));
-        logger.trace("points: " + pointsStr);
+        logger.debug("points: " + pointsStr);
 
         logger.trace("Request data from OIC database started");
         List<TelemetryRaw> telemetryList = new ArrayList<>();
