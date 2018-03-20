@@ -11,6 +11,13 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "log_points", schema = "apps")
 public class LogPoint {
+
+    public LogPoint() {}
+
+    public LogPoint(Long id) {
+        this.id = id;
+    }
+
     @Id
     private Long id;
 

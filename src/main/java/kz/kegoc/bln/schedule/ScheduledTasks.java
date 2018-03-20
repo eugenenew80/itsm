@@ -1,5 +1,7 @@
 package kz.kegoc.bln.schedule;
 
+import kz.kegoc.bln.entity.LogPoint;
+import kz.kegoc.bln.entity.Telemetry;
 import kz.kegoc.bln.gateway.oic.OicImpGateway;
 import kz.kegoc.bln.gateway.oic.TelemetryRaw;
 import kz.kegoc.bln.repo.LogPointRepo;
@@ -29,6 +31,7 @@ public class ScheduledTasks {
                 .request(requestedTime);
 
             telemetry.stream().forEach(t -> logger.info(telemetry.toString()) );
+            //save(requestedTime, telemetry);
         }
         catch (Exception e) {
             logger.error(e.getMessage());
@@ -41,6 +44,27 @@ public class ScheduledTasks {
             .map(t -> t.getId())
             .collect(Collectors.toList());
     }
+
+    private void save(LocalDateTime dateTime, List<TelemetryRaw> telemetryRawList) {
+        List<Telemetry> telemetryList = telemetryRawList.stream()
+            .map(t -> {
+                Telemetry telemetry = null;
+                List<Telemetry> existing = telemetryRepo.findByLogPointIdAndDateTime(telemetry.getId(), telemetry.getDateTime());
+                if (existing.isEmpty())
+                    telemetry = new Telemetry();
+                else
+                    telemetry = existing.get(0);
+
+                telemetry.setDateTime(dateTime);
+                telemetry.setVal(t.getVal());
+                telemetry.setLogPoint(new LogPoint(t.getLogti()));
+                return telemetry;
+            })
+            .collect(Collectors.toList());
+
+        telemetryRepo.save(telemetryList);
+    }
+
 
     @Autowired
     private LogPointRepo logPointRepo;

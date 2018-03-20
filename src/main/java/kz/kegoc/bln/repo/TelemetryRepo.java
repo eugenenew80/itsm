@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface TelemetryRepo extends CrudRepository<Telemetry, Long> {
     List<Telemetry> findByDateTimeBetween(LocalDateTime start, LocalDateTime end);
+
+    List<Telemetry> findByLogPointIdAndDateTime(Long logPointId, LocalDateTime dateTime);
 }
