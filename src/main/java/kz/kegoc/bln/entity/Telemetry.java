@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class Telemetry {
 
     @Id
-    @SequenceGenerator(name="telemetry_s", sequenceName = "telemetry_s", schema = "apps", allocationSize=1)
+    @SequenceGenerator(name="telemetry_s", sequenceName = "apps.telemetry_s", allocationSize=1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "telemetry_s")
     private Long id;
 

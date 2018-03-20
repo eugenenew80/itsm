@@ -30,8 +30,7 @@ public class ScheduledTasks {
                 .points(buildPoints())
                 .request(requestedTime);
 
-            telemetry.stream().forEach(t -> logger.info(telemetry.toString()) );
-            //save(requestedTime, telemetry);
+            save(requestedTime, telemetry);
         }
         catch (Exception e) {
             logger.error(e.getMessage());
@@ -46,10 +45,10 @@ public class ScheduledTasks {
     }
 
     private void save(LocalDateTime dateTime, List<TelemetryRaw> telemetryRawList) {
-        List<Telemetry> telemetryList = telemetryRawList.stream()
+        List<Telemetry> list = telemetryRawList.stream()
             .map(t -> {
-                Telemetry telemetry = null;
-                List<Telemetry> existing = telemetryRepo.findByLogPointIdAndDateTime(telemetry.getId(), telemetry.getDateTime());
+                Telemetry telemetry;
+                List<Telemetry> existing = telemetryRepo.findByLogPointIdAndDateTime(t.getLogti(), dateTime);
                 if (existing.isEmpty())
                     telemetry = new Telemetry();
                 else
@@ -62,7 +61,7 @@ public class ScheduledTasks {
             })
             .collect(Collectors.toList());
 
-        telemetryRepo.save(telemetryList);
+        telemetryRepo.save(list);
     }
 
 

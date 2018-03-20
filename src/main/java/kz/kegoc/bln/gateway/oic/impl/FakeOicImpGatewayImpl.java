@@ -33,8 +33,8 @@ public class FakeOicImpGatewayImpl implements OicImpGateway {
         logger.debug("FakeOicImpGatewayImpl.request started");
 
         List<TelemetryRaw> telemetryRawList = Arrays.asList(
-            new TelemetryRaw(1l, 123d),
-            new TelemetryRaw(2l, 234d)
+            new TelemetryRaw(1l, 345d),
+            new TelemetryRaw(2l, 456d)
         );
 
         logger.debug("FakeOicImpGatewayImpl.request completed");
