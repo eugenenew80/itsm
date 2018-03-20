@@ -62,7 +62,6 @@ public class ScheduledTasks {
         logger.info("ScheduledTasks.startImport completed");
     }
 
-
     private LastLoadInfo buildLastLoadInfo() {
         String defArcType = "SEC-5";
         Long defStep = 5l;
