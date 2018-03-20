@@ -1,9 +1,11 @@
 package kz.kegoc.bln.schedule;
 
+import kz.kegoc.bln.entity.LastLoadInfo;
 import kz.kegoc.bln.entity.LogPoint;
 import kz.kegoc.bln.entity.Telemetry;
 import kz.kegoc.bln.gateway.oic.OicImpGateway;
 import kz.kegoc.bln.gateway.oic.TelemetryRaw;
+import kz.kegoc.bln.repo.LastLoadInfoRepo;
 import kz.kegoc.bln.repo.LogPointRepo;
 import kz.kegoc.bln.repo.TelemetryRepo;
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 import static kz.kegoc.bln.gateway.oic.OicConfig.propConfig;
@@ -23,14 +26,22 @@ public class ScheduledTasks {
 
     @Scheduled(fixedRate = 60000)
     public void startImport() {
-        LocalDateTime requestedTime = LocalDateTime.parse("19.03.2018 05:05:00", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
-        try {
-            List<TelemetryRaw> telemetry = oicImpGateway
-                .config(propConfig())
-                .points(buildPoints())
-                .request(requestedTime);
+        //LastLoadInfo lastLoadInfo = lastLoadInfoRepo.findOne("SEC-5");
 
-            save(requestedTime, telemetry);
+        LocalDateTime curTime = LocalDateTime.parse("20.03.2018 14:00:00", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
+        LocalDateTime endTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+
+        Long step = 5l;
+        try {
+            oicImpGateway
+                .config(propConfig())
+                .points(buildPoints());
+
+            while (curTime.isBefore(endTime) || curTime.isEqual(endTime)) {
+                List<TelemetryRaw> telemetry = oicImpGateway.request(curTime);
+                save(curTime, telemetry);
+                curTime = curTime.plusSeconds(step);
+            }
         }
         catch (Exception e) {
             logger.error(e.getMessage());
@@ -70,6 +81,9 @@ public class ScheduledTasks {
 
     @Autowired
     private TelemetryRepo telemetryRepo;
+
+    @Autowired
+    private LastLoadInfoRepo lastLoadInfoRepo;
 
     @Autowired
     private OicImpGateway oicImpGateway;
