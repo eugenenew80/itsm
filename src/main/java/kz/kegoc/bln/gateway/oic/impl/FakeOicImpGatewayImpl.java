@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-@Primary
 public class FakeOicImpGatewayImpl implements OicImpGateway {
     private static final Logger logger = LoggerFactory.getLogger(FakeOicImpGatewayImpl.class);
 

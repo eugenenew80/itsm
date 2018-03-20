@@ -11,11 +11,11 @@ public class OicConfigImpl implements OicConfig {
     }
 
     public String buildUrlMaster(Server serverType) {
-        return "jdbc:sqlserver://" + (serverType == Server.ServerOne ? serverOne : serverTwo) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + masterDb;
+        return "jdbc:jtds:sqlserver://" + (serverType == Server.ServerOne ? serverOne : serverTwo) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + masterDb;
     }
 
     public String buildUrlOIC(Server serverType) {
-        return "jdbc:sqlserver://" + (serverType == Server.ServerOne ? serverOne : serverTwo) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + oicDb;
+        return "jdbc:jtds:sqlserver://" + (serverType == Server.ServerOne ? serverOne : serverTwo) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + oicDb;
     }
 
     private String serverOne;
