@@ -5,7 +5,6 @@ import kz.kegoc.bln.gateway.oic.OicImpGateway;
 import kz.kegoc.bln.gateway.oic.TelemetryRaw;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Arrays;

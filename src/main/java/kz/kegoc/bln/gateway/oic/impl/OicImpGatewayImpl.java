@@ -1,4 +1,3 @@
-
 package kz.kegoc.bln.gateway.oic.impl;
 
 import kz.kegoc.bln.gateway.oic.OicConfig;
