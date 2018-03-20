@@ -1,4 +1,4 @@
-package kz.kegoc.bln.converter.mapper;
+package kz.kegoc.bln.converter.dozer;
 
 import org.dozer.DozerConverter;
 
