@@ -37,7 +37,9 @@ public class ScheduledTasks {
         }
 
         LocalDateTime curTime = lastLoadInfo.getLastLoadTime();
-        LocalDateTime endTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+        LocalDateTime endTime = LocalDateTime.now()
+            .minusMinutes(1)
+            .truncatedTo(ChronoUnit.MINUTES);
 
         logger.info("start time: " + curTime.toString());
         logger.info("end time: " + endTime.toString());
@@ -48,9 +50,13 @@ public class ScheduledTasks {
                 .points(buildPoints());
 
             while (curTime.isBefore(endTime) || curTime.isEqual(endTime)) {
+                List<TelemetryRaw> telemetryRawList = oicImpGateway.request(curTime);
+                if (telemetryRawList.isEmpty()) {
+                    logger.warn("No data at: " + curTime.toString());
+                    continue;
+                }
 
-                List<TelemetryRaw> telemetry = oicImpGateway.request(curTime);
-                save(curTime, telemetry);
+                save(curTime, telemetryRawList);
                 lastLoadInfo.setLastLoadTime(curTime);
                 lastLoadInfoRepo.save(lastLoadInfo);
                 curTime = curTime.plusSeconds(defStep);
@@ -71,6 +77,7 @@ public class ScheduledTasks {
     }
 
     private void save(LocalDateTime dateTime, List<TelemetryRaw> telemetryRawList) {
+        logger.info("ScheduledTasks.startImport save");
         List<Telemetry> list = telemetryRawList.stream()
             .map(t -> {
                 Telemetry telemetry;
@@ -88,6 +95,7 @@ public class ScheduledTasks {
             .collect(Collectors.toList());
 
         telemetryRepo.save(list);
+        logger.info("ScheduledTasks.startImport completed");
     }
 
 
