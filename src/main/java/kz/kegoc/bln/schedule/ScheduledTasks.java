@@ -79,7 +79,7 @@ public class ScheduledTasks {
     }
 
     private void save(LocalDateTime dateTime, List<TelemetryRaw> telemetryRawList) {
-        logger.info("ScheduledTasks.startImport save");
+        logger.debug("ScheduledTasks.startImport save");
         List<Telemetry> list = telemetryRawList.stream()
             .map(t -> {
                 Telemetry telemetry;
@@ -97,7 +97,7 @@ public class ScheduledTasks {
             .collect(Collectors.toList());
 
         telemetryRepo.save(list);
-        logger.info("ScheduledTasks.startImport completed");
+        logger.debug("ScheduledTasks.startImport completed");
     }
 
 
