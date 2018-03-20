@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,13 +26,15 @@ public class ScheduledTasks {
     @Scheduled(fixedRate = 60000)
     public void startImport() {
         LastLoadInfo lastLoadInfo = lastLoadInfoRepo.findOne("SEC-5");
-        Long step = 5l;
-        LocalDateTime curTime;
-        if (lastLoadInfo==null)
-            curTime = LocalDateTime.parse("20.03.2018 00:00:00", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
-        else
-            curTime = lastLoadInfo.getLastLoadTime();
+        Long defStep = 5l;
+        if (lastLoadInfo==null) {
+            lastLoadInfo = new LastLoadInfo();
+            lastLoadInfo.setArcType("SEC-5");
+            lastLoadInfo.setStep(defStep);
+            lastLoadInfo.setLastLoadTime(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS));
+        }
 
+        LocalDateTime curTime = lastLoadInfo.getLastLoadTime();
         LocalDateTime endTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         try {
             oicImpGateway
@@ -43,7 +44,9 @@ public class ScheduledTasks {
             while (curTime.isBefore(endTime) || curTime.isEqual(endTime)) {
                 List<TelemetryRaw> telemetry = oicImpGateway.request(curTime);
                 save(curTime, telemetry);
-                curTime = curTime.plusSeconds(step);
+                lastLoadInfo.setLastLoadTime(curTime);
+                lastLoadInfoRepo.save(lastLoadInfo);
+                curTime = curTime.plusSeconds(defStep);
             }
         }
         catch (Exception e) {
