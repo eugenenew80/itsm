@@ -98,15 +98,22 @@ public class ScheduledTasks {
         logger.debug("ScheduledTasks.startImport completed");
     }
 
+
     @Autowired
+    public void setLogPointRepo(LogPointRepo logPointRepo) { this.logPointRepo = logPointRepo; }
+
+    @Autowired
+    public void setTelemetryRepo(TelemetryRepo telemetryRepo) { this.telemetryRepo = telemetryRepo; }
+
+    @Autowired
+    public void setLastLoadInfoRepo(LastLoadInfoRepo lastLoadInfoRepo) { this.lastLoadInfoRepo = lastLoadInfoRepo; }
+
+    @Autowired
+    public void setOicImpGateway(OicImpGateway oicImpGateway) { this.oicImpGateway = oicImpGateway; }
+
+
     private LogPointRepo logPointRepo;
-
-    @Autowired
     private TelemetryRepo telemetryRepo;
-
-    @Autowired
     private LastLoadInfoRepo lastLoadInfoRepo;
-
-    @Autowired
     private OicImpGateway oicImpGateway;
 }
