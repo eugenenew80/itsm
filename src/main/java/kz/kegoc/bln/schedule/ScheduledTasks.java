@@ -1,13 +1,8 @@
 package kz.kegoc.bln.schedule;
 
-import kz.kegoc.bln.entity.LastLoadInfo;
-import kz.kegoc.bln.entity.LogPoint;
-import kz.kegoc.bln.entity.Telemetry;
-import kz.kegoc.bln.gateway.oic.OicImpGateway;
-import kz.kegoc.bln.gateway.oic.TelemetryRaw;
-import kz.kegoc.bln.repo.LastLoadInfoRepo;
-import kz.kegoc.bln.repo.LogPointRepo;
-import kz.kegoc.bln.repo.TelemetryRepo;
+import kz.kegoc.bln.entity.*;
+import kz.kegoc.bln.gateway.oic.*;
+import kz.kegoc.bln.repo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +23,6 @@ public class ScheduledTasks {
         logger.info("ScheduledTasks.startImport started");
 
         LastLoadInfo lastLoadInfo = buildLastLoadInfo();
-
         LocalDateTime curTime = lastLoadInfo.getLastLoadTime();
         LocalDateTime endTime = LocalDateTime.now()
             .minusMinutes(1)
@@ -105,7 +99,6 @@ public class ScheduledTasks {
         telemetryRepo.save(list);
         logger.debug("ScheduledTasks.startImport completed");
     }
-
 
     @Autowired
     private LogPointRepo logPointRepo;
