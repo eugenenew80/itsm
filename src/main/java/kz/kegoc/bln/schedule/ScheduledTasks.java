@@ -27,16 +27,7 @@ public class ScheduledTasks {
     public void startImport() {
         logger.info("ScheduledTasks.startImport started");
 
-        String defArcType = "SEC-5";
-        Long defStep = 5l;
-
-        LastLoadInfo lastLoadInfo = lastLoadInfoRepo.findOne(defArcType);
-        if (lastLoadInfo==null) {
-            lastLoadInfo = new LastLoadInfo();
-            lastLoadInfo.setArcType(defArcType);
-            lastLoadInfo.setStep(defStep);
-            lastLoadInfo.setLastLoadTime(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS));
-        }
+        LastLoadInfo lastLoadInfo = buildLastLoadInfo();
 
         LocalDateTime curTime = lastLoadInfo.getLastLoadTime();
         LocalDateTime endTime = LocalDateTime.now()
@@ -61,7 +52,7 @@ public class ScheduledTasks {
                 save(curTime, telemetryRawList);
                 lastLoadInfo.setLastLoadTime(curTime);
                 lastLoadInfoRepo.save(lastLoadInfo);
-                curTime = curTime.plusSeconds(defStep);
+                curTime = curTime.plusSeconds(lastLoadInfo.getStep());
             }
         }
         catch (Exception e) {
@@ -69,6 +60,22 @@ public class ScheduledTasks {
         }
 
         logger.info("ScheduledTasks.startImport completed");
+    }
+
+
+    private LastLoadInfo buildLastLoadInfo() {
+        String defArcType = "SEC-5";
+        Long defStep = 5l;
+
+        LastLoadInfo lastLoadInfo = lastLoadInfoRepo.findOne(defArcType);
+        if (lastLoadInfo==null) {
+            lastLoadInfo = new LastLoadInfo();
+            lastLoadInfo.setArcType(defArcType);
+            lastLoadInfo.setStep(defStep);
+            lastLoadInfo.setLastLoadTime(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS));
+        }
+
+        return lastLoadInfo;
     }
 
     private List<Long> buildPoints() {
