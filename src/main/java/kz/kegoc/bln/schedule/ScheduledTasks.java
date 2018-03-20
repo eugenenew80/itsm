@@ -27,11 +27,13 @@ public class ScheduledTasks {
     public void startImport() {
         logger.info("ScheduledTasks.startImport started");
 
-        LastLoadInfo lastLoadInfo = lastLoadInfoRepo.findOne("SEC-5");
+        String defArcType = "SEC-5";
         Long defStep = 5l;
+
+        LastLoadInfo lastLoadInfo = lastLoadInfoRepo.findOne(defArcType);
         if (lastLoadInfo==null) {
             lastLoadInfo = new LastLoadInfo();
-            lastLoadInfo.setArcType("SEC-5");
+            lastLoadInfo.setArcType(defArcType);
             lastLoadInfo.setStep(defStep);
             lastLoadInfo.setLastLoadTime(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS));
         }
