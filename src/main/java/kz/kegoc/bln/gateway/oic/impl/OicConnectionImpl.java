@@ -39,6 +39,7 @@ public class OicConnectionImpl implements OicConnection {
         }
         catch (Exception e) {
             logger.error(e.getMessage());
+            logger.error(conStr);
             return false;
         }
 
