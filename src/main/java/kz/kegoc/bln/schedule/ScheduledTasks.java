@@ -28,9 +28,7 @@ public class ScheduledTasks {
             .minusMinutes(1)
             .truncatedTo(ChronoUnit.MINUTES);
 
-        logger.info("start time: " + curTime.toString());
-        logger.info("end time: " + endTime.toString());
-
+        logger.info("Period: " + curTime.toString() + " - " + endTime.toString());
         try {
             oicImpGateway
                 .config(propConfig())
