@@ -10,16 +10,17 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Data
-@EqualsAndHashCode(of= {"arc_type"})
+@EqualsAndHashCode(of= {"arcType"})
 @Entity
 @Table(name = "last_load_info", schema = "apps")
 public class LastLoadInfo {
     @Id
+    @Column(name = "arc_type")
     private String arcType;
 
     @Column
     private Long step;
 
-    @Column
-    private LocalDateTime lastDateTime;
+    @Column(name = "last_load_time")
+    private LocalDateTime lastLoadTime;
 }

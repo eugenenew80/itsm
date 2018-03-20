@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="oic-eug-12" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: last_load_info</comment>
+        <createTable tableName="last_load_info" schemaName="apps" remarks="Данные телеизмерений">
+            <column name="arc_type" type="varchar(10)" remarks="Код архива">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="step" type="number" remarks="Шаг (сек)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="last_load_time" type="timestamp" remarks="Дата и время последней загрузки данных">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="oic-eug-13" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating primary key for table: last_load_info</comment>
+        <addPrimaryKey
+                columnNames="arc_type"
+                constraintName="pk_last_load_info"
+                schemaName="apps"
+                tableName="last_load_info"/>
+    </changeSet>
+</databaseChangeLog>

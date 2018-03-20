@@ -26,12 +26,15 @@ public class ScheduledTasks {
 
     @Scheduled(fixedRate = 60000)
     public void startImport() {
-        //LastLoadInfo lastLoadInfo = lastLoadInfoRepo.findOne("SEC-5");
-
-        LocalDateTime curTime = LocalDateTime.parse("20.03.2018 14:00:00", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
-        LocalDateTime endTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
-
+        LastLoadInfo lastLoadInfo = lastLoadInfoRepo.findOne("SEC-5");
         Long step = 5l;
+        LocalDateTime curTime;
+        if (lastLoadInfo==null)
+            curTime = LocalDateTime.parse("20.03.2018 00:00:00", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
+        else
+            curTime = lastLoadInfo.getLastLoadTime();
+
+        LocalDateTime endTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         try {
             oicImpGateway
                 .config(propConfig())
