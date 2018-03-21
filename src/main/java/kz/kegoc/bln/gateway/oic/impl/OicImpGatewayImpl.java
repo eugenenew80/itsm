@@ -56,7 +56,7 @@ public class OicImpGatewayImpl implements OicImpGateway {
             .collect(Collectors.joining(","));
         logger.debug("points: " + pointsStr);
 
-        logger.trace("Request data from OIC database started");
+        logger.debug("Request data from OIC database started");
         List<TelemetryRaw> telemetryList = new ArrayList<>();
         try (Connection con = new OicConnectionImpl(config).getConnection()) {
             String sql = "exec master..xp_gettidata2 1, '" + requestedTimeStr + "', " + pointsStr;
@@ -70,7 +70,7 @@ public class OicImpGatewayImpl implements OicImpGateway {
                 }
             }
         }
-        logger.trace("Request data from OIC database completed");
+        logger.debug("Request data from OIC database completed");
 
         logger.debug("OicImpGatewayImpl.request completed");
         return telemetryList;
