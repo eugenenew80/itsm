@@ -16,15 +16,16 @@
 
     <context:property-placeholder location="classpath:application.properties" />
 
-    <bean id="oicProperties" class="kz.kegoc.bln.gateway.oic.OicProperties">
-        <property name="serverOne"  value="${oic.server1}" />
-        <property name="serverTwo"  value="${oic.server2}" />
-        <property name="masterDb"   value="${oic.masterDb}" />
-        <property name="oicDb"      value="${oic.oicDb}}" />
-        <property name="user"       value="${oic.user}" />
-        <property name="pass"       value="${oic.pass}" />
-        <property name="port"       value="${oic.port}" />
-    </bean>
+    <util:map id="oicPropMap" map-class="java.util.HashMap">
+        <entry key="serverOne" value="${oic.serverOne}" />
+        <entry key="serverTwo" value="${oic.serverTwo}" />
+        <entry key="oicDb" value="${oic.oicDb}" />
+        <entry key="masterDb" value="${oic.masterDb}" />
+        <entry key="user" value="${oic.user}" />
+        <entry key="pass" value="${oic.pass}" />
+        <entry key="port" value="${oic.port}" />
+    </util:map>
+
 
     <bean id="localeResolver"
           class="org.springframework.web.servlet.i18n.SessionLocaleResolver">

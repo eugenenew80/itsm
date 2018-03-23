@@ -1,8 +1,9 @@
 package kz.kegoc.bln.gateway.oic.impl;
 
 import kz.kegoc.bln.gateway.oic.OicConfig;
-import kz.kegoc.bln.gateway.oic.OicProperties;
 import kz.kegoc.bln.gateway.oic.Server;
+
+import java.util.Map;
 
 public class OicConfigImpl implements OicConfig {
     private OicConfigImpl() {}
@@ -11,7 +12,7 @@ public class OicConfigImpl implements OicConfig {
         return new Builder();
     }
 
-    public static Builder oicConfigBuilder(OicProperties properties) {
+    public static Builder oicConfigBuilder(Map<String, String> properties) {
         return new Builder(properties);
     }
 
@@ -35,14 +36,14 @@ public class OicConfigImpl implements OicConfig {
     public static class Builder {
         private Builder() {}
 
-        private Builder(OicProperties properties) {
-            serverOne = properties.getServerOne();
-            serverTwo = properties.getServerTwo();
-            port = properties.getPort();
-            user = properties.getUser();
-            pass = properties.getPass();
-            masterDb = properties.getMasterDb();
-            oicDb = properties.getOicDb();
+        private Builder(Map<String, String> properties) {
+            serverOne = properties.get("serverOne");
+            serverTwo = properties.get("serverTwo");
+            port = Integer.parseInt(properties.get("port"));
+            user = properties.get("user");
+            pass = properties.get("pass");
+            masterDb = properties.get("masterDb");
+            oicDb = properties.get("oicDb");
         }
 
         private String serverOne;

@@ -8,9 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import static kz.kegoc.bln.gateway.oic.impl.OicConfigImpl.oicConfigBuilder;
 
@@ -31,7 +34,7 @@ public class ScheduledTasks {
         logger.info("Period: " + curTime.toString() + " - " + endTime.toString());
         try {
             oicImpGateway
-                .config(oicConfigBuilder(oicProperties).build())
+                .config(oicConfigBuilder(oicProperty).build())
                 .points(buildPoints());
 
             while (curTime.isBefore(endTime) || curTime.isEqual(endTime)) {
@@ -111,12 +114,12 @@ public class ScheduledTasks {
     @Autowired
     public void setOicImpGateway(OicImpGateway oicImpGateway) { this.oicImpGateway = oicImpGateway; }
 
-    @Autowired
-    public void setOicProperties(OicProperties oicProperties) { this.oicProperties = oicProperties; }
+    @Resource(name="oicPropMap")
+    public void setOicProperty(Map<String, String> oicProperty) { this.oicProperty = oicProperty; }
 
     private LogPointRepo logPointRepo;
     private TelemetryRepo telemetryRepo;
     private LastLoadInfoRepo lastLoadInfoRepo;
     private OicImpGateway oicImpGateway;
-    private OicProperties oicProperties;
+    private Map<String, String> oicProperty;
 }
