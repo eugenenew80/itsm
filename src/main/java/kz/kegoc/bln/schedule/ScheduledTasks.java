@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
-import static kz.kegoc.bln.gateway.oic.OicConfig.propConfig;
+import static kz.kegoc.bln.gateway.oic.impl.OicConfigImpl.oicConfigBuilder;
 
 @Component
 public class ScheduledTasks {
@@ -31,7 +31,7 @@ public class ScheduledTasks {
         logger.info("Period: " + curTime.toString() + " - " + endTime.toString());
         try {
             oicImpGateway
-                .config(propConfig())
+                .config(oicConfigBuilder(oicProperties).build())
                 .points(buildPoints());
 
             while (curTime.isBefore(endTime) || curTime.isEqual(endTime)) {
@@ -111,9 +111,12 @@ public class ScheduledTasks {
     @Autowired
     public void setOicImpGateway(OicImpGateway oicImpGateway) { this.oicImpGateway = oicImpGateway; }
 
+    @Autowired
+    public void setOicProperties(OicProperties oicProperties) { this.oicProperties = oicProperties; }
 
     private LogPointRepo logPointRepo;
     private TelemetryRepo telemetryRepo;
     private LastLoadInfoRepo lastLoadInfoRepo;
     private OicImpGateway oicImpGateway;
+    private OicProperties oicProperties;
 }

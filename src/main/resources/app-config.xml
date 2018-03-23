@@ -14,11 +14,32 @@
 
     <context:annotation-config />
 
+    <context:property-placeholder location="classpath:application.properties" />
 
-    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="basename" value="classpath:locale/messages" />
-        <property name="defaultEncoding" value="UTF-8" />
-        <property name="cacheSeconds" value="10" />
+    <bean id="oicProperties" class="kz.kegoc.bln.gateway.oic.OicProperties">
+        <property name="serverOne"  value="${oic.server1}" />
+        <property name="serverTwo"  value="${oic.server2}" />
+        <property name="masterDb"   value="${oic.masterDb}" />
+        <property name="oicDb"      value="${oic.oicDb}}" />
+        <property name="user"       value="${oic.user}" />
+        <property name="pass"       value="${oic.pass}" />
+        <property name="port"       value="${oic.port}" />
+    </bean>
+
+    <bean id="localeResolver"
+          class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+        <property name="defaultLocale" value="en" />
+    </bean>
+
+    <bean id="messageSource"
+          class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
+                p:defaultEncoding="UTF-8" p:cacheSeconds="10">
+
+        <property name="basenames">
+            <util:list>
+                <value>classpath:locale/messages</value>
+            </util:list>
+        </property>
     </bean>
 
     <bean id="dozerBeanMapper" class="org.dozer.DozerBeanMapper">

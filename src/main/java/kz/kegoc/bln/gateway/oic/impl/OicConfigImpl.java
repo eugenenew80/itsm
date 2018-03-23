@@ -1,13 +1,18 @@
 package kz.kegoc.bln.gateway.oic.impl;
 
 import kz.kegoc.bln.gateway.oic.OicConfig;
+import kz.kegoc.bln.gateway.oic.OicProperties;
 import kz.kegoc.bln.gateway.oic.Server;
 
 public class OicConfigImpl implements OicConfig {
     private OicConfigImpl() {}
 
-    public static Builder builder() {
+    public static Builder oicConfigBuilder() {
         return new Builder();
+    }
+
+    public static Builder oicConfigBuilder(OicProperties properties) {
+        return new Builder(properties);
     }
 
     public String buildUrlMaster(Server serverType) {
@@ -29,6 +34,16 @@ public class OicConfigImpl implements OicConfig {
 
     public static class Builder {
         private Builder() {}
+
+        private Builder(OicProperties properties) {
+            serverOne = properties.getServerOne();
+            serverTwo = properties.getServerTwo();
+            port = properties.getPort();
+            user = properties.getUser();
+            pass = properties.getPass();
+            masterDb = properties.getMasterDb();
+            oicDb = properties.getOicDb();
+        }
 
         private String serverOne;
         private String serverTwo;
