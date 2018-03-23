@@ -2,7 +2,7 @@ package kz.kegoc.bln.gateway.oic.impl;
 
 import kz.kegoc.bln.gateway.oic.OicConfig;
 import kz.kegoc.bln.gateway.oic.OicConnection;
-import kz.kegoc.bln.gateway.oic.Server;
+import kz.kegoc.bln.gateway.oic.ServerNum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.*;
@@ -15,13 +15,13 @@ public class OicConnectionImpl implements OicConnection {
     }
 
     public Connection getConnection() throws Exception {
-        boolean active01 = ping(config.buildUrlMaster(Server.ServerOne));
-        boolean active02 = ping(config.buildUrlMaster(Server.ServerTwo));
+        boolean active01 = ping(config.buildUrlMaster(ServerNum.OIC01));
+        boolean active02 = ping(config.buildUrlMaster(ServerNum.OIC02));
 
         if (!active01 && !active02)
             throw new RuntimeException("No server available");
 
-        String conStr = active01 ? config.buildUrlOIC(Server.ServerOne) : config.buildUrlOIC(Server.ServerTwo);
+        String conStr = active01 ? config.buildUrlOIC(ServerNum.OIC01) : config.buildUrlOIC(ServerNum.OIC02);
         return DriverManager.getConnection(conStr);
     }
 

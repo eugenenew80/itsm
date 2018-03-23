@@ -17,8 +17,8 @@
     <context:property-placeholder location="classpath:application.properties" />
 
     <util:map id="oicPropMap" map-class="java.util.HashMap">
-        <entry key="serverOne" value="${oic.serverOne}" />
-        <entry key="serverTwo" value="${oic.serverTwo}" />
+        <entry key="oic01" value="${oic.oic01}" />
+        <entry key="oic02" value="${oic.oic02}" />
         <entry key="oicDb" value="${oic.oicDb}" />
         <entry key="masterDb" value="${oic.masterDb}" />
         <entry key="user" value="${oic.user}" />

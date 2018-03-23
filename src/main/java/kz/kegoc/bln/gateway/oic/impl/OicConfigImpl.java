@@ -1,7 +1,7 @@
 package kz.kegoc.bln.gateway.oic.impl;
 
 import kz.kegoc.bln.gateway.oic.OicConfig;
-import kz.kegoc.bln.gateway.oic.Server;
+import kz.kegoc.bln.gateway.oic.ServerNum;
 
 import java.util.Map;
 
@@ -16,16 +16,16 @@ public class OicConfigImpl implements OicConfig {
         return new Builder(properties);
     }
 
-    public String buildUrlMaster(Server serverType) {
-        return "jdbc:jtds:sqlserver://" + (serverType == Server.ServerOne ? serverOne : serverTwo) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + masterDb;
+    public String buildUrlMaster(ServerNum serverNum) {
+        return "jdbc:jtds:sqlserver://" + (serverNum == ServerNum.OIC01 ? oic01 : oic02) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + masterDb;
     }
 
-    public String buildUrlOIC(Server serverType) {
-        return "jdbc:jtds:sqlserver://" + (serverType == Server.ServerOne ? serverOne : serverTwo) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + oicDb;
+    public String buildUrlOIC(ServerNum serverType) {
+        return "jdbc:jtds:sqlserver://" + (serverType == ServerNum.OIC01 ? oic01 : oic02) + ":" + port + ";user=" + user + ";" + "password=" + pass + ";databasename=" + oicDb;
     }
 
-    private String serverOne;
-    private String serverTwo;
+    private String oic01;
+    private String oic02;
     private int port;
     private String user;
     private String pass;
@@ -37,8 +37,8 @@ public class OicConfigImpl implements OicConfig {
         private Builder() {}
 
         private Builder(Map<String, String> properties) {
-            serverOne = properties.get("serverOne");
-            serverTwo = properties.get("serverTwo");
+            oic01 = properties.get("oic01");
+            oic02 = properties.get("oic02");
             port = Integer.parseInt(properties.get("port"));
             user = properties.get("user");
             pass = properties.get("pass");
@@ -46,21 +46,21 @@ public class OicConfigImpl implements OicConfig {
             oicDb = properties.get("oicDb");
         }
 
-        private String serverOne;
-        private String serverTwo;
+        private String oic01;
+        private String oic02;
         private int port;
         private String user;
         private String pass;
         private String masterDb;
         private String oicDb;
 
-        public Builder serverOne(String serverOne) {
-            this.serverOne = serverOne;
+        public Builder oic01(String oic01) {
+            this.oic01 = oic01;
             return this;
         }
 
-        public Builder serverTwo(String serverTwo) {
-            this.serverTwo = serverTwo;
+        public Builder oic02(String oic02) {
+            this.oic02 = oic02;
             return this;
         }
 
@@ -91,8 +91,8 @@ public class OicConfigImpl implements OicConfig {
 
         public OicConfig build() {
             OicConfigImpl config = new OicConfigImpl();
-            config.serverOne = this.serverOne;
-            config.serverTwo = this.serverTwo;
+            config.oic01 = this.oic01;
+            config.oic02 = this.oic02;
             config.port = this.port;
             config.user = this.user;
             config.pass = this.pass;
