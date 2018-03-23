@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-@Service
+@Service("fakeOicImpGateway")
 public class FakeOicImpGatewayImpl implements OicImpGateway {
     private static final Logger logger = LoggerFactory.getLogger(FakeOicImpGatewayImpl.class);
 

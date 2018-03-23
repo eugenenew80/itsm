@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans     http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context   http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/data/jpa  http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+            http://www.springframework.org/schema/util      http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:annotation-config />
+
+
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basename" value="classpath:locale/messages" />
+        <property name="defaultEncoding" value="UTF-8" />
+        <property name="cacheSeconds" value="10" />
+    </bean>
+
+    <bean id="dozerBeanMapper" class="org.dozer.DozerBeanMapper">
+        <property name="mappingFiles">
+            <list>
+                <value>dozer/MappingConfig.xml</value>
+                <value>dozer/MeteringPointDto.xml</value>
+                <value>dozer/TelemetryDto.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="objectMapper" class="kz.kegoc.bln.factory.ObjectMapperFactoryBean">
+        <property name="modules">
+            <set>
+                <bean id="parameterNamesModule" class="com.fasterxml.jackson.module.paramnames.ParameterNamesModule" />
+                <bean id="javaTimeModule"       class="com.fasterxml.jackson.datatype.jsr310.JavaTimeModule" />
+                <bean id="jdk8Module"           class="com.fasterxml.jackson.datatype.jdk8.Jdk8Module" />
+            </set>
+        </property>
+    </bean>
+</beans>

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Service("defOicImpGateway")
 @Primary
 public class OicImpGatewayImpl implements OicImpGateway {
     private static final Logger logger = LoggerFactory.getLogger(OicImpGatewayImpl.class);
