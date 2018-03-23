@@ -33,12 +33,14 @@ public class ScheduledTasks {
 
         logger.info("Period: " + curTime.toString() + " - " + endTime.toString());
         try {
-            oicImpGateway
-                .config(oicConfigBuilder(oicProperty).build())
-                .points(buildPoints());
-
             while (curTime.isBefore(endTime) || curTime.isEqual(endTime)) {
-                List<TelemetryRaw> telemetryRawList = oicImpGateway.request(curTime);
+                List<TelemetryRaw> telemetryRawList = oicImpGatewayBuilder
+                    .config(oicConfigBuilder(oicProperty).build())
+                    .points(buildPoints())
+                    .atDateTime(curTime)
+                    .build()
+                    .request();
+
                 if (telemetryRawList.isEmpty()) {
                     logger.warn("No data at: " + curTime.toString());
                     continue;
@@ -112,7 +114,7 @@ public class ScheduledTasks {
     public void setLastLoadInfoRepo(LastLoadInfoRepo lastLoadInfoRepo) { this.lastLoadInfoRepo = lastLoadInfoRepo; }
 
     @Autowired
-    public void setOicImpGateway(OicImpGateway oicImpGateway) { this.oicImpGateway = oicImpGateway; }
+    public void setOicImpGatewayBuilder(OicImpGatewayBuilder oicImpGatewayBuilder) { this.oicImpGatewayBuilder = oicImpGatewayBuilder; }
 
     @Resource(name="oicPropMap")
     public void setOicProperty(Map<String, String> oicProperty) { this.oicProperty = oicProperty; }
@@ -120,6 +122,6 @@ public class ScheduledTasks {
     private LogPointRepo logPointRepo;
     private TelemetryRepo telemetryRepo;
     private LastLoadInfoRepo lastLoadInfoRepo;
-    private OicImpGateway oicImpGateway;
+    private OicImpGatewayBuilder oicImpGatewayBuilder;
     private Map<String, String> oicProperty;
 }

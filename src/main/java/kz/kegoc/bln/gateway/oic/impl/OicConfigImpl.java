@@ -89,7 +89,7 @@ public class OicConfigImpl implements OicConfig {
             return this;
         }
 
-        public OicConfigImpl build() {
+        public OicConfig build() {
             OicConfigImpl config = new OicConfigImpl();
             config.serverOne = this.serverOne;
             config.serverTwo = this.serverTwo;
