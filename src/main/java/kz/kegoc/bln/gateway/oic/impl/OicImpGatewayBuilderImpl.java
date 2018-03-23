@@ -10,8 +10,8 @@ import java.util.List;
 
 @Service("defOicImpGateway")
 @Primary
-
 public class OicImpGatewayBuilderImpl implements kz.kegoc.bln.gateway.oic.OicImpGatewayBuilder {
+
     @Override
     public OicImpGatewayBuilderImpl config(OicConfig config) {
         this.config = config;

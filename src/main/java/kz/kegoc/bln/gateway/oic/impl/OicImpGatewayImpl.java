@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -28,32 +27,28 @@ public class OicImpGatewayImpl implements OicImpGateway {
     @Override
     public List<TelemetryRaw> request() throws Exception {
         logger.debug("OicImpGatewayImpl.request started");
-
-        String atDateTimeStr = atDateTime.format(timeFormatter);
-        logger.debug("requestedTime: " + atDateTimeStr);
+        logger.debug("atDateTime: " + atDateTime.toString());
 
         String pointsStr = points.stream()
             .map(t -> t.toString())
             .collect(Collectors.joining(","));
         logger.debug("points: " + pointsStr);
 
-        logger.debug("Request data from OIC database started");
-        List<TelemetryRaw> telemetryList = null;
+        List<TelemetryRaw> telemetryList;
         try (Connection con = new OicConnectionImpl(config).getConnection()) {
-            String sql = "exec master..xp_gettidata2 1, '" + atDateTimeStr + "', " + pointsStr;
+            String sql = "exec master..xp_gettidata2 1, '" + atDateTime.format(timeFormatter) + "', " + pointsStr;
             try (PreparedStatement pst = con.prepareStatement(sql)) {
                 try (ResultSet rs = pst.executeQuery()) {
                     telemetryList = parseAnswer(rs);
                 }
             }
         }
-        logger.debug("Request data from OIC database completed");
 
         logger.debug("OicImpGatewayImpl.request completed");
         return telemetryList;
     }
 
-    private List<TelemetryRaw> parseAnswer(ResultSet rs) throws SQLException {
+    private List<TelemetryRaw> parseAnswer(ResultSet rs) throws Exception {
         List<TelemetryRaw> telemetryList = new ArrayList<>();
         while (rs.next()) {
             Long logti = rs.getLong(1);
