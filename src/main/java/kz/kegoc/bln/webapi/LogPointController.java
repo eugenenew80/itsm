@@ -25,7 +25,7 @@ public class LogPointController {
         transformToDto = t -> mapper.map(t, LogPointDto.class);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/logPoints", produces = "application/json")
+    @GetMapping(value = "/logPoints", produces = "application/json")
     public List<LogPointDto> getAll() {
         return repo.findAll()
             .stream()
@@ -33,14 +33,14 @@ public class LogPointController {
             .collect(Collectors.toList());
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/logPoints/{id}", produces = "application/json")
+    @GetMapping(value = "/logPoints/{id}", produces = "application/json")
     public LogPointDto getById(@PathVariable Long id) {
         return first(findById)
             .andThen(transformToDto)
             .apply(id);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/logPoints", produces = "application/json")
+    @PostMapping(value = "/logPoints", produces = "application/json")
     public LogPointDto create(@RequestBody LogPointDto meteringPointDto) {
         return first(transformToEntity)
             .andThen(save)
@@ -48,7 +48,7 @@ public class LogPointController {
             .apply(meteringPointDto);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, value = "/logPoints/{id}", produces = "application/json")
+    @PutMapping(value = "/logPoints/{id}", produces = "application/json")
     public LogPointDto update(@PathVariable Long id, @RequestBody LogPointDto meteringPointDto) {
         return first(transformToEntity)
             .andThen(save)
@@ -56,7 +56,7 @@ public class LogPointController {
             .apply(meteringPointDto);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/logPoints/{id}")
+    @DeleteMapping(value = "/logPoints/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         repo.delete(id);

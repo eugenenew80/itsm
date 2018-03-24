@@ -1,6 +1,6 @@
 package kz.kegoc.bln.repo;
 
 import kz.kegoc.bln.entity.Unit;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UnitRepo extends CrudRepository<Unit, Long> { }
+public interface UnitRepo extends JpaRepository<Unit, Long> { }
