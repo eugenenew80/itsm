@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(of= {"arcType"})
 @Entity
-@Table(name = "last_load_info", schema = "apps")
+@Table(name = "last_load_info")
 public class LastLoadInfo {
     @Id
     @Column(name = "arc_type")

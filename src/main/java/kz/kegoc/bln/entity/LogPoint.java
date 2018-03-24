@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(of= {"id"})
 @Entity
-@Table(name = "log_points", schema = "apps")
+@Table(name = "log_points")
 public class LogPoint {
 
     public LogPoint() {}

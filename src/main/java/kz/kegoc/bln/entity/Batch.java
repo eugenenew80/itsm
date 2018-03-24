@@ -8,10 +8,10 @@ import javax.persistence.*;
 @Data
 @EqualsAndHashCode(of= {"id"})
 @Entity
-@Table(name = "batches", schema = "apps")
+@Table(name = "batches")
 public class Batch {
     @Id
-    @SequenceGenerator(name="batches_s", sequenceName = "apps.batches_s", allocationSize=1)
+    @SequenceGenerator(name="batches_s", sequenceName = "batches_s", allocationSize=1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "batches_s")
     private Long id;
 
