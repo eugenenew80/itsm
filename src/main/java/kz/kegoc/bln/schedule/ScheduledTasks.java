@@ -34,26 +34,12 @@ public class ScheduledTasks {
         logger.info("Period: " + curTime.toString() + " - " + endTime.toString());
         try {
             while (curTime.isBefore(endTime) || curTime.isEqual(endTime)) {
-                List<TelemetryRaw> telemetryRawList = oicImpGatewayBuilder
-                    .config(oicConfigBuilder(oicProperty).build())
-                    .points(buildPoints())
-                    .atDateTime(curTime)
-                    .build()
-                    .request();
-
-                if (telemetryRawList.isEmpty()) {
-                    logger.warn("No data at: " + curTime.toString());
-                    continue;
-                }
-
-                save(curTime, telemetryRawList);
-                lastLoadInfo.setLastLoadTime(curTime);
-                lastLoadInfoRepo.save(lastLoadInfo);
+                importAtTime(lastLoadInfo, curTime);
                 curTime = curTime.plusSeconds(lastLoadInfo.getStep());
             }
         }
         catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("ScheduledTasks.startImport terminated: " + e.getMessage());
         }
 
         logger.info("ScheduledTasks.startImport completed");
@@ -74,6 +60,24 @@ public class ScheduledTasks {
         return lastLoadInfo;
     }
 
+    private void importAtTime(LastLoadInfo lastLoadInfo, LocalDateTime curTime) throws Exception {
+        List<TelemetryRaw> telemetryRawList = oicImpGatewayBuilder
+            .config(oicConfigBuilder(oicProperty).build())
+            .points(buildPoints())
+            .atDateTime(curTime)
+            .build()
+            .request();
+
+        if (telemetryRawList.isEmpty()) {
+            logger.warn("No data at: " + curTime.toString());
+            return;
+        }
+
+        save(curTime, telemetryRawList);
+        lastLoadInfo.setLastLoadTime(curTime);
+        lastLoadInfoRepo.save(lastLoadInfo);
+    }
+
     private List<Long> buildPoints() {
         return logPointRepo.findByIsActiveTrue()
             .stream()
@@ -84,44 +88,36 @@ public class ScheduledTasks {
     private void save(LocalDateTime dateTime, List<TelemetryRaw> telemetryRawList) {
         logger.debug("ScheduledTasks.startImport save");
         List<Telemetry> list = telemetryRawList.stream()
-            .map(t -> {
-                Telemetry telemetry;
-                List<Telemetry> existing = telemetryRepo.findByLogPointIdAndDateTime(t.getLogti(), dateTime);
-                if (existing.isEmpty())
-                    telemetry = new Telemetry();
-                else
-                    telemetry = existing.get(0);
-
-                telemetry.setDateTime(dateTime);
-                telemetry.setVal(t.getVal());
-                telemetry.setLogPoint(new LogPoint(t.getLogti()));
-                return telemetry;
-            })
+            .map(t -> toTelemetry(dateTime, t))
             .collect(Collectors.toList());
 
         telemetryRepo.save(list);
         logger.debug("ScheduledTasks.startImport completed");
     }
 
+    private Telemetry toTelemetry(LocalDateTime dateTime, TelemetryRaw t) {
+        List<Telemetry> existing = telemetryRepo.findByLogPointIdAndDateTime(t.getLogti(), dateTime);
+
+        Telemetry telemetry = existing.isEmpty() ? new Telemetry() : existing.get(0);
+        telemetry.setLogPoint(new LogPoint(t.getLogti()));
+        telemetry.setDateTime(dateTime);
+        telemetry.setVal(t.getVal());
+        return telemetry;
+    }
+
 
     @Autowired
-    public void setLogPointRepo(LogPointRepo logPointRepo) { this.logPointRepo = logPointRepo; }
+    private LogPointRepo logPointRepo;
 
     @Autowired
-    public void setTelemetryRepo(TelemetryRepo telemetryRepo) { this.telemetryRepo = telemetryRepo; }
+    private TelemetryRepo telemetryRepo;
 
     @Autowired
-    public void setLastLoadInfoRepo(LastLoadInfoRepo lastLoadInfoRepo) { this.lastLoadInfoRepo = lastLoadInfoRepo; }
+    private LastLoadInfoRepo lastLoadInfoRepo;
 
     @Autowired
-    public void setOicImpGatewayBuilder(OicImpGatewayBuilder oicImpGatewayBuilder) { this.oicImpGatewayBuilder = oicImpGatewayBuilder; }
+    private OicImpGatewayBuilder oicImpGatewayBuilder;
 
     @Resource(name="oicPropMap")
-    public void setOicProperty(Map<String, String> oicProperty) { this.oicProperty = oicProperty; }
-
-    private LogPointRepo logPointRepo;
-    private TelemetryRepo telemetryRepo;
-    private LastLoadInfoRepo lastLoadInfoRepo;
-    private OicImpGatewayBuilder oicImpGatewayBuilder;
     private Map<String, String> oicProperty;
 }

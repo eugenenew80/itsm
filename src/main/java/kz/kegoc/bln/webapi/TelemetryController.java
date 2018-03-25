@@ -27,7 +27,7 @@ public class TelemetryController {
         transformToDto = t -> mapper.map(t, TelemetryDto.class);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/telemetry", produces = "application/json")
+    @GetMapping(value = "/telemetry", produces = "application/json")
     public List<TelemetryDto> getAll(
         @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime start,
         @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime end) {
@@ -37,7 +37,7 @@ public class TelemetryController {
             .collect(Collectors.toList());
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/telemetry/{id}", produces = "application/json")
+    @GetMapping(value = "/telemetry/{id}", produces = "application/json")
     public TelemetryDto getById(@PathVariable Long id) {
         return first(findById)
             .andThen(transformToDto)
