@@ -1,4 +1,4 @@
-package kz.kegoc.bln.gateway.oic.impl;
+package kz.kegoc.bln.gateway.oic.impl.fake;
 
 import kz.kegoc.bln.gateway.oic.OicConfig;
 import kz.kegoc.bln.gateway.oic.OicImpGateway;

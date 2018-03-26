@@ -4,7 +4,6 @@ import kz.kegoc.bln.gateway.oic.OicConfig;
 import kz.kegoc.bln.gateway.oic.OicImpGateway;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 

@@ -3,16 +3,15 @@ package kz.kegoc.bln.gateway.oic.impl;
 import kz.kegoc.bln.gateway.oic.OicConfig;
 import kz.kegoc.bln.gateway.oic.OicConnection;
 import kz.kegoc.bln.gateway.oic.ServerNum;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.*;
 
+@RequiredArgsConstructor
 public class OicConnectionImpl implements OicConnection {
     private static final Logger logger = LoggerFactory.getLogger(OicConnectionImpl.class);
-
-    public OicConnectionImpl(OicConfig config) {
-        this.config = config;
-    }
+    private final OicConfig config;
 
     public Connection getConnection() throws Exception {
         boolean active01 = ping(config.buildUrlMaster(ServerNum.OIC01));
@@ -45,6 +44,4 @@ public class OicConnectionImpl implements OicConnection {
 
         return true;
     }
-
-    private final OicConfig config;
 }
