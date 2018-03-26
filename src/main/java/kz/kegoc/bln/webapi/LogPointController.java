@@ -3,8 +3,8 @@ package kz.kegoc.bln.webapi;
 import kz.kegoc.bln.entity.LogPoint;
 import kz.kegoc.bln.repo.LogPointRepo;
 import kz.kegoc.bln.webapi.dto.LogPointDto;
+import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
@@ -15,7 +15,10 @@ import java.util.stream.Collectors;
 import static kz.kegoc.bln.util.Util.first;
 
 @RestController
+@RequiredArgsConstructor
 public class LogPointController {
+    private final LogPointRepo repo;
+    private final DozerBeanMapper mapper;
 
     @PostConstruct
     private void init() {
@@ -67,11 +70,4 @@ public class LogPointController {
     private Function<Long, LogPoint> findById;
     private Function<LogPointDto, LogPoint> transformToEntity;
     private Function<LogPoint, LogPointDto> transformToDto;
-
-
-    @Autowired
-    private LogPointRepo repo;
-
-    @Autowired
-    private DozerBeanMapper mapper;
 }

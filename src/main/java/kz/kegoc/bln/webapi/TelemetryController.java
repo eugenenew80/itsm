@@ -3,10 +3,10 @@ package kz.kegoc.bln.webapi;
 import kz.kegoc.bln.entity.Telemetry;
 import kz.kegoc.bln.repo.TelemetryRepo;
 import kz.kegoc.bln.webapi.dto.TelemetryDto;
+import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
@@ -17,8 +17,11 @@ import java.util.stream.Collectors;
 import static kz.kegoc.bln.util.Util.first;
 
 @RestController
+@RequiredArgsConstructor
 public class TelemetryController {
     private static final Logger logger = LoggerFactory.getLogger(TelemetryController.class);
+    private final TelemetryRepo repo;
+    private final DozerBeanMapper mapper;
 
     @PostConstruct
     private void init() {
@@ -44,15 +47,7 @@ public class TelemetryController {
             .apply(id);
     }
 
-
     private Function<Long, Telemetry> findById;
     private Function<TelemetryDto, Telemetry> transformToEntity;
     private Function<Telemetry, TelemetryDto> transformToDto;
-
-
-    @Autowired
-    private TelemetryRepo repo;
-
-    @Autowired
-    private DozerBeanMapper mapper;
 }
