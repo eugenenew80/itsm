@@ -97,7 +97,6 @@ public class ScheduledTasks {
 
     private Telemetry toTelemetry(LocalDateTime dateTime, TelemetryRaw t) {
         List<Telemetry> existing = telemetryRepo.findByLogPointIdAndDateTime(t.getLogti(), dateTime);
-
         Telemetry telemetry = existing.isEmpty() ? new Telemetry() : existing.get(0);
         telemetry.setLogPoint(new LogPoint(t.getLogti()));
         telemetry.setDateTime(dateTime);
