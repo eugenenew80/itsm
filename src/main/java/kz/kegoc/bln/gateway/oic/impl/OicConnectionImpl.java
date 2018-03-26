@@ -25,23 +25,18 @@ public class OicConnectionImpl implements OicConnection {
     }
 
     private boolean ping(String conStr) {
-        try (Connection con = DriverManager.getConnection(conStr)) {
-            try (PreparedStatement pst = con.prepareStatement("select status from [dbo].sysdatabases t WHERE t.name='OICDB'")) {
-                try (ResultSet rs = pst.executeQuery()) {
-                    if (!rs.next())
-                        throw new RuntimeException("No data in sysdatabases table");
+        String sql = "select status from [dbo].sysdatabases t WHERE t.name='OICDB'";
+        try (Connection con = DriverManager.getConnection(conStr);
+             PreparedStatement pst = con.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
 
-                    if (rs.getInt(1) > 99)
-                        throw new RuntimeException("Database is not active");
-                }
-            }
+            if (!rs.next() || rs.getInt(1) > 99)
+                throw new RuntimeException("Database is not active");
         }
         catch (Exception e) {
             logger.error(e.getMessage());
             logger.error(conStr);
             return false;
         }
-
         return true;
     }
 }
