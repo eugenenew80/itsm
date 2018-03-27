@@ -34,7 +34,8 @@ public class ScheduledTasks {
         logger.info("Period: " + curTime.toString() + " - " + endTime.toString());
         try {
             while (curTime.isBefore(endTime) || curTime.isEqual(endTime)) {
-                importAtTime(lastLoadInfo, curTime);
+                int count = importAtTime(lastLoadInfo, curTime);
+                logger.debug("Request data completed, record count: " + count);
                 curTime = curTime.plusSeconds(lastLoadInfo.getStep());
             }
         }
@@ -60,26 +61,23 @@ public class ScheduledTasks {
         return lastLoadInfo;
     }
 
-    private void importAtTime(LastLoadInfo lastLoadInfo, LocalDateTime curTime) throws Exception {
-        logger.info("Request data from OIC at time: " + curTime.toString());
+    private int importAtTime(LastLoadInfo lastLoadInfo, LocalDateTime curTime) throws Exception {
         List<TelemetryRaw> telemetries = oicImpGatewayBuilder
             .config(oicConfigBuilder(oicProperty).build())
             .points(buildPoints())
             .atDateTime(curTime)
             .build()
             .request();
-        logger.info("Request data completed, record count: " + telemetries.size());
 
         if (telemetries.isEmpty()) {
             logger.warn("No data at: " + curTime.toString());
-            return;
+            return 0;
         }
 
-        logger.info("Save data started at time: "+ curTime.toString());
         save(curTime, telemetries);
         lastLoadInfo.setLastLoadTime(curTime);
         lastLoadInfoRepo.save(lastLoadInfo);
-        logger.info("Save data completed");
+        return telemetries.size();
     }
 
     private List<Long> buildPoints() {
@@ -105,6 +103,7 @@ public class ScheduledTasks {
         telemetry.setLogPoint(new LogPoint(t.getLogti()));
         telemetry.setDateTime(dateTime);
         telemetry.setVal(t.getVal());
+        telemetry.setSystemCode("OIC");
         return telemetry;
     }
 

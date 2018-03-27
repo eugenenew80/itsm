@@ -2,11 +2,13 @@ package kz.kegoc.bln.gateway.oic.impl.fake;
 
 import kz.kegoc.bln.gateway.oic.OicConfig;
 import kz.kegoc.bln.gateway.oic.OicImpGateway;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service("fakeOicImpGateway")
+@Primary
 public class FakeOicImpGatewayBuilderImpl implements kz.kegoc.bln.gateway.oic.OicImpGatewayBuilder {
     @Override
     public FakeOicImpGatewayBuilderImpl config(OicConfig config) {
