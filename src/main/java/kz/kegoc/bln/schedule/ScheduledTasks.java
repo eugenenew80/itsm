@@ -26,29 +26,39 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
     private static final Long   defStep = 180l;
     private boolean isReady = false;
 
-    @Scheduled(cron = "0 */1 * * * *")
+    @Scheduled(cron = "30 */1 * * * *")
     public void startImport() {
         if (!isReady) return;
 
         logger.info("ScheduledTasks.startImport started");
 
         LastLoadInfo lastLoadInfo = buildLastLoadInfo();
-        LocalDateTime curTime = lastLoadInfo.getLastLoadTime();
+        Long step = lastLoadInfo.getStep();
+
+        LocalDateTime startTime = lastLoadInfo.getLastLoadTime();
         LocalDateTime endTime = LocalDateTime.now()
-            .minusMinutes(1)
             .truncatedTo(ChronoUnit.MINUTES);
 
-        logger.info("Period: " + curTime.toString() + " - " + endTime.toString());
+        long sec = startTime.getMinute()*60 - Math.round(startTime.getMinute()*60 / step) * step;
+        startTime = startTime.minusSeconds(sec);
+
+        sec = endTime.getMinute()*60 - Math.round(endTime.getMinute()*60 / step) * step;
+        endTime = endTime.minusSeconds(sec);
+
+        if (!startTime.plusSeconds(step).isAfter(endTime))
+            logger.info("Period: " + startTime.toString() + " - " + endTime.toString());
+
         try {
             OicImpGateway oicImpGateway = oicImpGatewayBuilder
                 .config(oicConfigBuilder(oicProperty).build())
                 .points(buildPoints())
                 .build();
 
-            while (curTime.isBefore(endTime) || curTime.isEqual(endTime)) {
+            LocalDateTime curTime = startTime.plusSeconds(step);
+            while (!curTime.isAfter(endTime)) {
                 List<TelemetryRaw> telemetries = oicImpGateway.request(curTime);
                 save(lastLoadInfo, curTime, telemetries);
-                curTime = curTime.plusSeconds(lastLoadInfo.getStep());
+                curTime = curTime.plusSeconds(step);
             }
         }
         catch (Exception e) {
@@ -64,7 +74,7 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
             lastLoadInfo = new LastLoadInfo();
             lastLoadInfo.setArcType(defArcType);
             lastLoadInfo.setStep(defStep);
-            lastLoadInfo.setLastLoadTime(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS));
+            lastLoadInfo.setLastLoadTime(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS).minusSeconds(defStep));
         }
 
         return lastLoadInfo;
