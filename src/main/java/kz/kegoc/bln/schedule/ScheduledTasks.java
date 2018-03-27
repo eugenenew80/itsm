@@ -61,21 +61,25 @@ public class ScheduledTasks {
     }
 
     private void importAtTime(LastLoadInfo lastLoadInfo, LocalDateTime curTime) throws Exception {
-        List<TelemetryRaw> telemetryRawList = oicImpGatewayBuilder
+        logger.info("Request data from OIC at time: " + curTime.toString());
+        List<TelemetryRaw> telemetries = oicImpGatewayBuilder
             .config(oicConfigBuilder(oicProperty).build())
             .points(buildPoints())
             .atDateTime(curTime)
             .build()
             .request();
+        logger.info("Request data completed, record count: " + telemetries.size());
 
-        if (telemetryRawList.isEmpty()) {
+        if (telemetries.isEmpty()) {
             logger.warn("No data at: " + curTime.toString());
             return;
         }
 
-        save(curTime, telemetryRawList);
+        logger.info("Save data started at time: "+ curTime.toString());
+        save(curTime, telemetries);
         lastLoadInfo.setLastLoadTime(curTime);
         lastLoadInfoRepo.save(lastLoadInfo);
+        logger.info("Save data completed");
     }
 
     private List<Long> buildPoints() {

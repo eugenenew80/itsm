@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="media-eug-14" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding column system_code into table: telemetry</comment>
+        <addColumn schemaName="apps" tableName="telemetry">
+            <column name="system_code" type="varchar(20)" remarks="Система - источник данных" defaultValue="OIC">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-15" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding column param_code into table: log_points</comment>
+        <addColumn schemaName="apps" tableName="log_points">
+            <column name="param_code" type="varchar(4)" remarks="Код параметра" defaultValue="U">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-16" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding column code into table: units</comment>
+        <addColumn schemaName="apps" tableName="units">
+            <column name="code" type="varchar(10)" remarks="Код единицы измерения" defaultValue="U">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

@@ -2,7 +2,6 @@ package kz.kegoc.bln.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -20,6 +19,9 @@ public class Telemetry {
     @ManyToOne
     @JoinColumn(name = "log_point_id")
     private LogPoint logPoint;
+
+    @Column(name="system_code")
+    private String systemCode;
 
     @Column(name = "date_time")
     private LocalDateTime dateTime;

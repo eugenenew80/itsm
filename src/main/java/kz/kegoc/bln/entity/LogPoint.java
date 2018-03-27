@@ -19,6 +19,9 @@ public class LogPoint {
     @Column
     private String name;
 
+    @Column(name="param_code")
+    private String paramCode;
+
     @ManyToOne
     @JoinColumn(name = "unit_id")
     private Unit unit;

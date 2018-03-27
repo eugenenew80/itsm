@@ -20,6 +20,12 @@ public class OicConnectionImpl implements OicConnection {
         if (!active01 && !active02)
             throw new RuntimeException("No server available");
 
+        if (active01)
+            logger.info("Server 01 is active");
+
+        if (active02)
+            logger.info("Server 02 is active");
+
         String conStr = active01 ? config.buildUrlOIC(ServerNum.OIC01) : config.buildUrlOIC(ServerNum.OIC02);
         return DriverManager.getConnection(conStr);
     }

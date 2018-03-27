@@ -3,6 +3,7 @@ package kz.kegoc.bln.webapi;
 import kz.kegoc.bln.entity.Telemetry;
 import kz.kegoc.bln.repo.TelemetryRepo;
 import kz.kegoc.bln.webapi.dto.TelemetryDto;
+import kz.kegoc.bln.webapi.dto.TelemetryExpDto;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
@@ -27,11 +28,11 @@ public class TelemetryController {
     private void init() {
         findById = repo::findOne;
         transformToEntity = t -> mapper.map(t, Telemetry.class);
-        transformToDto = t -> mapper.map(t, TelemetryDto.class);
+        transformToDto = t -> mapper.map(t, TelemetryExpDto.class);
     }
 
-    @GetMapping(value = "/telemetry", produces = "application/json")
-    public List<TelemetryDto> getAll(
+    @GetMapping(value = "/exp/telemetry", produces = "application/json")
+    public List<TelemetryExpDto> getAll(
         @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime start,
         @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime end) {
 
@@ -41,7 +42,7 @@ public class TelemetryController {
     }
 
     @GetMapping(value = "/telemetry/{id}", produces = "application/json")
-    public TelemetryDto getById(@PathVariable Long id) {
+    public TelemetryExpDto getById(@PathVariable Long id) {
         return first(findById)
             .andThen(transformToDto)
             .apply(id);
@@ -49,5 +50,5 @@ public class TelemetryController {
 
     private Function<Long, Telemetry> findById;
     private Function<TelemetryDto, Telemetry> transformToEntity;
-    private Function<Telemetry, TelemetryDto> transformToDto;
+    private Function<Telemetry, TelemetryExpDto> transformToDto;
 }

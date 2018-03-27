@@ -16,5 +16,8 @@ public class Unit {
     private Long id;
 
     @Column
+    private String code;
+
+    @Column
     private String name;
 }

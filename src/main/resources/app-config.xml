@@ -51,6 +51,7 @@
                 <value>dozer/MappingConfig.xml</value>
                 <value>dozer/MeteringPointDto.xml</value>
                 <value>dozer/TelemetryDto.xml</value>
+                <value>dozer/TelemetryExpDto.xml</value>
             </list>
         </property>
     </bean>
