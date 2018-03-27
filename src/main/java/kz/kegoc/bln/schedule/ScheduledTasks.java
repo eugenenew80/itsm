@@ -35,7 +35,7 @@ public class ScheduledTasks {
         try {
             while (curTime.isBefore(endTime) || curTime.isEqual(endTime)) {
                 int count = importAtTime(lastLoadInfo, curTime);
-                logger.debug("Request data completed, record count: " + count);
+                logger.info("Request data completed, record count: " + count);
                 curTime = curTime.plusSeconds(lastLoadInfo.getStep());
             }
         }
