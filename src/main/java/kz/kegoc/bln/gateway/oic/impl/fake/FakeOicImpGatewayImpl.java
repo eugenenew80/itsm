@@ -4,6 +4,8 @@ import kz.kegoc.bln.gateway.oic.OicImpGateway;
 import kz.kegoc.bln.gateway.oic.TelemetryRaw;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,5 +23,10 @@ public class FakeOicImpGatewayImpl implements OicImpGateway {
 
         logger.debug("FakeOicImpGatewayImpl.request completed");
         return telemetryRawList;
+    }
+
+    @Override
+    public List<TelemetryRaw> request(LocalDateTime atDateTime) throws Exception {
+        return request();
     }
 }

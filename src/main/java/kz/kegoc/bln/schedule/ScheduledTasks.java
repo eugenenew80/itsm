@@ -6,6 +6,8 @@ import kz.kegoc.bln.repo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -18,11 +20,16 @@ import java.util.stream.Collectors;
 import static kz.kegoc.bln.gateway.oic.impl.OicConfigImpl.oicConfigBuilder;
 
 @Component
-public class ScheduledTasks {
+public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent> {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
+    private static final String defArcType = "SEC-180";
+    private static final Long   defStep = 180l;
+    private boolean isReady = false;
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(cron = "0 */1 * * * *")
     public void startImport() {
+        if (!isReady) return;
+
         logger.info("ScheduledTasks.startImport started");
 
         LastLoadInfo lastLoadInfo = buildLastLoadInfo();
@@ -33,23 +40,25 @@ public class ScheduledTasks {
 
         logger.info("Period: " + curTime.toString() + " - " + endTime.toString());
         try {
+            OicImpGateway oicImpGateway = oicImpGatewayBuilder
+                .config(oicConfigBuilder(oicProperty).build())
+                .points(buildPoints())
+                .build();
+
             while (curTime.isBefore(endTime) || curTime.isEqual(endTime)) {
-                int count = importAtTime(lastLoadInfo, curTime);
-                logger.info("Request data completed, record count: " + count);
+                List<TelemetryRaw> telemetries = oicImpGateway.request(curTime);
+                save(lastLoadInfo, curTime, telemetries);
                 curTime = curTime.plusSeconds(lastLoadInfo.getStep());
             }
         }
         catch (Exception e) {
-            logger.error("ScheduledTasks.startImport terminated: " + e.getMessage());
+            logger.error("ScheduledTasks.startImport crashed: " + e.getMessage());
         }
 
         logger.info("ScheduledTasks.startImport completed");
     }
 
     private LastLoadInfo buildLastLoadInfo() {
-        String defArcType = "SEC-5";
-        Long defStep = 5l;
-
         LastLoadInfo lastLoadInfo = lastLoadInfoRepo.findOne(defArcType);
         if (lastLoadInfo==null) {
             lastLoadInfo = new LastLoadInfo();
@@ -61,33 +70,6 @@ public class ScheduledTasks {
         return lastLoadInfo;
     }
 
-    private int importAtTime(LastLoadInfo lastLoadInfo, LocalDateTime curTime) throws Exception {
-        logger.info("importAtTime started");
-
-        logger.info("request started");
-        List<TelemetryRaw> telemetries = oicImpGatewayBuilder
-            .config(oicConfigBuilder(oicProperty).build())
-            .points(buildPoints())
-            .atDateTime(curTime)
-            .build()
-            .request();
-        logger.info("request completed");
-
-        if (telemetries.isEmpty()) {
-            logger.warn("No data at: " + curTime.toString());
-            return 0;
-        }
-
-        logger.info("save started");
-        save(curTime, telemetries);
-        lastLoadInfo.setLastLoadTime(curTime);
-        lastLoadInfoRepo.save(lastLoadInfo);
-        logger.info("save completed");
-
-        logger.info("importAtTime completed");
-        return telemetries.size();
-    }
-
     private List<Long> buildPoints() {
         return logPointRepo.findByIsActiveTrue()
             .stream()
@@ -95,14 +77,19 @@ public class ScheduledTasks {
             .collect(Collectors.toList());
     }
 
-    private void save(LocalDateTime dateTime, List<TelemetryRaw> telemetryRawList) {
-        logger.debug("ScheduledTasks.startImport save");
-        List<Telemetry> list = telemetryRawList.stream()
-            .map(t -> toTelemetry(dateTime, t))
-            .collect(Collectors.toList());
+    private void save(LastLoadInfo lastLoadInfo, LocalDateTime curTime, List<TelemetryRaw> telemetries) {
+        if (telemetries.isEmpty()) {
+            logger.warn("No data at: " + curTime.toString());
+            return;
+        }
 
+        List<Telemetry> list = telemetries.stream()
+            .map(t -> toTelemetry(curTime, t))
+            .collect(Collectors.toList());
         telemetryRepo.save(list);
-        logger.debug("ScheduledTasks.startImport completed");
+
+        lastLoadInfo.setLastLoadTime(curTime);
+        lastLoadInfoRepo.save(lastLoadInfo);
     }
 
     private Telemetry toTelemetry(LocalDateTime dateTime, TelemetryRaw t) {
@@ -113,6 +100,11 @@ public class ScheduledTasks {
         telemetry.setVal(t.getVal());
         telemetry.setSystemCode("OIC");
         return telemetry;
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
+        isReady = true;
     }
 
 

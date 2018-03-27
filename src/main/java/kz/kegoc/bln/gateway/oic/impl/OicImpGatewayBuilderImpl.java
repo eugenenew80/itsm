@@ -36,9 +36,6 @@ public class OicImpGatewayBuilderImpl implements kz.kegoc.bln.gateway.oic.OicImp
     }
 
     private void validate() throws Exception {
-        if (atDateTime ==null)
-            throw new Exception("requestedTime  must be specified");
-
         if (points==null || points.isEmpty())
             throw new Exception("points must be specified");
 

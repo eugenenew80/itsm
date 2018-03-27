@@ -14,23 +14,28 @@ public class OicConnectionImpl implements OicConnection {
     private final OicConfig config;
 
     public Connection getConnection() throws Exception {
-        boolean active01 = ping(config.buildUrlMaster(ServerNum.OIC01));
-        boolean active02 = ping(config.buildUrlMaster(ServerNum.OIC02));
+        ServerNum activeServer = findServer();
+        logger.info("Active server: " + activeServer);
 
-        if (!active01 && !active02)
-            throw new RuntimeException("No server available");
+        logger.debug("Connecting to server started: " + activeServer);
+        String conStr = config.urlOic(activeServer);
+        Connection connection = DriverManager.getConnection(conStr, config.user(), config.pass());
+        logger.debug("Connecting to server is successful");
 
-        if (active01)
-            logger.info("Server 01 is active");
-
-        if (active02)
-            logger.info("Server 02 is active");
-
-        String conStr = active01 ? config.buildUrlOIC(ServerNum.OIC01) : config.buildUrlOIC(ServerNum.OIC02);
-        return DriverManager.getConnection(conStr);
+        return connection;
     }
 
-    private boolean ping(String conStr) {
+    private ServerNum findServer() {
+        if (ping(ServerNum.OIC_01)) return ServerNum.OIC_01;
+        if (ping(ServerNum.OIC_02)) return ServerNum.OIC_02;
+
+        throw new RuntimeException("No server available");
+    }
+
+    private boolean ping(ServerNum serverNum) {
+        logger.debug("Pinging server started: " + serverNum);
+
+        String conStr = config.urlMaster(serverNum);
         String sql = "select status from [dbo].sysdatabases t WHERE t.name='OICDB'";
         try (Connection con = DriverManager.getConnection(conStr);
              PreparedStatement pst = con.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
@@ -43,6 +48,7 @@ public class OicConnectionImpl implements OicConnection {
             logger.error(conStr);
             return false;
         }
+        logger.debug("Pinging server is successful");
         return true;
     }
 }

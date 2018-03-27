@@ -26,8 +26,16 @@ public class OicImpGatewayImpl implements OicImpGateway {
 
     @Override
     public List<TelemetryRaw> request() throws Exception {
+        return request(atDateTime);
+    }
+
+    @Override
+    public List<TelemetryRaw> request(LocalDateTime dateTime) throws Exception {
+        if (dateTime ==null)
+            throw new Exception("dateTime  must be specified");
+
         logger.debug("OicImpGatewayImpl.request started");
-        logger.debug("atDateTime: " + atDateTime.toString());
+        logger.debug("dateTime: " + dateTime.toString());
 
         String pointsStr = points.stream()
             .map(t -> t.toString())
@@ -36,12 +44,14 @@ public class OicImpGatewayImpl implements OicImpGateway {
 
         List<TelemetryRaw> telemetryList;
         try (Connection con = new OicConnectionImpl(config).getConnection()) {
-            String sql = "exec master..xp_gettidata2 1, '" + atDateTime.format(timeFormatter) + "', " + pointsStr;
+            String sql = "exec master..xp_gettidata2 1, '" + dateTime.format(timeFormatter) + "', " + pointsStr;
+            logger.debug("Executing SQL command: " + sql);
             try (PreparedStatement pst = con.prepareStatement(sql)) {
                 try (ResultSet rs = pst.executeQuery()) {
                     telemetryList = parseAnswer(rs);
                 }
             }
+            logger.debug("SQL completed, record count: " + telemetryList.size());
         }
 
         logger.debug("OicImpGatewayImpl.request completed");
