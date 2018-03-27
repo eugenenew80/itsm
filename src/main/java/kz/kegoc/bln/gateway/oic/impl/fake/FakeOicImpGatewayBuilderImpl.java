@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service("fakeOicImpGateway")
-@Primary
+//@Primary
 public class FakeOicImpGatewayBuilderImpl implements kz.kegoc.bln.gateway.oic.OicImpGatewayBuilder {
     @Override
     public FakeOicImpGatewayBuilderImpl config(OicConfig config) {
