@@ -2,7 +2,7 @@ package kz.kegoc.bln.gateway.oic.impl;
 
 import com.sun.rowset.CachedRowSetImpl;
 import kz.kegoc.bln.gateway.oic.OicConfig;
-import kz.kegoc.bln.gateway.oic.OicConnection;
+import kz.kegoc.bln.gateway.oic.OicDatabase;
 import kz.kegoc.bln.gateway.oic.ServerNum;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -11,17 +11,15 @@ import javax.sql.RowSet;
 import java.sql.*;
 
 @RequiredArgsConstructor
-public class OicConnectionImpl implements OicConnection {
-    private static final Logger logger = LoggerFactory.getLogger(OicConnectionImpl.class);
+public class OicDatabaseImpl implements OicDatabase {
+    private static final Logger logger = LoggerFactory.getLogger(OicDatabaseImpl.class);
     private final OicConfig config;
 
     public RowSet execStatement(String sql) throws Exception {
         logger.debug("Executing SQL command: " + sql);
         CachedRowSetImpl crs = new CachedRowSetImpl();
-        try (Connection con = getConnection()) {
-            try (PreparedStatement pst = con.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
-                crs.populate(rs);
-            }
+        try (Connection con = getConnection(); PreparedStatement pst = con.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
+            crs.populate(rs);
         }
         logger.debug("Executing SQL command completed, record count: " + crs.size());
         return crs;
@@ -39,13 +37,13 @@ public class OicConnectionImpl implements OicConnection {
     }
 
     private ServerNum findServer() {
-        if (ping(ServerNum.OIC_01)) return ServerNum.OIC_01;
-        if (ping(ServerNum.OIC_02)) return ServerNum.OIC_02;
+        if (checkServer(ServerNum.OIC_01)) return ServerNum.OIC_01;
+        if (checkServer(ServerNum.OIC_02)) return ServerNum.OIC_02;
         throw new RuntimeException("No server available");
     }
 
-    private boolean ping(ServerNum serverNum) {
-        logger.debug("Pinging server started: " + serverNum);
+    private boolean checkServer(ServerNum serverNum) {
+        logger.debug("Checking server started: " + serverNum);
 
         String conStr = config.urlMaster(serverNum);
         String sql = "select status from [dbo].sysdatabases t WHERE t.name='OICDB'";

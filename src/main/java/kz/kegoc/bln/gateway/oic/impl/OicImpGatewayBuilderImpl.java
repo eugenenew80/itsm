@@ -25,7 +25,7 @@ public class OicImpGatewayBuilderImpl implements kz.kegoc.bln.gateway.oic.OicImp
     @Override
     public OicImpGateway build() throws Exception {
         validate();
-        return new OicImpGatewayImpl(new OicConnectionImpl(config), points);
+        return new OicImpGatewayImpl(new OicDatabaseImpl(config), points);
     }
 
     private void validate() throws Exception {
