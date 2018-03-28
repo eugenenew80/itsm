@@ -2,9 +2,13 @@ package kz.kegoc.bln.gateway.oic.impl;
 
 import kz.kegoc.bln.gateway.oic.OicConfig;
 import kz.kegoc.bln.gateway.oic.ServerNum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 public class OicConfigImpl implements OicConfig {
+    private static final Logger logger = LoggerFactory.getLogger(OicConfigImpl.class);
+
     private OicConfigImpl() {}
 
     public static Builder oicConfigBuilder(Map<String, String> properties) {
@@ -19,16 +23,6 @@ public class OicConfigImpl implements OicConfig {
     @Override
     public String urlOic(ServerNum serverNum) {
         return "jdbc:jtds:sqlserver://" + host(serverNum) + ":" + port + ";user=" + user + ";password=" + pass +  ";databasename=" + oicDb;
-    }
-
-    @Override
-    public String user() {
-        return user;
-    }
-
-    @Override
-    public String pass() {
-        return pass;
     }
 
     private String host(ServerNum serverNum) {

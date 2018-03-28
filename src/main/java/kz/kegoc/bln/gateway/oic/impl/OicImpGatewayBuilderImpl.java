@@ -4,10 +4,9 @@ import kz.kegoc.bln.gateway.oic.OicConfig;
 import kz.kegoc.bln.gateway.oic.OicImpGateway;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Service("defOicImpGateway")
+@Service
 @Primary
 public class OicImpGatewayBuilderImpl implements kz.kegoc.bln.gateway.oic.OicImpGatewayBuilder {
 
@@ -24,15 +23,9 @@ public class OicImpGatewayBuilderImpl implements kz.kegoc.bln.gateway.oic.OicImp
     }
 
     @Override
-    public OicImpGatewayBuilderImpl atDateTime(LocalDateTime atDateTime) {
-        this.atDateTime = atDateTime;
-        return this;
-    }
-
-    @Override
     public OicImpGateway build() throws Exception {
         validate();
-        return new OicImpGatewayImpl(config, points, atDateTime);
+        return new OicImpGatewayImpl(new OicConnectionImpl(config), points);
     }
 
     private void validate() throws Exception {
@@ -45,5 +38,4 @@ public class OicImpGatewayBuilderImpl implements kz.kegoc.bln.gateway.oic.OicImp
 
     private OicConfig config;
     private List<Long> points;
-    private LocalDateTime atDateTime;
 }

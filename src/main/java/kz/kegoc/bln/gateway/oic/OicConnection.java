@@ -1,7 +1,7 @@
 package kz.kegoc.bln.gateway.oic;
 
-import java.sql.Connection;
+import javax.sql.RowSet;
 
 public interface OicConnection {
-    Connection getConnection() throws Exception;
+    RowSet execStatement(String sql) throws Exception;
 }
