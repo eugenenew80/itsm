@@ -10,7 +10,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -22,8 +21,9 @@ import static kz.kegoc.bln.gateway.oic.impl.OicConfigImpl.oicConfigBuilder;
 @Component
 public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent> {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
-    private static final String defArcType = "SEC-180";
-    private static final Long   defStep = 180l;
+    private static final String DEF_ARC_TYPE_CODE = "MIN-3";
+    private static final String DEF_ARC_TYPE_NAME = "Архив с шагом 3 минуты";
+    private static final Long DEF_STEP = 180l;
     private boolean isReady = false;
 
     @Scheduled(cron = "30 */1 * * * *")
@@ -31,11 +31,20 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
         if (!isReady) return;
 
         logger.info("ScheduledTasks.startImport started");
+        ArcType arcType = getDefArcType();
+        try {
+            readData(arcType);
+        }
+        catch (Exception e) {
+            logger.error("ScheduledTasks.startImport crashed: " + e.getMessage());
+        }
+        logger.info("ScheduledTasks.startImport completed");
+    }
 
-        LastLoadInfo lastLoadInfo = buildLastLoadInfo();
-        Long step = lastLoadInfo.getStep();
+    private void readData(ArcType arcType) throws Exception {
+        Long step = arcType.getStep();
 
-        LocalDateTime startTime = lastLoadInfo.getLastLoadTime();
+        LocalDateTime startTime = arcType.getLastLoadTime();
         LocalDateTime endTime = LocalDateTime.now()
             .truncatedTo(ChronoUnit.MINUTES);
 
@@ -45,39 +54,35 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
         sec = endTime.getMinute()*60 - Math.round(endTime.getMinute()*60 / step) * step;
         endTime = endTime.minusSeconds(sec);
 
-        if (!startTime.plusSeconds(step).isAfter(endTime))
-            logger.info("Period: " + startTime.toString() + " - " + endTime.toString());
+        if (startTime.plusSeconds(step).isAfter(endTime))
+            return;;
 
-        try {
-            OicImpGateway oicImpGateway = oicImpGatewayBuilder
-                .config(oicConfigBuilder(oicProperty).build())
-                .points(buildPoints())
-                .build();
+        logger.info("ArcType: " + arcType.getCode() + ", Period: " + startTime.toString() + " - " + endTime.toString());
 
-            LocalDateTime curTime = startTime.plusSeconds(step);
-            while (!curTime.isAfter(endTime)) {
-                List<TelemetryRaw> telemetries = oicImpGateway.request(curTime);
-                save(lastLoadInfo, curTime, telemetries);
-                curTime = curTime.plusSeconds(step);
-            }
+        OicImpGateway oicImpGateway = oicImpGatewayBuilder
+            .config(oicConfigBuilder(oicProperty).build())
+            .points(buildPoints())
+            .build();
+
+        LocalDateTime curTime = startTime.plusSeconds(step);
+        while (!curTime.isAfter(endTime)) {
+            List<TelemetryRaw> telemetries = oicImpGateway.request(curTime);
+            save(arcType, curTime, telemetries);
+            curTime = curTime.plusSeconds(step);
         }
-        catch (Exception e) {
-            logger.error("ScheduledTasks.startImport crashed: " + e.getMessage());
-        }
-
-        logger.info("ScheduledTasks.startImport completed");
     }
 
-    private LastLoadInfo buildLastLoadInfo() {
-        LastLoadInfo lastLoadInfo = lastLoadInfoRepo.findOne(defArcType);
-        if (lastLoadInfo==null) {
-            lastLoadInfo = new LastLoadInfo();
-            lastLoadInfo.setArcType(defArcType);
-            lastLoadInfo.setStep(defStep);
-            lastLoadInfo.setLastLoadTime(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS).minusSeconds(defStep));
+    private ArcType getDefArcType() {
+        ArcType arcType = arcTypeRepo.findOne(DEF_ARC_TYPE_CODE);
+        if (arcType==null) {
+            arcType = new ArcType();
+            arcType.setCode(DEF_ARC_TYPE_CODE);
+            arcType.setName(DEF_ARC_TYPE_NAME);
+            arcType.setStep(DEF_STEP);
+            arcType.setLastLoadTime(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS).minusSeconds(DEF_STEP));
         }
 
-        return lastLoadInfo;
+        return arcType;
     }
 
     private List<Long> buildPoints() {
@@ -87,28 +92,29 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
             .collect(Collectors.toList());
     }
 
-    private void save(LastLoadInfo lastLoadInfo, LocalDateTime curTime, List<TelemetryRaw> telemetries) {
+    private void save(ArcType arcType, LocalDateTime curTime, List<TelemetryRaw> telemetries) {
         if (telemetries.isEmpty()) {
             logger.warn("No data at: " + curTime.toString());
             return;
         }
 
         List<Telemetry> list = telemetries.stream()
-            .map(t -> toTelemetry(curTime, t))
+            .map(t -> toTelemetry(arcType, curTime, t))
             .collect(Collectors.toList());
         telemetryRepo.save(list);
 
-        lastLoadInfo.setLastLoadTime(curTime);
-        lastLoadInfoRepo.save(lastLoadInfo);
+        arcType.setLastLoadTime(curTime);
+        arcTypeRepo.save(arcType);
     }
 
-    private Telemetry toTelemetry(LocalDateTime dateTime, TelemetryRaw t) {
+    private Telemetry toTelemetry(ArcType arcType, LocalDateTime dateTime, TelemetryRaw t) {
         List<Telemetry> existing = telemetryRepo.findByLogPointIdAndDateTime(t.getLogti(), dateTime);
         Telemetry telemetry = existing.isEmpty() ? new Telemetry() : existing.get(0);
         telemetry.setLogPoint(new LogPoint(t.getLogti()));
         telemetry.setDateTime(dateTime);
         telemetry.setVal(t.getVal());
         telemetry.setSystemCode("OIC");
+        telemetry.setArcTypeCode(arcType.getCode());
         return telemetry;
     }
 
@@ -125,7 +131,7 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
     private TelemetryRepo telemetryRepo;
 
     @Autowired
-    private LastLoadInfoRepo lastLoadInfoRepo;
+    private ArcTypeRepo arcTypeRepo;
 
     @Autowired
     private OicImpGatewayBuilder oicImpGatewayBuilder;

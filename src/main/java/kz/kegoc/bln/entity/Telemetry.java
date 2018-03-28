@@ -23,6 +23,9 @@ public class Telemetry {
     @Column(name="system_code")
     private String systemCode;
 
+    @Column(name="arc_type_code")
+    private String arcTypeCode;
+
     @Column(name = "date_time")
     private LocalDateTime dateTime;
 

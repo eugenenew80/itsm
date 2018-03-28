@@ -12,11 +12,14 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(of= {"arcType"})
 @Entity
-@Table(name = "last_load_info")
-public class LastLoadInfo {
+@Table(name = "arc_types")
+public class ArcType {
     @Id
-    @Column(name = "arc_type")
-    private String arcType;
+    @Column(name = "code")
+    private String code;
+
+    @Column(name = "name")
+    private String name;
 
     @Column
     private Long step;
