@@ -6,10 +6,8 @@ import kz.kegoc.bln.gateway.oic.TelemetryRaw;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
+
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -33,25 +31,17 @@ public class OicImpGatewayImpl implements OicImpGateway {
 
     @Override
     public List<TelemetryRaw> request(LocalDateTime dateTime) throws Exception {
-        if (dateTime ==null)
-            throw new Exception("dateTime  must be specified");
+        validateParams(dateTime);
 
         logger.debug("OicImpGatewayImpl.request started");
         logger.debug("dateTime: " + dateTime.toString());
 
-        String pointsStr = points.stream()
-            .map(t -> t.toString())
-            .collect(Collectors.joining(","));
-        logger.debug("points: " + pointsStr);
-
         List<TelemetryRaw> telemetryList;
+        String sql = "exec master..xp_gettidata2 1, '" + dateTime.format(timeFormatter) + "', " + mapPoints();
         try (Connection con = new OicConnectionImpl(config).getConnection()) {
-            String sql = "exec master..xp_gettidata2 1, '" + dateTime.format(timeFormatter) + "', " + pointsStr;
             logger.debug("Executing SQL command: " + sql);
-            try (PreparedStatement pst = con.prepareStatement(sql)) {
-                try (ResultSet rs = pst.executeQuery()) {
-                    telemetryList = parseAnswer(rs);
-                }
+            try (PreparedStatement pst = con.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
+                telemetryList = parseAnswer(rs);
             }
             logger.debug("SQL completed, record count: " + telemetryList.size());
         }
@@ -60,13 +50,28 @@ public class OicImpGatewayImpl implements OicImpGateway {
         return telemetryList;
     }
 
+    private void validateParams(LocalDateTime dateTime) throws Exception {
+        if (config ==null)
+            throw new Exception("config must be specified");
+
+        if (points ==null || points.isEmpty())
+            throw new Exception("list points must be specified");
+
+        if (dateTime ==null)
+            throw new Exception("dateTime  must be specified");
+    }
+
+    private String mapPoints() {
+        String pointsStr = points.stream()
+            .map(t -> t.toString())
+            .collect(Collectors.joining(","));
+
+        logger.debug("points: " + pointsStr);
+        return pointsStr;
+    }
+
     private List<TelemetryRaw> parseAnswer(ResultSet rs) throws Exception {
-        int columnCount = rs.getMetaData().getColumnCount();
-        if (columnCount==1) {
-            rs.next();
-            logger.warn("Error when parsing answer: " + rs.getString(1));
-            return Collections.emptyList();
-        }
+        if (!validateAnswer(rs)) return Collections.emptyList();
 
         List<TelemetryRaw> telemetryList = new ArrayList<>();
         while (rs.next()) {
@@ -75,5 +80,15 @@ public class OicImpGatewayImpl implements OicImpGateway {
             telemetryList.add(new TelemetryRaw(logti, val));
         }
         return telemetryList;
+    }
+
+    private boolean validateAnswer(ResultSet rs) throws SQLException {
+        int columnCount = rs.getMetaData().getColumnCount();
+        if (columnCount>1)
+            return true;
+
+        rs.next();
+        logger.warn("Error when parsing answer: " + rs.getString(1));
+        return false;
     }
 }
