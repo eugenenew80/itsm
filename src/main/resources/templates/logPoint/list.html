@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorator="layout/default">
+
+    <head lang="ru">
+        <title>Интегация с ИС Биллинг</title>
+    </head>
+
+    <body>
+        <div class="container" layout:fragment="content">
+            <div class="row">
+                <h4 class="indigo-text" th:text="'Точки учёта'">Точки учёта</h4>
+
+                <table class="responsive-table">
+                    <thead>
+                        <tr>
+                            <th>Ид.</th>
+                            <th>Наименование</th>
+                            <th>Ед. изм.</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="logPoint : ${logPoints}">
+                            <td th:text="${logPoint.id}">Ид.</td>
+                            <td th:text="${logPoint.name}">Точка учётта</td>
+                            <td th:text="${logPoint.unit.name}">Ед. изм.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </body>
+</html>

@@ -6,6 +6,6 @@
 
   <mapping map-null="false" map-empty-string="false" trim-strings="true">
     <class-a>kz.kegoc.bln.entity.Telemetry</class-a>
-    <class-b>kz.kegoc.bln.webapi.dto.TelemetryDto</class-b>
+    <class-b>kz.kegoc.bln.web.dto.TelemetryDto</class-b>
   </mapping> 
 </mappings> 

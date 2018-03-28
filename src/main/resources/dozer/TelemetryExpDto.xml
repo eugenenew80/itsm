@@ -6,7 +6,7 @@
 
   <mapping map-null="false" map-empty-string="false" trim-strings="true">
     <class-a>kz.kegoc.bln.entity.Telemetry</class-a>
-    <class-b>kz.kegoc.bln.webapi.dto.TelemetryExpDto</class-b>
+    <class-b>kz.kegoc.bln.web.dto.TelemetryExpDto</class-b>
 
     <field>
       <a>logPoint.id</a>

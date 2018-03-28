@@ -33,7 +33,7 @@ public class OicImpGatewayBuilderImpl implements kz.kegoc.bln.gateway.oic.OicImp
             throw new Exception("points must be specified");
 
         if (config==null)
-            throw new Exception("config  must be specified");
+            throw new Exception("config must be specified");
     }
 
     private OicConfig config;

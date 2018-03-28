@@ -1,4 +1,4 @@
-package kz.kegoc.bln.webapi.dto;
+package kz.kegoc.bln.web.dto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -7,4 +7,5 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(of= {"id"})
 public class UnitRelDto {
     private Long id;
+    private String name;
 }

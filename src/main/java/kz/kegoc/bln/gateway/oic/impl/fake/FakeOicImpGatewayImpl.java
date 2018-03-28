@@ -13,7 +13,7 @@ public class FakeOicImpGatewayImpl implements OicImpGateway {
     private static final Logger logger = LoggerFactory.getLogger(FakeOicImpGatewayImpl.class);
 
     @Override
-    public List<TelemetryRaw> request(LocalDateTime atDateTime) throws Exception {
+    public List<TelemetryRaw> request(LocalDateTime dateTime) throws Exception {
         logger.debug("FakeOicImpGatewayImpl.request started");
 
         List<TelemetryRaw> telemetryRawList = Arrays.asList(

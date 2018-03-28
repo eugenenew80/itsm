@@ -21,7 +21,7 @@ public class OicImpGatewayImpl implements OicImpGateway {
     private static final Logger logger = LoggerFactory.getLogger(OicImpGatewayImpl.class);
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
-    private final OicDatabase oicConnection;
+    private final OicDatabase oicDatabase;
     private final List<Long> points;
 
     @Override
@@ -32,7 +32,7 @@ public class OicImpGatewayImpl implements OicImpGateway {
         logger.debug("dateTime: " + dateTime.toString());
 
         String sql = "exec master..xp_gettidata2 1, '" + dateTime.format(timeFormatter) + "', " + mapPoints();
-        RowSet rs = oicConnection.execStatement(sql);
+        RowSet rs = oicDatabase.execStatement(sql);
         List<TelemetryRaw> telemetries = parseAnswer(rs);
 
         logger.debug("OicImpGatewayImpl.request completed");

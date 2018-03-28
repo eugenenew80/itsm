@@ -1,9 +1,9 @@
-package kz.kegoc.bln.webapi;
+package kz.kegoc.bln.web.telemetry;
 
 import kz.kegoc.bln.entity.Telemetry;
 import kz.kegoc.bln.repo.TelemetryRepo;
-import kz.kegoc.bln.webapi.dto.TelemetryDto;
-import kz.kegoc.bln.webapi.dto.TelemetryExpDto;
+import kz.kegoc.bln.web.dto.TelemetryDto;
+import kz.kegoc.bln.web.dto.TelemetryExpDto;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
@@ -19,8 +19,8 @@ import static kz.kegoc.bln.util.Util.first;
 
 @RestController
 @RequiredArgsConstructor
-public class TelemetryController {
-    private static final Logger logger = LoggerFactory.getLogger(TelemetryController.class);
+public class TelemetryRestController {
+    private static final Logger logger = LoggerFactory.getLogger(TelemetryRestController.class);
     private final TelemetryRepo repo;
     private final DozerBeanMapper mapper;
 

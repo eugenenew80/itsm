@@ -1,4 +1,4 @@
-package kz.kegoc.bln.webapi.dto;
+package kz.kegoc.bln.web.dto;
 
 import lombok.Data;
 import java.time.LocalDateTime;

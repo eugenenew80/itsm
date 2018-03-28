@@ -3,7 +3,8 @@ package kz.kegoc.bln.webapi;
 import kz.kegoc.bln.TestUtil;
 import kz.kegoc.bln.entity.LogPoint;
 import kz.kegoc.bln.repo.LogPointRepo;
-import kz.kegoc.bln.webapi.dto.LogPointDto;
+import kz.kegoc.bln.web.logPoint.LogPointRestController;
+import kz.kegoc.bln.web.dto.LogPointDto;
 import org.dozer.DozerBeanMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,22 +17,19 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(LogPointController.class)
+@WebMvcTest(LogPointRestController.class)
 public class LogPointControllerTest {
 
     @Autowired

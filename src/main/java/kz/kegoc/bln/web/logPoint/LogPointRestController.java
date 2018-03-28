@@ -1,8 +1,8 @@
-package kz.kegoc.bln.webapi;
+package kz.kegoc.bln.web.logPoint;
 
 import kz.kegoc.bln.entity.LogPoint;
 import kz.kegoc.bln.repo.LogPointRepo;
-import kz.kegoc.bln.webapi.dto.LogPointDto;
+import kz.kegoc.bln.web.dto.LogPointDto;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import static kz.kegoc.bln.util.Util.first;
 
 @RestController
 @RequiredArgsConstructor
-public class LogPointController {
+public class LogPointRestController {
     private final LogPointRepo repo;
     private final DozerBeanMapper mapper;
 
