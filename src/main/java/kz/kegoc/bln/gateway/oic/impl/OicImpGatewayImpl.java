@@ -63,6 +63,7 @@ public class OicImpGatewayImpl implements OicImpGateway {
     private List<TelemetryRaw> parseAnswer(ResultSet rs) throws Exception {
         int columnCount = rs.getMetaData().getColumnCount();
         if (columnCount==1) {
+            rs.next();
             logger.warn("Error when parsing answer: " + rs.getString(1));
             return Collections.emptyList();
         }
