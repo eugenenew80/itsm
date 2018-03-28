@@ -9,9 +9,11 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,6 +61,12 @@ public class OicImpGatewayImpl implements OicImpGateway {
     }
 
     private List<TelemetryRaw> parseAnswer(ResultSet rs) throws Exception {
+        int columnCount = rs.getMetaData().getColumnCount();
+        if (columnCount==1) {
+            logger.warn("Error when parsing answer: " + rs.getString(1));
+            return Collections.emptyList();
+        }
+
         List<TelemetryRaw> telemetryList = new ArrayList<>();
         while (rs.next()) {
             Long logti = rs.getLong(1);
