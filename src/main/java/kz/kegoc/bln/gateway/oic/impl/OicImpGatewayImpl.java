@@ -43,7 +43,7 @@ public class OicImpGatewayImpl implements OicImpGateway {
             try (PreparedStatement pst = con.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
                 telemetryList = parseAnswer(rs);
             }
-            logger.debug("SQL completed, record count: " + telemetryList.size());
+            logger.debug("Executing SQL command completed, record count: " + telemetryList.size());
         }
 
         logger.debug("OicImpGatewayImpl.request completed");
