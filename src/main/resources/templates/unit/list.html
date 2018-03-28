@@ -9,22 +9,22 @@
     <body>
         <div class="container" layout:fragment="content">
             <div class="row">
-                <h4 class="indigo-text" th:text="'Точки учёта'">Точки учёта</h4>
+                <h4 class="indigo-text" th:text="'Единицы измерения'">Точки учёта</h4>
 
                 <table class="responsive-table">
                     <thead>
                         <tr>
                             <th>Ид.</th>
+                            <th>Код</th>
                             <th>Наименование</th>
-                            <th>Ед. изм.</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        <tr th:each="logPoint : ${logPoints}">
-                            <td th:text="${logPoint.id}">Ид.</td>
-                            <td th:text="${logPoint.name}">Точка учёта</td>
-                            <td th:text="${logPoint.unit.name}">Ед. изм.</td>
+                        <tr th:each="unit : ${units}">
+                            <td th:text="${unit.id}">Ид.</td>
+                            <td th:text="${unit.code}">Код</td>
+                            <td th:text="${unit.name}">Наменование</td>
                         </tr>
                     </tbody>
                 </table>
