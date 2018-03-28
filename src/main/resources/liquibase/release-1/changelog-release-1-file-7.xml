@@ -64,4 +64,12 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="media-eug-22" logicalFilePath="path-independent" author="eugene">
+        <comment>Update column code in table: units</comment>
+        <sql dbms="postres" endDelimiter=";" splitStatements="true" stripComments="true">
+            update apps.units t set t.code = 'V' where t.code = 'U';
+        </sql>
+        <rollback/>
+    </changeSet>
 </databaseChangeLog>

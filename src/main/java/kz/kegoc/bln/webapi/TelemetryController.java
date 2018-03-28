@@ -34,9 +34,10 @@ public class TelemetryController {
     @GetMapping(value = "/exp/telemetry", produces = "application/json")
     public List<TelemetryExpDto> getAll(
         @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime start,
-        @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime end) {
+        @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime end,
+        @RequestParam String arcType) {
 
-        return repo.findByDateTimeBetween(start, end).stream()
+        return repo.findByDateTimeBetweenAndArcTypeCode(start, end, arcType).stream()
             .map(transformToDto::apply)
             .collect(Collectors.toList());
     }
