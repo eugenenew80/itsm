@@ -19,7 +19,7 @@ public class OicConnectionImpl implements OicConnection {
 
         logger.debug("Connecting to server started: " + activeServer);
         String conStr = config.urlOic(activeServer);
-        Connection connection = DriverManager.getConnection(conStr, config.user(), config.pass());
+        Connection connection = DriverManager.getConnection(conStr);
         logger.debug("Connecting to server is successful");
 
         return connection;

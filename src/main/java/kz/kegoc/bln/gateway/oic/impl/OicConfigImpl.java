@@ -13,12 +13,12 @@ public class OicConfigImpl implements OicConfig {
 
     @Override
     public String urlMaster(ServerNum serverNum) {
-        return "jdbc:jtds:sqlserver://" + host(serverNum) + ":" + port + ";databasename=" + masterDb;
+        return "jdbc:jtds:sqlserver://" + host(serverNum) + ":" + port + ";user=" + user + ";password=" + pass +  ";databasename=" + masterDb;
     }
 
     @Override
     public String urlOic(ServerNum serverNum) {
-        return "jdbc:jtds:sqlserver://" + host(serverNum) + ":" + port + ";databasename=" + oicDb;
+        return "jdbc:jtds:sqlserver://" + host(serverNum) + ":" + port + ";user=" + user + ";password=" + pass +  ";databasename=" + oicDb;
     }
 
     @Override
