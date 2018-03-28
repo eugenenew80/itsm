@@ -51,12 +51,6 @@ public class OicImpGatewayImpl implements OicImpGateway {
     }
 
     private void validateParams(LocalDateTime dateTime) throws Exception {
-        if (config ==null)
-            throw new Exception("config must be specified");
-
-        if (points ==null || points.isEmpty())
-            throw new Exception("list points must be specified");
-
         if (dateTime ==null)
             throw new Exception("dateTime  must be specified");
     }
