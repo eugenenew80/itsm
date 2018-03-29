@@ -29,7 +29,7 @@ public class UnitController {
         transformToDto = t -> mapper.map(t, UnitDto.class);
     }
 
-    @RequestMapping("/unit")
+    @RequestMapping("/units")
     public String list(Model model) {
         List<UnitDto> list = repo.findAll()
             .stream()

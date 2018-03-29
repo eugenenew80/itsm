@@ -29,7 +29,7 @@ public class ArcTypeController {
         transformToDto = t -> mapper.map(t, ArcTypeDto.class);
     }
 
-    @RequestMapping("/arcType")
+    @RequestMapping("/arcTypes")
     public String list(Model model) {
         List<ArcTypeDto> list = repo.findAll()
             .stream()

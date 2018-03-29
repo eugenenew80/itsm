@@ -29,7 +29,7 @@ public class LogPointController {
         transformToDto = t -> mapper.map(t, LogPointDto.class);
     }
 
-    @RequestMapping("/logPoint")
+    @RequestMapping("/logPoints")
     public String list(Model model) {
         List<LogPointDto> list = repo.findAll()
             .stream()

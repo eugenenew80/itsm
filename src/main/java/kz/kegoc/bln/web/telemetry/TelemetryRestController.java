@@ -31,7 +31,7 @@ public class TelemetryRestController {
         transformToDto = t -> mapper.map(t, TelemetryExpDto.class);
     }
 
-    @GetMapping(value = "/exp/telemetry", produces = "application/json")
+    @GetMapping(value = "/rest/exp/telemetry", produces = "application/json")
     public List<TelemetryExpDto> getAll(
         @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime start,
         @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime end,
@@ -42,7 +42,7 @@ public class TelemetryRestController {
             .collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/telemetry/{id}", produces = "application/json")
+    @GetMapping(value = "/rest/telemetry/{id}", produces = "application/json")
     public TelemetryExpDto getById(@PathVariable Long id) {
         return first(findById)
             .andThen(transformToDto)

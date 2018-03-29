@@ -30,7 +30,7 @@ public class UnitRestController {
         transformToDto = t -> mapper.map(t, UnitDto.class);
     }
 
-    @GetMapping(value = "/units", produces = "application/json")
+    @GetMapping(value = "/rest/units", produces = "application/json")
     public List<UnitDto> getAll() {
         return repo.findAll()
             .stream()
@@ -38,14 +38,14 @@ public class UnitRestController {
             .collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/units/{id}", produces = "application/json")
+    @GetMapping(value = "/rest/units/{id}", produces = "application/json")
     public UnitDto getById(@PathVariable Long id) {
         return first(findById)
             .andThen(transformToDto)
             .apply(id);
     }
 
-    @PostMapping(value = "/units", produces = "application/json")
+    @PostMapping(value = "/rest/units", produces = "application/json")
     public UnitDto create(@RequestBody UnitDto meteringPointDto) {
         return first(transformToEntity)
             .andThen(save)
@@ -53,7 +53,7 @@ public class UnitRestController {
             .apply(meteringPointDto);
     }
 
-    @PutMapping(value = "/units/{id}", produces = "application/json")
+    @PutMapping(value = "/rest/units/{id}", produces = "application/json")
     public UnitDto update(@PathVariable Long id, @RequestBody UnitDto meteringPointDto) {
         return first(transformToEntity)
             .andThen(save)
@@ -61,7 +61,7 @@ public class UnitRestController {
             .apply(meteringPointDto);
     }
 
-    @DeleteMapping(value = "/units/{id}")
+    @DeleteMapping(value = "/rest/units/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         repo.delete(id);

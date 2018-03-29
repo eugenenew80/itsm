@@ -30,7 +30,7 @@ public class ArcTypeRestController {
         transformToDto = t -> mapper.map(t, ArcTypeDto.class);
     }
 
-    @GetMapping(value = "/arcTypes", produces = "application/json")
+    @GetMapping(value = "/rest/arcTypes", produces = "application/json")
     public List<ArcTypeDto> getAll() {
         return repo.findAll()
             .stream()
@@ -38,14 +38,14 @@ public class ArcTypeRestController {
             .collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/arcTypes/{code}", produces = "application/json")
+    @GetMapping(value = "/rest/arcTypes/{code}", produces = "application/json")
     public ArcTypeDto getById(@PathVariable String code) {
         return first(findById)
             .andThen(transformToDto)
             .apply(code);
     }
 
-    @PostMapping(value = "/arcTypes", produces = "application/json")
+    @PostMapping(value = "/rest/arcTypes", produces = "application/json")
     public ArcTypeDto create(@RequestBody ArcTypeDto dto) {
         return first(transformToEntity)
             .andThen(save)
@@ -53,7 +53,7 @@ public class ArcTypeRestController {
             .apply(dto);
     }
 
-    @PutMapping(value = "/arcTypes/{code}", produces = "application/json")
+    @PutMapping(value = "/rest/arcTypes/{code}", produces = "application/json")
     public ArcTypeDto update(@PathVariable String code, @RequestBody ArcTypeDto dto) {
         return first(transformToEntity)
             .andThen(save)
@@ -61,7 +61,7 @@ public class ArcTypeRestController {
             .apply(dto);
     }
 
-    @DeleteMapping(value = "/arcTypes/{code}")
+    @DeleteMapping(value = "/rest/arcTypes/{code}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String code) {
         repo.delete(code);
