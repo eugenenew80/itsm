@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorator="layout/default">
+
+    <head lang="ru">
+        <title>Интегация с ИС Биллинг</title>
+    </head>
+
+    <body>
+        <div class="container" layout:fragment="content">
+            <div class="row">
+                <h4 class="indigo-text" th:text="'Телеизмерения'">Точки учёта</h4>
+
+                <table class="responsive-table">
+                    <thead>
+                        <tr>
+                            <th>Ид.</th>
+                            <th>Точка учёта</th>
+                            <th>Время</th>
+                            <th>Значение</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="t : ${telemetry}">
+                            <td th:text="${t.id}">Ид.</td>
+                            <td th:text="${t.logPoint.name}">Точка учёта</td>
+                            <td th:text="${t.dateTime}">Время</td>
+                            <td th:text="${t.val}">Значение</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

@@ -7,4 +7,5 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(of= {"id"})
 public class LogPointRelDto {
     private Long id;
+    private String name;
 }
