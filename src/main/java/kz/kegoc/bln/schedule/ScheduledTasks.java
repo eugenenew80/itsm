@@ -55,7 +55,7 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
         endTime = endTime.minusSeconds(sec);
 
         if (startTime.plusSeconds(step).isAfter(endTime))
-            return;;
+            return;
 
         logger.info("ArcType: " + arcType.getCode() + ", Period: " + startTime.toString() + " - " + endTime.toString());
 
