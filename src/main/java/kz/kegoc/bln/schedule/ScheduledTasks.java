@@ -30,15 +30,15 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
     public void startImport() {
         if (!isReady) return;
 
-        logger.info("ScheduledTasks.startImport started");
+        logger.info("startImport started");
         ArcType arcType = getDefArcType();
         try {
             readData(arcType);
         }
         catch (Exception e) {
-            logger.error("ScheduledTasks.startImport crashed: " + e.getMessage());
+            logger.error("startImport crashed: " + e.getMessage());
         }
-        logger.info("ScheduledTasks.startImport completed");
+        logger.info("startImport completed");
     }
 
     private void readData(ArcType arcType) throws Exception {

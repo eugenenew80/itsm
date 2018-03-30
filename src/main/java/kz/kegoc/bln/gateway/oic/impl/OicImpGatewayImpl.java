@@ -28,14 +28,14 @@ public class OicImpGatewayImpl implements OicImpGateway {
     public List<TelemetryRaw> request(LocalDateTime dateTime) throws Exception {
         validateParams(dateTime);
 
-        logger.debug("OicImpGatewayImpl.request started");
+        logger.debug("request started");
         logger.debug("dateTime: " + dateTime.toString());
 
         String sql = "exec master..xp_gettidata2 1, '" + dateTime.format(timeFormatter) + "', " + mapPoints();
         RowSet rs = oicDatabase.execStatement(sql);
         List<TelemetryRaw> telemetries = parseAnswer(rs);
 
-        logger.debug("OicImpGatewayImpl.request completed");
+        logger.debug("request completed");
         return telemetries;
     }
 

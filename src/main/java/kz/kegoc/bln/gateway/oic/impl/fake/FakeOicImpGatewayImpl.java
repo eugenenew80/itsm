@@ -14,13 +14,13 @@ public class FakeOicImpGatewayImpl implements OicImpGateway {
 
     @Override
     public List<TelemetryRaw> request(LocalDateTime dateTime) throws Exception {
-        logger.debug("FakeOicImpGatewayImpl.request started");
+        logger.debug("request started");
 
         List<TelemetryRaw> telemetryRawList = Arrays.asList(
                 new TelemetryRaw(1l, 345d),
                 new TelemetryRaw(2l, 456d)
         );
 
-        logger.debug("FakeOicImpGatewayImpl.request completed");
+        logger.debug("request completed");
         return telemetryRawList;    }
 }
