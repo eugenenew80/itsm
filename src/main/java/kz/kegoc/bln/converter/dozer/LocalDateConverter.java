@@ -1,7 +1,6 @@
 package kz.kegoc.bln.converter.dozer;
 
 import org.dozer.DozerConverter;
-
 import java.time.LocalDate;
 
 public class LocalDateConverter extends DozerConverter<LocalDate, LocalDate> {
