@@ -49,12 +49,12 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
             .truncatedTo(ChronoUnit.MINUTES);
 
         long sec = startTime.getMinute()*60 - Math.round(startTime.getMinute()*60 / step) * step;
-        startTime = startTime.minusSeconds(sec);
+        startTime = startTime.minusSeconds(sec).plusSeconds(step);
 
         sec = endTime.getMinute()*60 - Math.round(endTime.getMinute()*60 / step) * step;
         endTime = endTime.minusSeconds(sec);
 
-        if (startTime.plusSeconds(step).isAfter(endTime))
+        if (startTime.isAfter(endTime))
             return;
 
         logger.info("ArcType: " + arcType.getCode() + ", Period: " + startTime.toString() + " - " + endTime.toString());
@@ -64,7 +64,7 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
             .points(buildPoints())
             .build();
 
-        LocalDateTime curTime = startTime.plusSeconds(step);
+        LocalDateTime curTime = startTime;
         while (!curTime.isAfter(endTime)) {
             List<TelemetryRaw> telemetries = oicImpGateway.request(curTime);
             save(arcType, curTime, telemetries);
