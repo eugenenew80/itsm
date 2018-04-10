@@ -17,12 +17,12 @@ public class OicConfigImpl implements OicConfig {
 
     @Override
     public String urlMaster(ServerNum serverNum) {
-        return "jdbc:jtds:sqlserver://" + host(serverNum) + ":" + port + ";user=" + user + ";password=" + pass +  ";databasename=" + masterDb;
+        return "jdbc:jtds:sqlserver://" + host(serverNum) + ":" + port + ";user=" + user + ";password=" + pass +  ";databasename=" + masterDb + ";loginTimeout=20";
     }
 
     @Override
     public String urlOic(ServerNum serverNum) {
-        return "jdbc:jtds:sqlserver://" + host(serverNum) + ":" + port + ";user=" + user + ";password=" + pass +  ";databasename=" + oicDb;
+        return "jdbc:jtds:sqlserver://" + host(serverNum) + ":" + port + ";user=" + user + ";password=" + pass +  ";databasename=" + oicDb + ";loginTimeout=20";
     }
 
     private String host(ServerNum serverNum) {
