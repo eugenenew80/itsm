@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Data
-@EqualsAndHashCode(of= {"arcType"})
+@EqualsAndHashCode(of= {"code"})
 @Entity
 @Table(name = "arc_types")
 public class ArcType {
