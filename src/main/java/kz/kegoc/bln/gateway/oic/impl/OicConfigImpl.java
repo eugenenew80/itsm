@@ -1,7 +1,7 @@
 package kz.kegoc.bln.gateway.oic.impl;
 
 import kz.kegoc.bln.gateway.oic.OicConfig;
-import kz.kegoc.bln.gateway.oic.ServerNum;
+import kz.kegoc.bln.gateway.oic.ServerNumEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Map;
@@ -16,17 +16,17 @@ public class OicConfigImpl implements OicConfig {
     }
 
     @Override
-    public String urlMaster(ServerNum serverNum) {
+    public String urlMaster(ServerNumEnum serverNum) {
         return "jdbc:jtds:sqlserver://" + host(serverNum) + ":" + port + ";user=" + user + ";password=" + pass +  ";databasename=" + masterDb + ";loginTimeout=20";
     }
 
     @Override
-    public String urlOic(ServerNum serverNum) {
+    public String urlOic(ServerNumEnum serverNum) {
         return "jdbc:jtds:sqlserver://" + host(serverNum) + ":" + port + ";user=" + user + ";password=" + pass +  ";databasename=" + oicDb + ";loginTimeout=20";
     }
 
-    private String host(ServerNum serverNum) {
-        return (serverNum == ServerNum.OIC_01 ? oic01 : oic02);
+    private String host(ServerNumEnum serverNum) {
+        return (serverNum == ServerNumEnum.OIC_01 ? oic01 : oic02);
     }
 
     private String oic01;

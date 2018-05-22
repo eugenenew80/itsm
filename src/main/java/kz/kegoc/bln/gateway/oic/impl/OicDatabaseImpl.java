@@ -3,7 +3,7 @@ package kz.kegoc.bln.gateway.oic.impl;
 import com.sun.rowset.CachedRowSetImpl;
 import kz.kegoc.bln.gateway.oic.OicConfig;
 import kz.kegoc.bln.gateway.oic.OicDatabase;
-import kz.kegoc.bln.gateway.oic.ServerNum;
+import kz.kegoc.bln.gateway.oic.ServerNumEnum;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class OicDatabaseImpl implements OicDatabase {
     }
 
     private Connection getConnection() throws Exception {
-        ServerNum activeServer = findServer();
+        ServerNumEnum activeServer = findServer();
         logger.info("Active server: " + activeServer);
 
         logger.debug("Connecting to server started: " + activeServer);
@@ -36,13 +36,13 @@ public class OicDatabaseImpl implements OicDatabase {
         return connection;
     }
 
-    private ServerNum findServer() {
-        if (checkServer(ServerNum.OIC_01)) return ServerNum.OIC_01;
-        if (checkServer(ServerNum.OIC_02)) return ServerNum.OIC_02;
+    private ServerNumEnum findServer() {
+        if (checkServer(ServerNumEnum.OIC_01)) return ServerNumEnum.OIC_01;
+        if (checkServer(ServerNumEnum.OIC_02)) return ServerNumEnum.OIC_02;
         throw new RuntimeException("No server available");
     }
 
-    private boolean checkServer(ServerNum serverNum) {
+    private boolean checkServer(ServerNumEnum serverNum) {
         logger.debug("Checking server started: " + serverNum);
 
         String conStr = config.urlMaster(serverNum);

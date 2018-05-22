@@ -40,7 +40,7 @@ public class OicImpGatewayImpl implements OicImpGateway {
     }
 
     private void validateParams(LocalDateTime dateTime) throws Exception {
-        if (dateTime ==null)
+        if (dateTime == null)
             throw new Exception("dateTime  must be specified");
     }
 
