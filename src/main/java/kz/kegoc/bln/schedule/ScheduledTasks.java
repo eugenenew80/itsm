@@ -3,9 +3,10 @@ package kz.kegoc.bln.schedule;
 import kz.kegoc.bln.entity.*;
 import kz.kegoc.bln.gateway.oic.*;
 import kz.kegoc.bln.repo.*;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,17 +14,37 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import static kz.kegoc.bln.gateway.oic.impl.OicConfigImpl.oicConfigBuilder;
 
 @Component
+@RequiredArgsConstructor
 public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent> {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
-    private static final String DEF_ARC_TYPE_CODE = "MIN-3";
-    private static final String DEF_ARC_TYPE_NAME = "Архив с шагом 3 минуты";
-    private static final Long DEF_STEP = 180l;
+
+    private final LogPointRepo logPointRepo;
+    private final TelemetryRepo telemetryRepo;
+    private final ArcTypeRepo arcTypeRepo;
+    private final OicImpGatewayBuilder oicImpGatewayBuilder;
+
+    @Resource(name="oicPropMap")
+    private Map<String, String> oicProperty;
+
+    @Value("${oic.arc.depth}")
+    private Long defArcDepth;
+
+    @Value("${oic.arc.code}")
+    private String defArcCode;
+
+    @Value("${oic.arc.name}")
+    private String defArcName;
+
+    @Value("${oic.arc.step}")
+    private Long defArcStep;
+
     private boolean isReady = false;
 
     @Scheduled(cron = "30 */1 * * * *")
@@ -31,12 +52,19 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
         if (!isReady) return;
 
         logger.info("startImport started");
-        ArcType arcType = getDefArcType();
-        try {
-            readData(arcType);
-        }
-        catch (Exception e) {
-            logger.error("startImport crashed: " + e.getMessage());
+
+        List<ArcType> arcTypes = arcTypeRepo.findAll();
+        if (arcTypes.isEmpty())
+            arcTypes = Arrays.asList(getDefArcType());
+
+        for (ArcType arcType : arcTypes) {
+            logger.info("arc type: " + arcType.getCode());
+            try {
+                readData(arcType);
+            }
+            catch (Exception e) {
+                logger.error("startImport crashed: " + e.getMessage());
+            }
         }
         logger.info("startImport completed");
     }
@@ -44,7 +72,7 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
     private void readData(ArcType arcType) throws Exception {
         Long step = arcType.getStep();
 
-        LocalDateTime startTimeDef = LocalDateTime.now().minusDays(7);
+        LocalDateTime startTimeDef = LocalDateTime.now().minusDays(defArcDepth);
         LocalDateTime startTime = arcType.getLastLoadTime();
 
         if (startTime.isBefore(startTimeDef))
@@ -78,13 +106,13 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
     }
 
     private ArcType getDefArcType() {
-        ArcType arcType = arcTypeRepo.findOne(DEF_ARC_TYPE_CODE);
+        ArcType arcType = arcTypeRepo.findOne(defArcCode);
         if (arcType==null) {
             arcType = new ArcType();
-            arcType.setCode(DEF_ARC_TYPE_CODE);
-            arcType.setName(DEF_ARC_TYPE_NAME);
-            arcType.setStep(DEF_STEP);
-            arcType.setLastLoadTime(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS).minusSeconds(DEF_STEP));
+            arcType.setCode(defArcCode);
+            arcType.setName(defArcName);
+            arcType.setStep(defArcStep);
+            arcType.setLastLoadTime(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS).minusSeconds(defArcStep));
         }
 
         return arcType;
@@ -127,20 +155,4 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
         isReady = true;
     }
-
-
-    @Autowired
-    private LogPointRepo logPointRepo;
-
-    @Autowired
-    private TelemetryRepo telemetryRepo;
-
-    @Autowired
-    private ArcTypeRepo arcTypeRepo;
-
-    @Autowired
-    private OicImpGatewayBuilder oicImpGatewayBuilder;
-
-    @Resource(name="oicPropMap")
-    private Map<String, String> oicProperty;
 }
