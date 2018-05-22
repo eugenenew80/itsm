@@ -44,7 +44,12 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
     private void readData(ArcType arcType) throws Exception {
         Long step = arcType.getStep();
 
+        LocalDateTime startTimeDef = LocalDateTime.now().minusDays(7);
         LocalDateTime startTime = arcType.getLastLoadTime();
+
+        if (startTime.isBefore(startTimeDef))
+            startTime = startTimeDef;
+
         LocalDateTime endTime = LocalDateTime.now()
             .truncatedTo(ChronoUnit.MINUTES);
 

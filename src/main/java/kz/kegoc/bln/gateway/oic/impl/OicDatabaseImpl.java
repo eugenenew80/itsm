@@ -48,8 +48,13 @@ public class OicDatabaseImpl implements OicDatabase {
         String conStr = config.urlMaster(serverNum);
         String sql = "select status from [dbo].sysdatabases t WHERE t.name='OICDB'";
         try (Connection con = DriverManager.getConnection(conStr); PreparedStatement pst = con.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
-            if (!rs.next() || rs.getInt(1) != 16)
-                throw new RuntimeException("Database is not active");
+            logger.debug("Checking sysdatabases table");
+            if (rs.next()) {
+                int status = rs.getInt(1);
+                logger.debug("status: " + status);
+                if (status >99)
+                    throw new RuntimeException("Database is available, but is not active");
+            }
         }
         catch (Exception e) {
             logger.error(e.getMessage());
