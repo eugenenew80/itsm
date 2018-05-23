@@ -25,7 +25,7 @@ public class ArcType {
     @Column(name = "last_load_time")
     private LocalDateTime lastLoadTime;
 
-        @Column(name = "is_active")
+    @Column(name = "is_active")
     @Convert(converter = BooleanToIntConverter.class)
-    private Boolean active;
+    private Boolean isActive;
 }
