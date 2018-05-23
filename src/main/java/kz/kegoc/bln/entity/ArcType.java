@@ -1,12 +1,10 @@
 package kz.kegoc.bln.entity;
 
+import kz.kegoc.bln.converter.jpa.BooleanToIntConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
@@ -26,4 +24,8 @@ public class ArcType {
 
     @Column(name = "last_load_time")
     private LocalDateTime lastLoadTime;
+
+        @Column(name = "is_active")
+    @Convert(converter = BooleanToIntConverter.class)
+    private Boolean active;
 }
