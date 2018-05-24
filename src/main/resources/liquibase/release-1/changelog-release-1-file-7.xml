@@ -72,4 +72,13 @@
         </sql>
         <rollback/>
     </changeSet>
+
+    <changeSet id="media-eug-23" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding column is_active into table: arc_types</comment>
+        <addColumn schemaName="apps" tableName="arc_types">
+            <column name="is_active" type="number" remarks="Активно/неактивно" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

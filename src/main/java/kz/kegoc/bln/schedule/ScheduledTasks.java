@@ -58,6 +58,9 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
             arcTypes = Arrays.asList(getDefArcType());
 
         for (ArcType arcType : arcTypes) {
+            if (!arcType.getIsActive())
+                continue;
+
             logger.info("arc type: " + arcType.getCode());
             try {
                 readData(arcType);
@@ -70,14 +73,9 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
     }
 
     private void readData(ArcType arcType) throws Exception {
-        Long step = arcType.getStep();
-
-        LocalDateTime startTimeDef = LocalDateTime.now().minusDays(defArcDepth);
         LocalDateTime startTime = arcType.getLastLoadTime();
 
-        if (startTime.isBefore(startTimeDef))
-            startTime = startTimeDef;
-
+        Long step = arcType.getStep();
         LocalDateTime endTime = LocalDateTime.now()
             .truncatedTo(ChronoUnit.MINUTES);
 
@@ -87,10 +85,9 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
         sec = endTime.getMinute()*60 - Math.round(endTime.getMinute()*60 / step) * step;
         endTime = endTime.minusSeconds(sec);
 
+        logger.info("Period: " + startTime.toString() + " - " + endTime.toString());
         if (startTime.isAfter(endTime))
             return;
-
-        logger.info("ArcType: " + arcType.getCode() + ", Period: " + startTime.toString() + " - " + endTime.toString());
 
         OicImpGateway oicImpGateway = oicImpGatewayBuilder
             .config(oicConfigBuilder(oicProperty).build())
@@ -112,7 +109,12 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
             arcType.setCode(defArcCode);
             arcType.setName(defArcName);
             arcType.setStep(defArcStep);
-            arcType.setLastLoadTime(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS).minusSeconds(defArcStep));
+            arcType.setLastLoadTime(
+                    LocalDateTime.now()
+                        .truncatedTo(ChronoUnit.HOURS)
+                        .minusSeconds(defArcStep)
+                        .minusDays(defArcDepth)
+            );
         }
 
         return arcType;
