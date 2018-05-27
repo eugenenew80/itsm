@@ -1,4 +1,4 @@
-package kz.kegoc.bln.web.arcType;
+package kz.kegoc.bln.web;
 
 import kz.kegoc.bln.entity.ArcType;
 import kz.kegoc.bln.repo.ArcTypeRepo;

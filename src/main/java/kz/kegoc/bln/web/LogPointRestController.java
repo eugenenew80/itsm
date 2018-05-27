@@ -1,4 +1,4 @@
-package kz.kegoc.bln.web.logPoint;
+package kz.kegoc.bln.web;
 
 import kz.kegoc.bln.entity.LogPoint;
 import kz.kegoc.bln.repo.LogPointRepo;

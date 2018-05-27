@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,18 +32,6 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
     @Resource(name="oicPropMap")
     private Map<String, String> oicProperty;
 
-    @Value("${oic.arc.depth}")
-    private Long defArcDepth;
-
-    @Value("${oic.arc.code}")
-    private String defArcCode;
-
-    @Value("${oic.arc.name}")
-    private String defArcName;
-
-    @Value("${oic.arc.step}")
-    private Long defArcStep;
-
     private boolean isReady = false;
 
     @Scheduled(cron = "30 */1 * * * *")
@@ -54,9 +41,6 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
         logger.info("startImport started");
 
         List<ArcType> arcTypes = arcTypeRepo.findAll();
-        if (arcTypes.isEmpty())
-            arcTypes = Arrays.asList(getDefArcType());
-
         for (ArcType arcType : arcTypes) {
             if (!arcType.getIsActive())
                 continue;
@@ -74,6 +58,13 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
 
     private void readData(ArcType arcType) throws Exception {
         LocalDateTime startTime = arcType.getLastLoadTime();
+
+        if (startTime==null && arcType.getCode().equals("MIN-60")) {
+            arcType.setLastLoadTime(
+                LocalDateTime.now()
+                    .truncatedTo(ChronoUnit.HOURS)
+                    .minusDays(7));
+        }
 
         Long step = arcType.getStep();
         LocalDateTime endTime = LocalDateTime.now()
@@ -100,24 +91,6 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
             save(arcType, curTime, telemetries);
             curTime = curTime.plusSeconds(step);
         }
-    }
-
-    private ArcType getDefArcType() {
-        ArcType arcType = arcTypeRepo.findOne(defArcCode);
-        if (arcType==null) {
-            arcType = new ArcType();
-            arcType.setCode(defArcCode);
-            arcType.setName(defArcName);
-            arcType.setStep(defArcStep);
-            arcType.setLastLoadTime(
-                    LocalDateTime.now()
-                        .truncatedTo(ChronoUnit.HOURS)
-                        .minusSeconds(defArcStep)
-                        .minusDays(defArcDepth)
-            );
-        }
-
-        return arcType;
     }
 
     private List<Long> buildPoints() {

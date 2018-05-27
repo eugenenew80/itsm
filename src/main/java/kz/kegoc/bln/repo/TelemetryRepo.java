@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TelemetryRepo extends JpaRepository<Telemetry, Long> {
-    List<Telemetry> findByDateTimeBetweenAndArcTypeCode(LocalDateTime start, LocalDateTime end, String arcTypeCode);
+    List<Telemetry> findAllByLogPointIdAndDateTimeBetweenAndArcTypeCode(Long logPointId, LocalDateTime start, LocalDateTime end, String arcTypeCode);
 
     List<Telemetry> findByLogPointIdAndDateTime(Long logPointId, LocalDateTime dateTime);
 }

@@ -1,20 +1,20 @@
-package kz.kegoc.bln.web.telemetry;
+package kz.kegoc.bln.web;
 
 import kz.kegoc.bln.entity.Telemetry;
 import kz.kegoc.bln.repo.TelemetryRepo;
+import kz.kegoc.bln.web.dto.LogPointCfgDto;
 import kz.kegoc.bln.web.dto.TelemetryDto;
 import kz.kegoc.bln.web.dto.TelemetryExpDto;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 import static kz.kegoc.bln.util.Util.first;
 
 @RestController
@@ -31,15 +31,20 @@ public class TelemetryRestController {
         transformToDto = t -> mapper.map(t, TelemetryExpDto.class);
     }
 
-    @GetMapping(value = "/rest/exp/telemetry", produces = "application/json")
-    public List<TelemetryExpDto> getAll(
-        @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime start,
-        @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime end,
-        @RequestParam String arcType) {
+    @PostMapping(value = "/rest/exp/telemetry/{arcType}", produces = "application/json")
+    public List<TelemetryExpDto> getAll(@PathVariable String arcType, @RequestBody List<LogPointCfgDto> points) {
+        List<Telemetry> list = points.stream()
+            .flatMap(p -> repo.findAllByLogPointIdAndDateTimeBetweenAndArcTypeCode(
+                    p.getLogTi(),
+                    p.getStartTime(),
+                    p.getEndTime(),
+                    arcType
+                ).stream())
+            .collect(toList());
 
-        return repo.findByDateTimeBetweenAndArcTypeCode(start, end, arcType).stream()
+        return list.stream()
             .map(transformToDto::apply)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     @GetMapping(value = "/rest/telemetry/{id}", produces = "application/json")
