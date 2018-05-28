@@ -28,4 +28,7 @@ public class ArcType {
     @Column(name = "is_active")
     @Convert(converter = BooleanToIntConverter.class)
     private Boolean isActive;
+
+    @Column(name = "oic_arc_id")
+    private Long oicArcId;
 }

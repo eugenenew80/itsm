@@ -1,5 +1,6 @@
 package kz.kegoc.bln.gateway.oic.impl;
 
+import kz.kegoc.bln.entity.ArcType;
 import kz.kegoc.bln.gateway.oic.OicDatabase;
 import kz.kegoc.bln.gateway.oic.OicImpGateway;
 import kz.kegoc.bln.gateway.oic.TelemetryRaw;
@@ -23,6 +24,7 @@ public class OicImpGatewayImpl implements OicImpGateway {
 
     private final OicDatabase oicDatabase;
     private final List<Long> points;
+    private final ArcType arcType;
 
     @Override
     public List<TelemetryRaw> request(LocalDateTime dateTime) throws Exception {
@@ -31,7 +33,7 @@ public class OicImpGatewayImpl implements OicImpGateway {
         logger.debug("request started");
         logger.debug("dateTime: " + dateTime.toString());
 
-        String sql = "exec master..xp_gettidata2 1, '" + dateTime.format(timeFormatter) + "', " + mapPoints();
+        String sql = "exec master..xp_gettidata2 " + arcType.getOicArcId().toString() + ", '" + dateTime.format(timeFormatter) + "', " + mapPoints();
         RowSet rs = oicDatabase.execStatement(sql);
         List<TelemetryRaw> telemetries = parseAnswer(rs);
 

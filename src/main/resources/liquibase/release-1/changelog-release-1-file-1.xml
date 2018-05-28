@@ -150,6 +150,16 @@
             <column name="step" type="number" value="3600" />
             <column name="is_active" type="number" value="1" />
         </insert>
+
+        <rollback/>
     </changeSet>
 
+    <changeSet id="media-eug-13" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding column oic_arc_id into table: arc_types</comment>
+        <addColumn schemaName="apps" tableName="arc_types">
+            <column name="oic_arc_id" type="number" remarks="Активно/неактивно" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -1,5 +1,6 @@
 package kz.kegoc.bln.gateway.oic.impl;
 
+import kz.kegoc.bln.entity.ArcType;
 import kz.kegoc.bln.gateway.oic.OicConfig;
 import kz.kegoc.bln.gateway.oic.OicImpGateway;
 import org.springframework.context.annotation.Primary;
@@ -23,9 +24,15 @@ public class OicImpGatewayBuilderImpl implements kz.kegoc.bln.gateway.oic.OicImp
     }
 
     @Override
+    public OicImpGatewayBuilderImpl arcType(ArcType arcType) {
+        this.arcType = arcType;
+        return this;
+    }
+
+    @Override
     public OicImpGateway build() throws Exception {
         validate();
-        return new OicImpGatewayImpl(new OicDatabaseImpl(config), points);
+        return new OicImpGatewayImpl(new OicDatabaseImpl(config), points, arcType);
     }
 
     private void validate() throws Exception {
@@ -38,4 +45,5 @@ public class OicImpGatewayBuilderImpl implements kz.kegoc.bln.gateway.oic.OicImp
 
     private OicConfig config;
     private List<Long> points;
+    private ArcType arcType;
 }

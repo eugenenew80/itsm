@@ -83,6 +83,7 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
         OicImpGateway oicImpGateway = oicImpGatewayBuilder
             .config(oicConfigBuilder(oicProperty).build())
             .points(buildPoints())
+            .arcType(arcType)
             .build();
 
         LocalDateTime curTime = startTime;
