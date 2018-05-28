@@ -6,7 +6,6 @@ import kz.kegoc.bln.repo.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -60,10 +59,11 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
         LocalDateTime startTime = arcType.getLastLoadTime();
 
         if (startTime==null && arcType.getCode().equals("MIN-60")) {
-            arcType.setLastLoadTime(
-                LocalDateTime.now()
-                    .truncatedTo(ChronoUnit.HOURS)
-                    .minusDays(7));
+            startTime = LocalDateTime.now()
+                .truncatedTo(ChronoUnit.HOURS)
+                .minusDays(7);
+
+            arcType.setLastLoadTime(startTime);
         }
 
         Long step = arcType.getStep();
@@ -94,7 +94,7 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
     }
 
     private List<Long> buildPoints() {
-        return logPointRepo.findByIsActiveTrue()
+        return logPointRepo.findAll()
             .stream()
             .map(t -> t.getId())
             .collect(Collectors.toList());

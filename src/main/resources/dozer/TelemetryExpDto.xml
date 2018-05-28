@@ -10,17 +10,7 @@
 
     <field>
       <a>logPoint.id</a>
-      <b>logPoint</b>
-    </field>
-
-    <field>
-      <a>logPoint.unit.code</a>
-      <b>unitCode</b>
-    </field>
-
-    <field>
-      <a>logPoint.paramCode</a>
-      <b>paramCode</b>
+      <b>logPointId</b>
     </field>
   </mapping>
 </mappings> 

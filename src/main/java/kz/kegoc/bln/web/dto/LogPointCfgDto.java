@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(of= {"logTi"})
 public class LogPointCfgDto {
-	private Long logTi;
-	private LocalDateTime startTime;
-	private LocalDateTime endTime;
+	private Long logPointId;
+	private LocalDateTime start;
+	private LocalDateTime end;
 }

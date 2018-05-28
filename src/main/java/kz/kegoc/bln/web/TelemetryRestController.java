@@ -35,9 +35,9 @@ public class TelemetryRestController {
     public List<TelemetryExpDto> getAll(@PathVariable String arcType, @RequestBody List<LogPointCfgDto> points) {
         List<Telemetry> list = points.stream()
             .flatMap(p -> repo.findAllByLogPointIdAndDateTimeBetweenAndArcTypeCode(
-                    p.getLogTi(),
-                    p.getStartTime(),
-                    p.getEndTime(),
+                    p.getLogPointId(),
+                    p.getStart(),
+                    p.getEnd(),
                     arcType
                 ).stream())
             .collect(toList());

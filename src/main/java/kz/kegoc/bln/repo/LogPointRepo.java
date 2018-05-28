@@ -4,6 +4,4 @@ import kz.kegoc.bln.entity.LogPoint;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
-public interface LogPointRepo extends JpaRepository<LogPoint, Long> {
-    List<LogPoint> findByIsActiveTrue();
-}
+public interface LogPointRepo extends JpaRepository<LogPoint, Long> { }

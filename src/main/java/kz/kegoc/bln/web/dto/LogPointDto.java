@@ -8,6 +8,5 @@ import lombok.EqualsAndHashCode;
 public class LogPointDto {
     private Long id;
     private String name;
-    private UnitRelDto unit;
-    private Boolean isActive;
+        private Boolean isActive;
 }
