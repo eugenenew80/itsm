@@ -25,6 +25,7 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
 
     private final LogPointRepo logPointRepo;
     private final TelemetryRepo telemetryRepo;
+    private final MissingTelemetryRepo missingTelemetryRepo;
     private final ArcTypeRepo arcTypeRepo;
     private final OicImpGatewayBuilder oicImpGatewayBuilder;
 
@@ -104,6 +105,11 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
     private void save(ArcType arcType, LocalDateTime curTime, List<TelemetryRaw> telemetries) {
         if (telemetries.isEmpty()) {
             logger.warn("No data at: " + curTime.toString());
+            MissingTelemetry missingTelemetry = new MissingTelemetry();
+            missingTelemetry.setSystemCode("OIC");
+            missingTelemetry.setArcTypeCode(arcType.getCode());
+            missingTelemetry.setDateTime(curTime);
+            missingTelemetryRepo.save(missingTelemetry);
             return;
         }
 

@@ -162,4 +162,44 @@
             </column>
         </addColumn>
     </changeSet>
+
+
+    <changeSet id="oic-eug-14" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: missing_telemetry</comment>
+        <createTable tableName="missing_telemetry" schemaName="apps" remarks="Отсутствующие срезы телеизмерений">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="system_code" type="varchar(20)" remarks="Система - источник данных" defaultValue="OIC">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="arc_type_code" type="varchar(10)" remarks="Код типа архива" defaultValue="MIN-3">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="date_time" type="timestamp" remarks="Дата и время телеизмерения">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="oic-eug-15" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating primary key for table: missing_telemetry</comment>
+        <addPrimaryKey
+                columnNames="id"
+                constraintName="pk_missing_telemetry"
+                schemaName="apps"
+                tableName="telemetry"/>
+    </changeSet>
+
+    <changeSet id="oic-eug-16" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating sequence for table: missing_telemetry</comment>
+        <createSequence
+                incrementBy="1"
+                schemaName="apps"
+                sequenceName="missing_telemetry_s"
+                startValue="1"/>
+    </changeSet>
 </databaseChangeLog>

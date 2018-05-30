@@ -1,6 +1,8 @@
 package kz.kegoc.bln.web;
 
+import kz.kegoc.bln.entity.LogPoint;
 import kz.kegoc.bln.entity.Telemetry;
+import kz.kegoc.bln.repo.LogPointRepo;
 import kz.kegoc.bln.repo.TelemetryRepo;
 import kz.kegoc.bln.web.dto.LogPointCfgDto;
 import kz.kegoc.bln.web.dto.TelemetryDto;
@@ -22,6 +24,7 @@ import static kz.kegoc.bln.util.Util.first;
 public class TelemetryRestController {
     private static final Logger logger = LoggerFactory.getLogger(TelemetryRestController.class);
     private final TelemetryRepo repo;
+    private final LogPointRepo logPointRepo;
     private final DozerBeanMapper mapper;
 
     @PostConstruct
@@ -33,6 +36,16 @@ public class TelemetryRestController {
 
     @PostMapping(value = "/rest/exp/telemetry/{arcType}", produces = "application/json")
     public List<TelemetryExpDto> getAll(@PathVariable String arcType, @RequestBody List<LogPointCfgDto> points) {
+        points.stream().forEach(point -> {
+            LogPoint logPoint = logPointRepo.findOne(point.getLogPointId());
+            if (logPoint==null) {
+                logPoint = new LogPoint();
+                logPoint.setId(point.getLogPointId());
+                logPoint.setName("ТИ #" + point.getLogPointId());
+                logPointRepo.save(logPoint);
+            }
+        });
+
         List<Telemetry> list = points.stream()
             .flatMap(p -> repo.findAllByLogPointIdAndDateTimeBetweenAndArcTypeCode(
                     p.getLogPointId(),
