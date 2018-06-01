@@ -191,7 +191,7 @@
                 columnNames="id"
                 constraintName="pk_missing_telemetry"
                 schemaName="apps"
-                tableName="telemetry"/>
+                tableName="missing_telemetry"/>
     </changeSet>
 
     <changeSet id="oic-eug-16" logicalFilePath="path-independent" author="eugene">
