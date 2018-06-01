@@ -41,6 +41,10 @@ public class OicImpGatewayImpl implements OicImpGateway {
         return telemetries;
     }
 
+    public void getPoint(LocalDateTime startTime) {
+
+    }
+
     private void validateParams(LocalDateTime dateTime) throws Exception {
         if (dateTime == null)
             throw new Exception("dateTime  must be specified");

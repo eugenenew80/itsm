@@ -2,6 +2,7 @@ package kz.kegoc.bln.schedule;
 
 import kz.kegoc.bln.entity.*;
 import kz.kegoc.bln.gateway.oic.*;
+import kz.kegoc.bln.imp.OicDataReader;
 import kz.kegoc.bln.repo.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -10,34 +11,25 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import static kz.kegoc.bln.gateway.oic.impl.OicConfigImpl.oicConfigBuilder;
 
 @Component
 @RequiredArgsConstructor
 public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent> {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
-
     private final LogPointRepo logPointRepo;
     private final TelemetryRepo telemetryRepo;
     private final MissingTelemetryRepo missingTelemetryRepo;
     private final ArcTypeRepo arcTypeRepo;
-    private final OicImpGatewayBuilder oicImpGatewayBuilder;
-
-    @Resource(name="oicPropMap")
-    private Map<String, String> oicProperty;
-
+    private final OicDataReader oicDataReader;
     private boolean isReady = false;
 
     @Scheduled(cron = "30 */1 * * * *")
     public void startImport() {
         if (!isReady) return;
-
         logger.info("startImport started");
 
         List<ArcType> arcTypes = arcTypeRepo.findAll();
@@ -63,35 +55,27 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
             startTime = LocalDateTime.now()
                 .truncatedTo(ChronoUnit.HOURS)
                 .minusDays(7);
-
             arcType.setLastLoadTime(startTime);
         }
 
-        Long step = arcType.getStep();
         LocalDateTime endTime = LocalDateTime.now()
             .truncatedTo(ChronoUnit.MINUTES);
 
-        long sec = startTime.getMinute()*60 - Math.round(startTime.getMinute()*60 / step) * step;
-        startTime = startTime.minusSeconds(sec).plusSeconds(step);
+        long sec = startTime.getMinute()*60 - Math.round(startTime.getMinute()*60 / arcType.getStep()) * arcType.getStep();
+        startTime = startTime.minusSeconds(sec).plusSeconds(arcType.getStep());
 
-        sec = endTime.getMinute()*60 - Math.round(endTime.getMinute()*60 / step) * step;
+        sec = endTime.getMinute()*60 - Math.round(endTime.getMinute()*60 / arcType.getStep()) * arcType.getStep();
         endTime = endTime.minusSeconds(sec);
 
         logger.info("Period: " + startTime.toString() + " - " + endTime.toString());
         if (startTime.isAfter(endTime))
             return;
 
-        OicImpGateway oicImpGateway = oicImpGatewayBuilder
-            .config(oicConfigBuilder(oicProperty).build())
-            .points(buildPoints())
-            .arcType(arcType)
-            .build();
-
         LocalDateTime curTime = startTime;
         while (!curTime.isAfter(endTime)) {
-            List<TelemetryRaw> telemetries = oicImpGateway.request(curTime);
+            List<TelemetryRaw> telemetries = oicDataReader.read(arcType, buildPoints(), curTime);
             save(arcType, curTime, telemetries);
-            curTime = curTime.plusSeconds(step);
+            curTime = curTime.plusSeconds(arcType.getStep());
         }
     }
 
@@ -120,6 +104,16 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
 
         arcType.setLastLoadTime(curTime);
         arcTypeRepo.save(arcType);
+
+        List<LogPoint> points = telemetries.stream().map(t -> {
+            LogPoint logPoint = logPointRepo.findOne(t.getLogti());
+            if (logPoint != null)
+                logPoint.setLastLoadTime(curTime);
+            return logPoint;
+        })
+        .filter(l -> l != null)
+        .collect(Collectors.toList());
+        logPointRepo.save(points);
     }
 
     private Telemetry toTelemetry(ArcType arcType, LocalDateTime dateTime, TelemetryRaw t) {

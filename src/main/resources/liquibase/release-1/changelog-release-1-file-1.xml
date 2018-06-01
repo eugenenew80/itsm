@@ -202,4 +202,16 @@
                 sequenceName="missing_telemetry_s"
                 startValue="1"/>
     </changeSet>
+
+    <changeSet id="media-eug-17" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding column is_new_point into table: log_points</comment>
+        <addColumn schemaName="apps" tableName="log_points">
+            <column name="is_new_point" type="number" remarks="Новая точка">
+                <constraints nullable="true"/>
+            </column>
+            <column name="start_time" type="timestamp" remarks="Дата и время начала импорта">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
