@@ -1,7 +1,7 @@
 package kz.kegoc.bln.schedule;
 
 import kz.kegoc.bln.entity.*;
-import kz.kegoc.bln.gateway.oic.*;
+import kz.kegoc.bln.gateway.TelemetryRaw;
 import kz.kegoc.bln.imp.OicDataReader;
 import kz.kegoc.bln.repo.*;
 import lombok.RequiredArgsConstructor;

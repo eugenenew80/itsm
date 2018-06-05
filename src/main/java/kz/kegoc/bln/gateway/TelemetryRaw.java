@@ -1,4 +1,4 @@
-package kz.kegoc.bln.gateway.oic;
+package kz.kegoc.bln.gateway;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

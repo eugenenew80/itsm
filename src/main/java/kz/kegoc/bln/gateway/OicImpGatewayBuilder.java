@@ -1,4 +1,4 @@
-package kz.kegoc.bln.gateway.oic;
+package kz.kegoc.bln.gateway;
 
 import kz.kegoc.bln.entity.ArcType;
 import java.util.List;

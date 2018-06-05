@@ -2,9 +2,9 @@ package kz.kegoc.bln.imp;
 
 import kz.kegoc.bln.entity.ArcType;
 import kz.kegoc.bln.entity.LogPoint;
-import kz.kegoc.bln.gateway.oic.OicImpGateway;
-import kz.kegoc.bln.gateway.oic.OicImpGatewayBuilder;
-import kz.kegoc.bln.gateway.oic.TelemetryRaw;
+import kz.kegoc.bln.gateway.OicImpGateway;
+import kz.kegoc.bln.gateway.OicImpGatewayBuilder;
+import kz.kegoc.bln.gateway.TelemetryRaw;
 import kz.kegoc.bln.repo.LogPointRepo;
 import kz.kegoc.bln.web.dto.LogPointCfgDto;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import static kz.kegoc.bln.gateway.oic.impl.OicConfigImpl.oicConfigBuilder;
+import static kz.kegoc.bln.gateway.impl.OicConfigImpl.oicConfigBuilder;
 
 @Service
 @RequiredArgsConstructor

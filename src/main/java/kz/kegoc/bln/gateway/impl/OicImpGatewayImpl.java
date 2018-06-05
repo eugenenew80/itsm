@@ -1,9 +1,9 @@
-package kz.kegoc.bln.gateway.oic.impl;
+package kz.kegoc.bln.gateway.impl;
 
 import kz.kegoc.bln.entity.ArcType;
-import kz.kegoc.bln.gateway.oic.OicDatabase;
-import kz.kegoc.bln.gateway.oic.OicImpGateway;
-import kz.kegoc.bln.gateway.oic.TelemetryRaw;
+import kz.kegoc.bln.gateway.OicDatabase;
+import kz.kegoc.bln.gateway.OicImpGateway;
+import kz.kegoc.bln.gateway.TelemetryRaw;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

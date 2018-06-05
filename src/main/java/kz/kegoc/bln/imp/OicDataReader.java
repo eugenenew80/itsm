@@ -1,7 +1,7 @@
 package kz.kegoc.bln.imp;
 
 import kz.kegoc.bln.entity.ArcType;
-import kz.kegoc.bln.gateway.oic.TelemetryRaw;
+import kz.kegoc.bln.gateway.TelemetryRaw;
 import kz.kegoc.bln.web.dto.LogPointCfgDto;
 
 import java.time.LocalDateTime;

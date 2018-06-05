@@ -1,8 +1,8 @@
-package kz.kegoc.bln.gateway.oic.impl;
+package kz.kegoc.bln.gateway.impl;
 
-import kz.kegoc.bln.gateway.oic.OicConfig;
-import kz.kegoc.bln.gateway.oic.OicDatabase;
-import kz.kegoc.bln.gateway.oic.ServerNumEnum;
+import kz.kegoc.bln.gateway.OicConfig;
+import kz.kegoc.bln.gateway.OicDatabase;
+import kz.kegoc.bln.gateway.ServerNumEnum;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

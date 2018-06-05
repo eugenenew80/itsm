@@ -1,15 +1,16 @@
-package kz.kegoc.bln.gateway.oic.impl;
+package kz.kegoc.bln.gateway.impl;
 
 import kz.kegoc.bln.entity.ArcType;
-import kz.kegoc.bln.gateway.oic.OicConfig;
-import kz.kegoc.bln.gateway.oic.OicImpGateway;
+import kz.kegoc.bln.gateway.OicConfig;
+import kz.kegoc.bln.gateway.OicImpGateway;
+import kz.kegoc.bln.gateway.OicImpGatewayBuilder;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
 @Primary
-public class OicImpGatewayBuilderImpl implements kz.kegoc.bln.gateway.oic.OicImpGatewayBuilder {
+public class OicImpGatewayBuilderImpl implements OicImpGatewayBuilder {
 
     @Override
     public OicImpGatewayBuilderImpl config(OicConfig config) {
