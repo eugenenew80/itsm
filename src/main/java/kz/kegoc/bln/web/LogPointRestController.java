@@ -1,7 +1,9 @@
 package kz.kegoc.bln.web;
 
 import kz.kegoc.bln.entity.LogPoint;
+import kz.kegoc.bln.imp.OicDataReader;
 import kz.kegoc.bln.repo.LogPointRepo;
+import kz.kegoc.bln.web.dto.LogPointCfgDto;
 import kz.kegoc.bln.web.dto.LogPointDto;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
@@ -18,6 +20,7 @@ import static kz.kegoc.bln.util.Util.first;
 @RequiredArgsConstructor
 public class LogPointRestController {
     private final LogPointRepo repo;
+    private final OicDataReader oicDataReader;
     private final DozerBeanMapper mapper;
 
     @PostConstruct
@@ -65,6 +68,14 @@ public class LogPointRestController {
         repo.delete(id);
     }
 
+    @PostMapping(value = "/rest/logPoints/all", produces = "application/json")
+    public List<LogPointDto> createOrDelete(@RequestBody List<LogPointCfgDto> points) {
+        oicDataReader.addPoints(points);
+        return repo.findAll()
+            .stream()
+            .map(transformToDto::apply)
+            .collect(Collectors.toList());
+    }
 
     private UnaryOperator<LogPoint> save;
     private Function<Long, LogPoint> findById;
