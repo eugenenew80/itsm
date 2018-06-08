@@ -34,6 +34,8 @@ public class OicImpGatewayImpl implements OicImpGateway {
         logger.debug("dateTime: " + dateTime.toString());
 
         String sql = "exec master..xp_gettidata2 " + arcType.getOicArcId().toString() + ", '" + dateTime.format(timeFormatter) + "', " + mapPoints();
+        logger.info(sql);
+
         RowSet rs = oicDatabase.execStatement(sql);
         List<TelemetryRaw> telemetries = parseAnswer(rs);
 
