@@ -1,9 +1,7 @@
 package kz.kegoc.bln.web;
 
-import kz.kegoc.bln.entity.LogPoint;
 import kz.kegoc.bln.entity.Telemetry;
 import kz.kegoc.bln.imp.OicDataReader;
-import kz.kegoc.bln.repo.LogPointRepo;
 import kz.kegoc.bln.repo.TelemetryRepo;
 import kz.kegoc.bln.web.dto.LogPointCfgDto;
 import kz.kegoc.bln.web.dto.TelemetryDto;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.function.Function;
-
 import static java.util.stream.Collectors.toList;
 import static kz.kegoc.bln.util.Util.first;
 

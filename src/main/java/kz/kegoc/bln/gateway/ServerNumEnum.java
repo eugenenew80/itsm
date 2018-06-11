@@ -1,4 +1,4 @@
-package kz.kegoc.bln.gateway.oic;
+package kz.kegoc.bln.gateway;
 
 public enum ServerNumEnum {
     OIC_01,

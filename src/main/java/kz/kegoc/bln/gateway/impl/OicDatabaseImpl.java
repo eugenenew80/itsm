@@ -1,13 +1,14 @@
-package kz.kegoc.bln.gateway.oic.impl;
+package kz.kegoc.bln.gateway.impl;
 
-import com.sun.rowset.CachedRowSetImpl;
-import kz.kegoc.bln.gateway.oic.OicConfig;
-import kz.kegoc.bln.gateway.oic.OicDatabase;
-import kz.kegoc.bln.gateway.oic.ServerNumEnum;
+import kz.kegoc.bln.gateway.OicConfig;
+import kz.kegoc.bln.gateway.OicDatabase;
+import kz.kegoc.bln.gateway.ServerNumEnum;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.sql.RowSet;
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetProvider;
 import java.sql.*;
 
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class OicDatabaseImpl implements OicDatabase {
 
     public RowSet execStatement(String sql) throws Exception {
         logger.debug("Executing SQL command: " + sql);
-        CachedRowSetImpl crs = new CachedRowSetImpl();
+        CachedRowSet crs = RowSetProvider.newFactory().createCachedRowSet();;
         try (Connection con = getConnection(); PreparedStatement pst = con.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
             crs.populate(rs);
         }
