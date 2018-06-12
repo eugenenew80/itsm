@@ -82,8 +82,8 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
         }
 
         logger.info("Period: " + startTime.toString() + " - " + endTime.toString());
-        //if (startTime.isAfter(endTime))
-        //    return;
+        if (startTime.isAfter(endTime))
+            return;
 
         LocalDateTime curTime = startTime;
         while (!curTime.isAfter(endTime)) {
