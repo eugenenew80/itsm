@@ -214,4 +214,10 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="media-eug-18" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding not null constraint to table: log_points</comment>
+        <addNotNullConstraint schemaName="apps" tableName="log_points" columnName="last_load_time" />
+    </changeSet>
+
 </databaseChangeLog>

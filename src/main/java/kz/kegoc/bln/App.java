@@ -4,7 +4,7 @@ import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
-import liquibase.resource.FileSystemResourceAccessor;
+import liquibase.resource.ClassLoaderResourceAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -42,7 +42,7 @@ public class App  {
 
             conn = DriverManager.getConnection(url);
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(conn));
-            Liquibase liquibase = new Liquibase("./src/main/resources/liquibase/changelog.xml", new FileSystemResourceAccessor(), database);
+            Liquibase liquibase = new Liquibase("liquibase/changelog.xml", new ClassLoaderResourceAccessor(), database);
             liquibase.update("");
         }
         catch (Exception e) {
