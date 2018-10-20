@@ -5,8 +5,7 @@
           http://dozer.sourceforge.net/schema/beanmapping.xsd">
 
   <mapping map-null="false" map-empty-string="false" trim-strings="true">
-    <class-a>kz.kegoc.bln.entity.LogPoint</class-a>
-    <class-b>kz.kegoc.bln.web.dto.LogPointDto</class-b>
-
+    <class-a>bln.entity.LogPoint</class-a>
+    <class-b>bln.web.dto.LogPointDto</class-b>
   </mapping> 
 </mappings> 
