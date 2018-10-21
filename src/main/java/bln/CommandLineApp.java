@@ -119,6 +119,7 @@ public class CommandLineApp implements CommandLineRunner {
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(conn));
             Liquibase liquibase = new Liquibase("liquibase/changelog.xml", new ClassLoaderResourceAccessor(), database);
             liquibase.update("");
+            logger.info("Schema updated successfully");
         }
         catch (Exception e) {
             e.printStackTrace();
