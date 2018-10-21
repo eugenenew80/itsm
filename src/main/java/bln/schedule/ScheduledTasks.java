@@ -88,6 +88,9 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
 
     private void readDataNew(ArcType arcType, LocalDateTime startTime) throws Exception {
         for (LogPoint point : logPointRepo.findAllByIsNewPoint(true)) {
+            if (!point.getIsActive())
+                continue;
+
             LocalDateTime curTime = Optional.ofNullable(point.getStartTime()).orElse(startTime);
             if (curTime.isBefore(startTime)) {
                 while (!curTime.isAfter(startTime)) {
@@ -105,6 +108,7 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
     private List<Long> buildPoints(Boolean isNewPoint) {
         return logPointRepo.findAllByIsNewPoint(isNewPoint)
             .stream()
+            .filter(t -> t.getIsActive())
             .map(t -> t.getId())
             .collect(Collectors.toList());
     }

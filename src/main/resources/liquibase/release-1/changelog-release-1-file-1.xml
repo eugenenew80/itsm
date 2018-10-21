@@ -214,4 +214,14 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="media-eug-18" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding column is_active into table: log_points</comment>
+        <addColumn schemaName="apps" tableName="log_points">
+            <column name="is_active" type="number" remarks="Точка учёта аактивна" defaultValue="0">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

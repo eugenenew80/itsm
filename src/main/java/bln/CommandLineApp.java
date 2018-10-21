@@ -49,6 +49,9 @@ public class CommandLineApp implements CommandLineRunner {
 
         if (arguments.containsOption("add-point"))
             addPoint();
+
+        if (arguments.containsOption("remove-point"))
+            removePoint();
     }
 
     private boolean addArc() {
@@ -111,6 +114,28 @@ public class CommandLineApp implements CommandLineRunner {
         point.setStartTime(Optional.ofNullable(startTime).orElse(point.getStartTime()));
         logPointRepo.save(point);
         logger.info("Point added successfully");
+    }
+
+    private void removePoint() {
+        List<String> values = arguments.getOptionValues("point.ti");
+        String tiNum = values!=null && values.size() > 0 ? values.get(0) : null;
+
+        Long id = Optional.ofNullable(Long.parseLong(tiNum)).orElse(null);
+        if (id == null) {
+            logger.error("Parameter point.ti required");
+            return;
+        }
+
+        LogPoint point = logPointRepo.findOne(id);
+        if (point == null) {
+            logger.info("Point not found");
+            return;
+        }
+
+        point.setId(id);
+        point.setIsActive(false);
+        logPointRepo.save(point);
+        logger.info("Point removed successfully");
     }
 
     private void updateDb() {

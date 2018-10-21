@@ -28,4 +28,8 @@ public class LogPoint {
     @Column(name = "is_new_point")
     @Convert(converter = BooleanToIntConverter.class)
     private Boolean isNewPoint;
+
+    @Column(name = "is_active")
+    @Convert(converter = BooleanToIntConverter.class)
+    private Boolean isActive;
 }
