@@ -17,7 +17,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.stereotype.Component;
-
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -45,64 +44,73 @@ public class CommandLineApp implements CommandLineRunner {
         if (arguments.containsOption("update-db"))
             updateDb();
 
-        if (arguments.containsOption("add-arc")) {
-            List<String> values = arguments.getOptionValues("arc.id");
-            String arcId = values!=null && values.size() > 0 ? values.get(0) : null;
+        if (arguments.containsOption("add-arc"))
+            if (addArc()) return;
 
-            values = arguments.getOptionValues("arc.start-date");
-            String arcStartTime = values!=null && values.size() > 0 ? values.get(0) : null;
+        if (arguments.containsOption("add-point"))
+            addPoint();
+    }
 
-            Long oicArcId = Optional.ofNullable(Long.parseLong(arcId)).orElse(null);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDateTime startTime = arcStartTime != null ? LocalDate.parse(arcStartTime, formatter).atStartOfDay().minusMinutes(60) : null;
+    private boolean addArc() {
+        List<String> values = arguments.getOptionValues("arc.id");
+        String arcId = values!=null && values.size() > 0 ? values.get(0) : null;
 
-            if (oicArcId == null) {
-                logger.error("Parameter arc.oicArcId required");
-                return;
-            }
+        values = arguments.getOptionValues("arc.start-date");
+        String arcStartTime = values!=null && values.size() > 0 ? values.get(0) : null;
 
-            ArcType arcType = arcTypeRepo.findOne("MIN-60");
-            if (arcType == null) {
-                arcType = new ArcType();
-                arcType.setCode("MIN-60");
-                arcType.setStep(60l);
-                arcType.setName("Часовый архив телеизмерений");
-            }
-            arcType.setIsActive(true);
-            arcType.setOicArcId(oicArcId);
-            arcType.setLastLoadTime(Optional.ofNullable(startTime).orElse(arcType.getLastLoadTime()));
-            arcTypeRepo.save(arcType);
+        Long oicArcId = Optional.ofNullable(Long.parseLong(arcId)).orElse(null);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startTime = arcStartTime != null ? LocalDate.parse(arcStartTime, formatter).atStartOfDay().minusMinutes(60) : null;
+
+        if (oicArcId == null) {
+            logger.error("Parameter arc.oicArcId required");
+            return true;
         }
 
-        if (arguments.containsOption("add-point")) {
-            List<String> values = arguments.getOptionValues("point.ti");
-            String tiNum = values!=null && values.size() > 0 ? values.get(0) : null;
-
-            values = arguments.getOptionValues("point.name");
-            String tiName = values!=null && values.size() > 0 ? values.get(0) : null;
-
-            values = arguments.getOptionValues("point.start-date");
-            String tiStartTime = values!=null && values.size() > 0 ? values.get(0) : null;
-
-            Long id = Optional.ofNullable(Long.parseLong(tiNum)).orElse(null);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDateTime startTime = tiStartTime != null ? LocalDate.parse(tiStartTime, formatter).atStartOfDay() : null;
-
-            if (id == null) {
-                logger.error("Parameter point.ti required");
-                return;
-            }
-
-            LogPoint point = logPointRepo.findOne(id);
-            if (point == null) {
-                point = new LogPoint();
-                point.setId(id);
-                point.setIsNewPoint(true);
-            }
-            point.setName(Optional.ofNullable(tiName).orElse(point.getName()) );
-            point.setStartTime(Optional.ofNullable(startTime).orElse(point.getStartTime()));
-            logPointRepo.save(point);
+        ArcType arcType = arcTypeRepo.findOne("MIN-60");
+        if (arcType == null) {
+            arcType = new ArcType();
+            arcType.setCode("MIN-60");
+            arcType.setStep(60l);
+            arcType.setName("Часовый архив телеизмерений");
         }
+        arcType.setIsActive(true);
+        arcType.setOicArcId(oicArcId);
+        arcType.setLastLoadTime(Optional.ofNullable(startTime).orElse(arcType.getLastLoadTime()));
+        arcTypeRepo.save(arcType);
+        logger.info("Arc changed successfully");
+        return false;
+    }
+
+    private void addPoint() {
+        List<String> values = arguments.getOptionValues("point.ti");
+        String tiNum = values!=null && values.size() > 0 ? values.get(0) : null;
+
+        values = arguments.getOptionValues("point.name");
+        String tiName = values!=null && values.size() > 0 ? values.get(0) : null;
+
+        values = arguments.getOptionValues("point.start-date");
+        String tiStartTime = values!=null && values.size() > 0 ? values.get(0) : null;
+
+        Long id = Optional.ofNullable(Long.parseLong(tiNum)).orElse(null);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startTime = tiStartTime != null ? LocalDate.parse(tiStartTime, formatter).atStartOfDay() : null;
+
+        if (id == null) {
+            logger.error("Parameter point.ti required");
+            return;
+        }
+
+        LogPoint point = logPointRepo.findOne(id);
+        if (point == null) {
+            point = new LogPoint();
+            point.setId(id);
+            point.setIsNewPoint(true);
+        }
+        point.setName(Optional.ofNullable(tiName).orElse(point.getName()) );
+        point.setStartTime(Optional.ofNullable(startTime).orElse(point.getStartTime()));
+        logPointRepo.save(point);
+        logger.info("Point added successfully");
     }
 
     private void updateDb() {
