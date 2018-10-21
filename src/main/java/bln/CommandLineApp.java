@@ -127,7 +127,7 @@ public class CommandLineApp implements CommandLineRunner {
         }
 
         LogPoint point = logPointRepo.findOne(id);
-        if (point == null) {
+        if (point == null || !point.getIsActive()) {
             logger.info("Point not found");
             return;
         }
