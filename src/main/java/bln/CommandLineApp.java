@@ -108,9 +108,9 @@ public class CommandLineApp implements CommandLineRunner {
         if (point == null) {
             point = new LogPoint();
             point.setId(id);
-            point.setIsNewPoint(true);
-            point.setIsActive(true);
         }
+        point.setIsNewPoint(true);
+        point.setIsActive(true);
         point.setName(Optional.ofNullable(tiName).orElse(point.getName()) );
         point.setStartTime(Optional.ofNullable(startTime).orElse(point.getStartTime()));
         logPointRepo.save(point);
