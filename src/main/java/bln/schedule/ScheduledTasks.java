@@ -54,14 +54,10 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
         LocalDateTime startTime = arcType.getLastLoadTime();
 
         if (startTime == null && arcType.getCode().equals("MIN-60")) {
-            startTime = LocalDateTime.now()
-                .truncatedTo(ChronoUnit.HOURS)
-                .minusDays(7);
+            startTime = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS).minusDays(7);
             arcType.setLastLoadTime(startTime);
         }
-
-        LocalDateTime endTime = LocalDateTime.now()
-            .truncatedTo(ChronoUnit.MINUTES);
+        LocalDateTime endTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 
         long sec = startTime.getMinute()*60 - Math.round(startTime.getMinute()*60 / arcType.getStep()) * arcType.getStep();
         startTime = startTime.minusSeconds(sec).plusSeconds(arcType.getStep());
