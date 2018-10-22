@@ -53,7 +53,7 @@ public class CommandLineApp implements CommandLineRunner {
         if (arguments.containsOption("remove-point"))
             removePoint();
 
-        if (arguments.containsOption("list-point"))
+        if (arguments.containsOption("list-points"))
             listPoints();
     }
 
