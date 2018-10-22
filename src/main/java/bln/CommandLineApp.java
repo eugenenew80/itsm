@@ -52,6 +52,9 @@ public class CommandLineApp implements CommandLineRunner {
 
         if (arguments.containsOption("remove-point"))
             removePoint();
+
+        if (arguments.containsOption("list-point"))
+            listPoints();
     }
 
     private boolean addArc() {
@@ -83,6 +86,16 @@ public class CommandLineApp implements CommandLineRunner {
         arcTypeRepo.save(arcType);
         logger.info("Arc changed successfully");
         return false;
+    }
+
+    private void listPoints() {
+        List<LogPoint> points = logPointRepo.findAll();
+        for (LogPoint point : points) {
+            if (!point.getIsActive())
+                continue;
+
+            logger.info(point.getId() + ", " + point.getName());
+        }
     }
 
     private void addPoint() {
