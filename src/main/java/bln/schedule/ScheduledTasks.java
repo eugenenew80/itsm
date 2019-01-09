@@ -29,7 +29,7 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
     private final OicDataReader oicDataReader;
     private boolean isReady = false;
 
-    @Scheduled(cron = "30 */1 * * * *")
+    @Scheduled(cron = "30 */5 * * * *")
     public void startImport() {
         if (!isReady) return;
         logger.info("startImport started");
@@ -65,9 +65,10 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
         sec = endTime.getMinute()*60 - Math.round(endTime.getMinute()*60 / arcType.getStep()) * arcType.getStep();
         endTime = endTime.minusSeconds(sec);
 
-        logger.info("Period: " + startTime.toString() + " - " + endTime.toString());
         if (startTime.isAfter(endTime))
             return;
+
+        logger.info("Period: " + startTime.toString() + " - " + endTime.toString());
 
         readDataNew(arcType, startTime);
         readData(arcType, startTime, endTime);
@@ -77,10 +78,12 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
         LocalDateTime curTime = startTime;
         while (!curTime.isAfter(endTime)) {
             List<TelemetryRaw> telemetries = oicDataReader.read(arcType, buildPoints(false), curTime);
-            save(arcType, curTime, telemetries);
 
-            arcType.setLastLoadTime(curTime);
-            arcTypeRepo.save(arcType);
+            if (!telemetries.isEmpty()) {
+                save(arcType, curTime, telemetries);
+                arcType.setLastLoadTime(curTime);
+                arcTypeRepo.save(arcType);
+            }
 
             curTime = curTime.plusSeconds(arcType.getStep());
         }
