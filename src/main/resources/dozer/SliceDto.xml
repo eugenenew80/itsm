@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+  <mapping map-null="false" map-empty-string="false" trim-strings="true">
+    <class-a>itdesign.entity.Slice</class-a>
+    <class-b>itdesign.web.dto.SliceDto</class-b>
+
+    <field>
+      <a>id</a>
+      <b>sliceNumber</b>
+    </field>
+
+    <field>
+      <a>created</a>
+      <b>formed</b>
+    </field>
+
+    <field>
+      <a>maxRecNum</a>
+      <b>dbNumber</b>
+    </field>
+
+    <field>
+      <a>group.name</a>
+      <b>groupName</b>
+    </field>
+
+    <field>
+      <a>fullStatus</a>
+      <b>subGroupName</b>
+    </field>
+
+    <field>
+      <a>period</a>
+      <b>period</b>
+    </field>
+
+    <field>
+      <a>region</a>
+      <b>sliceRegion</b>
+    </field>
+
+  </mapping>
+</mappings> 
