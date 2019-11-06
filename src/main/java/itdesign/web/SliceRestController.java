@@ -8,15 +8,11 @@ import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
-
 import static itdesign.util.Util.first;
 
 @RestController
@@ -32,8 +28,6 @@ public class SliceRestController {
         logger.debug(getClass() .getName()+ ".init()");
 
         findById = repo::findOne;
-        save = repo::save;
-        transformToEntity = t -> mapper.map(t, Slice.class);
         transformToDto = t -> mapper.map(t, SliceDto.class);
     }
 
@@ -57,35 +51,6 @@ public class SliceRestController {
             .apply(id);
     }
 
-    @PostMapping(value = "/api/v1/slices", produces = "application/json")
-    public SliceDto create(@RequestBody SliceDto sliceDto) {
-        logger.info(getClass().getName() + ".create()");
-
-        return first(transformToEntity)
-            .andThen(save)
-            .andThen(transformToDto)
-            .apply(sliceDto);
-    }
-
-    @PutMapping(value = "/api/v1/slices/{id}", produces = "application/json")
-    public SliceDto update(@PathVariable Long id, @RequestBody SliceDto sliceDto) {
-        logger.info(getClass().getName() + ".update()");
-
-        return first(transformToEntity)
-            .andThen(save)
-            .andThen(transformToDto)
-            .apply(sliceDto);
-    }
-
-    @DeleteMapping(value = "/api/v1/slices/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
-        logger.info(getClass().getName() + ".delete()");
-        repo.delete(id);
-    }
-
-    private UnaryOperator<Slice> save;
     private Function<Long, Slice> findById;
-    private Function<SliceDto, Slice> transformToEntity;
     private Function<Slice, SliceDto> transformToDto;
 }
