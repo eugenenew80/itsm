@@ -30,7 +30,7 @@
 
     <field>
       <a>fullStatus</a>
-      <b>subGroupName</b>
+      <b>statusName</b>
     </field>
 
     <field>
