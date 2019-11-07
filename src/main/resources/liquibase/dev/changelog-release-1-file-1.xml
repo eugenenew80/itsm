@@ -146,4 +146,43 @@
                 referencedColumnNames="id"
         />
     </changeSet>
+
+    <changeSet id="slice-eug-10" logicalFilePath="path-independent" author="eugene">
+        <comment>Load demo data to table: rep_groups</comment>
+        <loadData
+                relativeToChangelogFile="true"
+                file="data/rep_groups.csv"
+                quotchar="'"
+                schemaName="slice"
+                separator=";"
+                tableName="rep_groups" >
+
+            <column name="id" 	type="NUMERIC" />
+            <column name="name"	type="STRING"  />
+        </loadData>
+
+        <rollback>
+            <delete schemaName="slice" tableName="rep_groups" />
+        </rollback>
+    </changeSet>
+
+    <changeSet id="slice-eug-11" logicalFilePath="path-independent" author="eugene">
+        <comment>Load demo data to table: rep_statuses</comment>
+        <loadData
+                relativeToChangelogFile="true"
+                file="data/rep_statuses.csv"
+                quotchar="'"
+                schemaName="slice"
+                separator=";"
+                tableName="rep_statuses">
+
+            <column name="id" 				type="NUMERIC"/>
+            <column name="name"				type="STRING"/>
+        </loadData>
+
+        <rollback>
+            <delete schemaName="slice" tableName="rep_statuses" />
+        </rollback>
+    </changeSet>
+
 </databaseChangeLog>
