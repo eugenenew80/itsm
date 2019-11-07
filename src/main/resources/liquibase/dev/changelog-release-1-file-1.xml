@@ -149,40 +149,101 @@
 
     <changeSet id="slice-eug-10" logicalFilePath="path-independent" author="eugene">
         <comment>Load demo data to table: rep_groups</comment>
-        <loadData
-                relativeToChangelogFile="true"
-                file="data/rep_groups.csv"
-                quotchar="'"
-                schemaName="slice"
-                separator=";"
-                tableName="rep_groups" >
+        <insert tableName="rep_groups" schemaName="slice">
+            <column name="id" value="1"  />
+            <column name="name" value="Группа отчетов о преступности"  />
+        </insert>
 
-            <column name="id" 	type="NUMERIC" />
-            <column name="name"	type="STRING"  />
-        </loadData>
+        <insert tableName="rep_groups" schemaName="slice">
+            <column name="id" value="2"  />
+            <column name="name" value="Группа отчетов о работе органа угол.преследования"  />
+        </insert>
+
+        <insert tableName="rep_groups" schemaName="slice">
+            <column name="id" value="3"  />
+            <column name="name" value="Группа отчетов о работе прокурора"  />
+        </insert>
+
+        <insert tableName="rep_groups" schemaName="slice">
+            <column name="id" value="4"  />
+            <column name="name" value="Группа отчетов о работе суда"  />
+        </insert>
+
+        <insert tableName="rep_groups" schemaName="slice">
+            <column name="id" value="5"  />
+            <column name="name" value="Группа отчетов о рассмотрении заявлений"  />
+        </insert>
+
+        <insert tableName="rep_groups" schemaName="slice">
+            <column name="id" value="6"  />
+            <column name="name" value="Группа отчетов об административных правонарушениях"  />
+        </insert>
+
+        <insert tableName="rep_groups" schemaName="slice">
+            <column name="id" value="7"  />
+            <column name="name" value="Группа отчетов о дорожно транспортных происшествиях"  />
+        </insert>
+
+        <insert tableName="rep_groups" schemaName="slice">
+            <column name="id" value="8"  />
+            <column name="name" value="Группа отчетов по мерам обеспечения производства по делам об адм.правонарушениях"  />
+        </insert>
+
+        <insert tableName="rep_groups" schemaName="slice">
+            <column name="id" value="9"  />
+            <column name="name" value="Группа отчетов по сведениям &quot;Заңдылық&quot;"  />
+        </insert>
 
         <rollback>
-            <delete schemaName="slice" tableName="rep_groups" />
+            <delete schemaName="slice" tableName="rep_groups" >
+                <where>id between 1 and 9</where>
+            </delete>
         </rollback>
     </changeSet>
 
     <changeSet id="slice-eug-11" logicalFilePath="path-independent" author="eugene">
         <comment>Load demo data to table: rep_statuses</comment>
-        <loadData
-                relativeToChangelogFile="true"
-                file="data/rep_statuses.csv"
-                quotchar="'"
-                schemaName="slice"
-                separator=";"
-                tableName="rep_statuses">
+        <insert tableName="rep_statuses" schemaName="slice">
+            <column name="id" value="0"  />
+            <column name="name" value="В обработке"  />
+        </insert>
 
-            <column name="id" 				type="NUMERIC"/>
-            <column name="name"				type="STRING"/>
-        </loadData>
+        <insert tableName="rep_statuses" schemaName="slice">
+            <column name="id" value="1"  />
+            <column name="name" value="Окончательный"  />
+        </insert>
+
+        <insert tableName="rep_statuses" schemaName="slice">
+            <column name="id" value="2"  />
+            <column name="name" value="Предварительный"  />
+        </insert>
+
+        <insert tableName="rep_statuses" schemaName="slice">
+            <column name="id" value="3"  />
+            <column name="name" value="Удаленный"  />
+        </insert>
+
+        <insert tableName="rep_statuses" schemaName="slice">
+            <column name="id" value="4"  />
+            <column name="name" value="Отменен пользователем"  />
+        </insert>
+
+        <insert tableName="rep_statuses" schemaName="slice">
+            <column name="id" value="5"  />
+            <column name="name" value="Сформирован с ошибкой"  />
+        </insert>
+
+        <insert tableName="rep_statuses" schemaName="slice">
+            <column name="id" value="6"  />
+            <column name="name" value="Ожидание обработки"  />
+        </insert>
 
         <rollback>
-            <delete schemaName="slice" tableName="rep_statuses" />
+            <delete schemaName="slice" tableName="rep_statuses" >
+                <where>id between 0 and 6</where>
+            </delete>
         </rollback>
     </changeSet>
+
 
 </databaseChangeLog>
