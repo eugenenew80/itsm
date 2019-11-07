@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+
+    <changeSet id="slice-eug-1" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating schema for slice app</comment>
+        <sql dbms="postgresql" endDelimiter=";">
+            create schema slice
+        </sql>
+
+        <rollback>
+            <sql dbms="postgresql" endDelimiter=";">
+                drop schema slice
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="slice-eug-2" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: rep_groups</comment>
+        <createTable tableName="rep_groups" schemaName="slice" remarks="Группы отчётов">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(100)" remarks="Наименование">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="slice-eug-3" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating primary key for table rep_groups</comment>
+        <addPrimaryKey
+                columnNames="id"
+                constraintName="pk_rep_groups"
+                schemaName="slice"
+                tableName="rep_groups"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-4" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: rep_statuses</comment>
+        <createTable tableName="rep_statuses" schemaName="slice" remarks="Статусы отчётов">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(100)" remarks="Наименование">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="slice-eug-5" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating primary key for table rep_statuses</comment>
+        <addPrimaryKey
+                columnNames="id"
+                constraintName="pk_rep_statuses"
+                schemaName="slice"
+                tableName="rep_statuses"/>
+    </changeSet>
+
+
+    <changeSet id="slice-eug-6" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: slices</comment>
+        <createTable tableName="slices" schemaName="slice" remarks="Срезы для отчётов">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="group_id" type="number" remarks="Идентификатор группы">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status_id" type="number" remarks="Идентификатор статуса">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="region" type="varchar(2)" remarks="Код региона">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="start_date" type="date" remarks="Дата начала периода">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="end_date" type="date" remarks="Дата окончания периода">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_date" type="TIMESTAMP" remarks="Дата и время создания среза">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="completed_date" type="TIMESTAMP" remarks="Дата и время завершения формирования среза">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="max_rec_num" type="number" remarks="Максимальный номер записи в срезе">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="slice-eug-7" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating primary key for table slices</comment>
+        <addPrimaryKey
+                columnNames="id"
+                constraintName="pk_slices"
+                schemaName="slice"
+                tableName="slices"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-8" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating foreign constraint: slices to rep_statuses</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="slice"
+                baseTableName="slices"
+                baseColumnNames="status_id"
+                constraintName="fk_slices_1"
+                deferrable="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="slice"
+                referencedTableName="rep_statuses"
+                referencedColumnNames="id"
+        />
+    </changeSet>
+
+    <changeSet id="slice-eug-9" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating foreign constraint: slices to rep_groups</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="slice"
+                baseTableName="slices"
+                baseColumnNames="group_id"
+                constraintName="fk_slices_2"
+                deferrable="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="slice"
+                referencedTableName="rep_groups"
+                referencedColumnNames="id"
+        />
+    </changeSet>
+</databaseChangeLog>

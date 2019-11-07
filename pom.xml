@@ -22,6 +22,10 @@
 
             <properties>
                 <activatedProperties>dev</activatedProperties>
+                <driver>org.postgresql.Driver</driver>
+                <url>jdbc:postgresql://localhost:5432/postgres</url>
+                <username>postgres</username>
+                <password>password</password>
             </properties>
         </profile>
 
@@ -29,6 +33,10 @@
             <id>test</id>
             <properties>
                 <activatedProperties>test</activatedProperties>
+                <driver>org.postgresql.Driver</driver>
+                <url>jdbc:postgresql://localhost:5432/postgres</url>
+                <username>postgres</username>
+                <password>password</password>
             </properties>
         </profile>
 
@@ -36,6 +44,10 @@
             <id>prod</id>
             <properties>
                 <activatedProperties>prod</activatedProperties>
+                <driver>org.postgresql.Driver</driver>
+                <url>jdbc:postgresql://localhost:5432/postgres</url>
+                <username>postgres</username>
+                <password>password</password>
             </properties>
         </profile>
     </profiles>
@@ -125,6 +137,31 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>1.5.22.RELEASE</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>3.5.3</version>
+
+                <configuration>
+                    <changeLogFile>
+                        ${basedir}/src/main/resources/liquibase/${activatedProperties}/changelog.xml
+                    </changeLogFile>
+                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+                    <driver>${driver}</driver>
+                    <url>${url}</url>
+                    <username>${username}</username>
+                    <password>${password}</password>
+                </configuration>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.liquibase.ext</groupId>
+                        <artifactId>liquibase-oracle</artifactId>
+                        <version>3.2</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
 

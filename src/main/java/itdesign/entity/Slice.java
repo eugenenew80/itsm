@@ -40,8 +40,11 @@ public class Slice {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(name = "created")
-    private LocalDateTime created;
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
+
+    @Column(name = "completed_date")
+    private LocalDateTime completedDate;
 
     @Column(name = "max_rec_num")
     private  Long maxRecNum;
