@@ -25,7 +25,7 @@
                 <driver>org.postgresql.Driver</driver>
                 <url>jdbc:postgresql://localhost:5432/postgres</url>
                 <username>postgres</username>
-                <password>password</password>
+                <password>123456</password>
             </properties>
         </profile>
 
