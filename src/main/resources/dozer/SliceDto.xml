@@ -9,18 +9,18 @@
     <class-b>itdesign.web.dto.SliceDto</class-b>
 
     <field>
-      <a>id</a>
-      <b>sliceNumber</b>
+      <a>createdDate</a>
+      <b>created</b>
     </field>
 
     <field>
       <a>completedDate</a>
-      <b>formed</b>
+      <b>completed</b>
     </field>
 
     <field>
-      <a>maxRecNum</a>
-      <b>dbNumber</b>
+      <a>group.id</a>
+      <b>groupId</b>
     </field>
 
     <field>
@@ -29,18 +29,13 @@
     </field>
 
     <field>
+      <a>status.id</a>
+      <b>statusId</b>
+    </field>
+
+    <field>
       <a>fullStatus</a>
       <b>statusName</b>
-    </field>
-
-    <field>
-      <a>period</a>
-      <b>period</b>
-    </field>
-
-    <field>
-      <a>region</a>
-      <b>sliceRegion</b>
     </field>
 
   </mapping>

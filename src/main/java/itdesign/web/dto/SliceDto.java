@@ -10,15 +10,26 @@ import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(of= {"id"})
-@JsonPropertyOrder({ "groupName", "statusName", "sliceNumber", "period", "sliceRegion", "dbNumber", "formed" })
+@JsonPropertyOrder({ "id", "groupName", "statusName", "period", "region", "maxRecNum", "completed" })
 public class SliceDto {
-    private Long sliceNumber;
+    private Long id;
+    private Long groupId;
     private String groupName;
+    private Long statusId;
     private String statusName;
     private String period;
-    private Long dbNumber;
-    private String sliceRegion;
+    private Long maxRecNum;
+    private String region;
+
+    @JsonFormat(pattern="dd.MM.yyyy")
+    private LocalDate startDate;
+
+    @JsonFormat(pattern="dd.MM.yyyy")
+    private LocalDate endDate;
 
     @JsonFormat(pattern="dd.MM.yyyy HH:mm:ss")
-    private LocalDateTime formed;
+    private LocalDateTime created;
+
+    @JsonFormat(pattern="dd.MM.yyyy HH:mm:ss")
+    private LocalDateTime completed;
 }
