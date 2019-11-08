@@ -3,9 +3,9 @@ package itdesign.web;
 import itdesign.entity.Group;
 import itdesign.entity.Slice;
 import itdesign.entity.Status;
-import itdesign.repo.GroupRepo;
 import itdesign.repo.SliceRepo;
-import itdesign.repo.StatusRepo;
+import itdesign.service.CachedGroupService;
+import itdesign.service.CachedStatusService;
 import itdesign.web.dto.LongDto;
 import itdesign.web.dto.OrderSliceDto;
 import itdesign.web.dto.OrderSlicesDto;
@@ -29,10 +29,9 @@ import static java.util.stream.Collectors.*;
 public class SliceRestController {
     private static final Logger logger = LoggerFactory.getLogger(SliceRestController.class);
     private final SliceRepo repo;
-    private final StatusRepo statusRepo;
-    private final GroupRepo groupRepo;
+    private final CachedStatusService statusService;
+    private final CachedGroupService groupService;
     private final DozerBeanMapper mapper;
-
 
     @PostConstruct
     private void init() {
@@ -49,7 +48,7 @@ public class SliceRestController {
         logger.debug("deleted: " + deleted);
 
         Sort sort = new Sort(Sort.Direction.ASC, "id");
-        Status status = statusRepo.findOne(3l);
+        Status status = statusService.getStatus(3l);
 
         return repo.findAll(sort)
             .stream()
@@ -82,9 +81,9 @@ public class SliceRestController {
             .map(transformToEntity::apply)
             .collect(toList());
 
-        Status status = statusRepo.findOne(0l);
+        Status status = statusService.getStatus(0l);
         for (Slice slice : slices) {
-            Group group = groupRepo.findOne(slice.getGroup().getId());
+            Group group = groupService.getGroup(slice.getGroup().getId());
             slice.setStatus(status);
             slice.setGroup(group);
         }
@@ -101,7 +100,7 @@ public class SliceRestController {
         logger.debug(getClass().getName() + ".delete()");
 
         Slice slice = repo.findOne(id);
-        Status status = statusRepo.findOne(3l);
+        Status status = statusService.getStatus(3l);
         slice.setStatus(status);
         repo.save(slice);
     }

@@ -6,9 +6,9 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import itdesign.entity.Group;
+import itdesign.entity.Status;
 import org.dozer.DozerBeanMapper;
 import org.ehcache.CacheManager;
-import org.ehcache.Status;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -52,10 +52,10 @@ public class AppConfig {
     public CacheManager ehcacheManager() {
         return CacheManagerBuilder.newCacheManagerBuilder()
             .withCache("statusCache",
-                newCacheConfigurationBuilder(String.class, Status.class, heap(20))
+                newCacheConfigurationBuilder(Long.class, Status.class, heap(20))
                         .withExpiry(timeToLiveExpiration(ofMinutes(60))).build())
             .withCache("groupCache",
-                newCacheConfigurationBuilder(String.class, Group.class, heap(300))
+                newCacheConfigurationBuilder(Long.class, Group.class, heap(300))
                     .withExpiry(timeToLiveExpiration(ofMinutes(10))).build())
             .build(true);
     }

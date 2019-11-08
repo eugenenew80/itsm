@@ -26,7 +26,6 @@ public class StatusRestController {
     private final StatusRepo repo;
     private final DozerBeanMapper mapper;
 
-
     @PostConstruct
     private void init() {
         logger.debug(getClass() .getName()+ ".init()");
