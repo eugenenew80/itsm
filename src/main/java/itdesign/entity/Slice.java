@@ -21,6 +21,8 @@ import static java.util.Optional.ofNullable;
 public class Slice {
 
     @Id
+    @SequenceGenerator(name="slices_s", sequenceName = "slices_s", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "slices_s")
     private Long id;
 
     @ManyToOne

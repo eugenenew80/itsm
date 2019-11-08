@@ -245,5 +245,12 @@
         </rollback>
     </changeSet>
 
-
+    <changeSet id="slice-eug-12" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating sequence for table slices</comment>
+        <createSequence
+                incrementBy="1"
+                schemaName="slice"
+                sequenceName="slices_s"
+                startValue="1"/>
+    </changeSet>
 </databaseChangeLog>
