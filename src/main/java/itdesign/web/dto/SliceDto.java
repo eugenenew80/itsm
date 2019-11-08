@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(of= {"id"})
-@JsonPropertyOrder({ "id", "groupName", "statusName", "period", "region", "maxRecNum", "completed" })
+@JsonPropertyOrder({ "id", "groupName", "statusName", "period", "region", "groupId", "statusId", "startDate", "endDate", "maxRecNum", "created", "completed" })
 public class SliceDto {
     private Long id;
     private Long groupId;
