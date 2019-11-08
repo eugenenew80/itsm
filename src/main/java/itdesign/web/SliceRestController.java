@@ -7,22 +7,22 @@ import itdesign.repo.GroupRepo;
 import itdesign.repo.SliceRepo;
 import itdesign.repo.StatusRepo;
 import itdesign.web.dto.LongDto;
-import itdesign.web.dto.NewSliceDto;
+import itdesign.web.dto.OrderSliceDto;
+import itdesign.web.dto.OrderSlicesDto;
 import itdesign.web.dto.SliceDto;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import static itdesign.util.Util.first;
+import static java.util.stream.Collectors.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,28 +40,34 @@ public class SliceRestController {
 
         findById = repo::findOne;
         transformToDto = t -> mapper.map(t, SliceDto.class);
+        transformToEntity = t -> mapper.map(t, Slice.class);
     }
 
     @GetMapping(value = "/api/v1/slices", produces = "application/json")
-    public List<SliceDto> getAll() {
-        logger.info(getClass().getName() + ".getAll()");
+    public List<SliceDto> getAll(@RequestParam(value = "deleted", defaultValue = "false") boolean deleted) {
+        logger.debug(getClass().getName() + ".getAll()");
+        logger.debug("deleted: " + deleted);
 
         Sort sort = new Sort(Sort.Direction.ASC, "id");
+        Status status = statusRepo.findOne(3l);
+
         return repo.findAll(sort)
             .stream()
+            .filter(t -> deleted  || t.getStatus() == null || !t.getStatus().equals(status))
             .map(transformToDto::apply)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
+
     @GetMapping(value = "/api/v1/slices/max", produces = MediaType.APPLICATION_JSON_VALUE)
     public LongDto getMax() {
-        logger.info(getClass().getName() + ".getMax()");
+        logger.debug(getClass().getName() + ".getMax()");
 
         return new LongDto(9999l);
     }
 
     @GetMapping(value = "/api/v1/slices/{id}", produces = "application/json")
     public SliceDto getById(@PathVariable Long id) {
-        logger.info(getClass().getName() + ".getById()");
+        logger.debug(getClass().getName() + ".getById()");
 
         return first(findById)
             .andThen(transformToDto)
@@ -69,39 +75,38 @@ public class SliceRestController {
     }
 
     @PostMapping(value = "/api/v1/slices", produces = "application/json")
-    public List<SliceDto> create(@RequestBody NewSliceDto newSliceDto) {
-        logger.info(getClass().getName() + ".create()");
+    public List<SliceDto> create(@RequestBody OrderSlicesDto orderSlicesDto) {
+        logger.debug(getClass().getName() + ".create()");
 
-        if (newSliceDto == null)
-            return null;
-
-        if (newSliceDto.getGroups() == null || newSliceDto.getGroups().size()== 0)
-            return null;
+        List<Slice> slices = orderSlicesDto.list().stream()
+            .map(transformToEntity::apply)
+            .collect(toList());
 
         Status status = statusRepo.findOne(0l);
-
-        List<Slice> slices = newSliceDto.getGroups().stream()
-            .map(t -> {
-                Slice slice = new Slice();
-                slice.setStartDate(newSliceDto.getStartDate());
-                slice.setEndDate(newSliceDto.getEndDate());
-                slice.setCreatedDate(LocalDateTime.now());
-                slice.setMaxRecNum(newSliceDto.getMaxRecNum());
-                slice.setRegion(newSliceDto.getRegion());
-                slice.setStatus(status);
-                Group group = groupRepo.findOne(t);
-                slice.setGroup(group);
-                return slice;
-            })
-            .collect(Collectors.toList());
-
+        for (Slice slice : slices) {
+            Group group = groupRepo.findOne(slice.getGroup().getId());
+            slice.setStatus(status);
+            slice.setGroup(group);
+        }
         repo.save(slices);
 
         return slices.stream()
             .map(transformToDto::apply)
-            .collect(Collectors.toList());
+            .collect(toList());
+    }
+
+    @DeleteMapping(value = "/api/v1/slices/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        logger.debug(getClass().getName() + ".delete()");
+
+        Slice slice = repo.findOne(id);
+        Status status = statusRepo.findOne(3l);
+        slice.setStatus(status);
+        repo.save(slice);
     }
 
     private Function<Long, Slice> findById;
     private Function<Slice, SliceDto> transformToDto;
+    private Function<OrderSliceDto, Slice> transformToEntity;
 }

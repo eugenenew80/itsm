@@ -22,7 +22,8 @@ public class AppConfig {
             "dozer/MappingConfig.xml",
             "dozer/StatusDto.xml",
             "dozer/GroupDto.xml",
-            "dozer/SliceDto.xml"
+            "dozer/SliceDto.xml",
+            "dozer/OrderSliceDto.xml"
         ));
 
         return mapper;
