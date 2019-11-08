@@ -24,7 +24,6 @@ public class GroupRestController {
     private final GroupRepo repo;
     private final DozerBeanMapper mapper;
 
-
     @PostConstruct
     private void init() {
         logger.debug(getClass() .getName()+ ".init()");
@@ -37,7 +36,7 @@ public class GroupRestController {
 
     @GetMapping(value = "/api/v1/slices/groups", produces = "application/json")
     public List<GroupDto> getAll() {
-        logger.info(getClass().getName() + ".getAll()");
+        logger.debug(getClass().getName() + ".getAll()");
 
         Sort sort = new Sort(Sort.Direction.ASC, "id");
         return repo.findAll(sort)
@@ -48,7 +47,7 @@ public class GroupRestController {
 
     @GetMapping(value = "/api/v1/slices/groups/{id}", produces = "application/json")
     public GroupDto getById(@PathVariable Long id) {
-        logger.info(getClass().getName() + ".getById()");
+        logger.debug(getClass().getName() + ".getById()");
 
         return first(findById)
             .andThen(transformToDto)
@@ -57,7 +56,7 @@ public class GroupRestController {
 
     @PostMapping(value = "/api/v1/slices/groups", produces = "application/json")
     public GroupDto create(@RequestBody GroupDto groupDto) {
-        logger.info(getClass().getName() + ".create()");
+        logger.debug(getClass().getName() + ".create()");
 
         return first(transformToEntity)
             .andThen(save)
@@ -67,7 +66,7 @@ public class GroupRestController {
 
     @PutMapping(value = "/api/v1/slices/groups/{id}", produces = "application/json")
     public GroupDto update(@PathVariable Long id, @RequestBody GroupDto groupDto) {
-        logger.info(getClass().getName() + ".update()");
+        logger.debug(getClass().getName() + ".update()");
 
         return first(transformToEntity)
             .andThen(save)
@@ -78,7 +77,7 @@ public class GroupRestController {
     @DeleteMapping(value = "/api/v1/slices/groups/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
-        logger.info(getClass().getName() + ".delete()");
+        logger.debug(getClass().getName() + ".delete()");
         repo.delete(id);
     }
 
