@@ -3,21 +3,21 @@ package itdesign.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Immutable;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import static java.util.Optional.ofNullable;
 
 @Data
 @EqualsAndHashCode(of= {"id"})
 @NoArgsConstructor
 @Entity
 @Table(name = "slices")
-@Immutable
+
+@NamedEntityGraph(name="Slice.allJoins", attributeNodes = {
+    @NamedAttributeNode("group"),
+    @NamedAttributeNode("status")
+})
 public class Slice {
 
     @Id

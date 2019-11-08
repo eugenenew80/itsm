@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -47,10 +46,9 @@ public class SliceRestController {
         logger.debug(getClass().getName() + ".getAll()");
         logger.debug("deleted: " + deleted);
 
-        Sort sort = new Sort(Sort.Direction.ASC, "id");
         Status status = statusService.getStatus(3l);
 
-        return repo.findAll(sort)
+        return repo.findAll()
             .stream()
             .filter(t -> deleted  || t.getStatus() == null || !t.getStatus().equals(status))
             .map(transformToDto::apply)
