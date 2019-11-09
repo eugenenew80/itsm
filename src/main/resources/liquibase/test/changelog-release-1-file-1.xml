@@ -251,6 +251,6 @@
                 incrementBy="1"
                 schemaName="slice"
                 sequenceName="slices_s"
-                startValue="1"/>
+                startValue="4"/>
     </changeSet>
 </databaseChangeLog>
