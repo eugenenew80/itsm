@@ -25,6 +25,7 @@ public final class EntitiesHelper {
 	public static Status newStatus() {
 		Status status = new Status();
 		status.setId(1l);
+		status.setName(STATUS_NAME);
 		return status;
 	}
 	
@@ -44,11 +45,12 @@ public final class EntitiesHelper {
 	public static Group newGroup() {
 		Group newGroup = new Group();
 		newGroup.setId(1l);
+		newGroup.setName(GROUP_NAME);
 		return newGroup;
 	}
 
 	public static Group newGroup(Long id) {
-		Group group = new Group();
+		Group group = newGroup();
 		group.setId(id);
 		return group;
 	}

@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import javax.annotation.PostConstruct;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,13 +20,10 @@ public class CashedStatusServiceImpl implements CachedStatusService {
     private final CacheManager ehcacheManager;
     private Cache<Long, Status> cache = null;
 
-    @PostConstruct
-    public void init() {
-        cache = ehcacheManager.getCache("statusCache", Long.class, Status.class);
-    }
-
     @Override
     public Status getStatus(Long statusId) {
+        cache = (cache == null) ? ehcacheManager.getCache("statusCache", Long.class, Status.class) : cache;
+
         Status status = cache.get(statusId);
         if (status != null) {
             logger.debug("status from cache, statusId: " + statusId);

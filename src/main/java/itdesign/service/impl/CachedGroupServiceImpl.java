@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import javax.annotation.PostConstruct;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,13 +20,10 @@ public class CachedGroupServiceImpl implements CachedGroupService {
     private final CacheManager ehcacheManager;
     private Cache<Long, Group> cache = null;
 
-    @PostConstruct
-    public void init() {
-        cache = ehcacheManager.getCache("groupCache", Long.class, Group.class);
-    }
-
     @Override
     public Group getGroup(Long groupId) {
+        cache = (cache == null) ? ehcacheManager.getCache("groupCache", Long.class, Group.class) : cache;
+
         Group group = cache.get(groupId);
         if (group != null) {
             logger.debug("group from cache, groupId: " + groupId);
