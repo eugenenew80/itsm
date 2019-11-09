@@ -1,21 +1,14 @@
 package itdesign.web;
 
-import itdesign.entity.Group;
-import itdesign.entity.Slice;
-import itdesign.entity.Status;
+import itdesign.entity.*;
 import itdesign.repo.SliceRepo;
-import itdesign.service.CachedGroupService;
-import itdesign.service.CachedStatusService;
-import itdesign.web.dto.LongDto;
-import itdesign.web.dto.OrderSliceDto;
-import itdesign.web.dto.OrderSlicesDto;
-import itdesign.web.dto.SliceDto;
+import itdesign.service.*;
+import itdesign.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -101,6 +94,14 @@ public class SliceRestController {
         Status status = statusService.getStatus(3l);
         slice.setStatus(status);
         repo.save(slice);
+    }
+
+    @ExceptionHandler( { Throwable.class } )
+    public ResponseEntity<ErrorDto> handleException(Throwable exc) {
+        ErrorDto errorDto = new ErrorDto(exc);
+        logger.error( errorDto.getErrType() + ": " + errorDto.getErrDetails());
+        logger.trace("view stack trace for details:", exc);
+        return new ResponseEntity<>(errorDto,  errorDto.getErrStatus());
     }
 
     private Function<Long, Slice> findById;

@@ -2,6 +2,7 @@ package itdesign.web;
 
 import itdesign.entity.Group;
 import itdesign.repo.GroupRepo;
+import itdesign.web.dto.ErrorDto;
 import itdesign.web.dto.GroupDto;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -79,6 +81,14 @@ public class GroupRestController {
     public void delete(@PathVariable Long id) {
         logger.debug(getClass().getName() + ".delete()");
         repo.delete(id);
+    }
+
+    @ExceptionHandler( { Throwable.class } )
+    public ResponseEntity<ErrorDto> handleException(Throwable exc) {
+        ErrorDto errorDto = new ErrorDto(exc);
+        logger.error( errorDto.getErrType() + ": " + errorDto.getErrDetails());
+        logger.trace("view stack trace for details:", exc);
+        return new ResponseEntity<>(errorDto,  errorDto.getErrStatus());
     }
 
     private UnaryOperator<Group> save;
