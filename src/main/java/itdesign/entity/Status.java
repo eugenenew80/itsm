@@ -16,7 +16,6 @@ import javax.persistence.*;
 @Immutable
 @EntityListeners(PreventAnyUpdate.class)
 public class Status {
-    public Status(Long id) { this.id = id; }
 
     @Id
     private Long id;
