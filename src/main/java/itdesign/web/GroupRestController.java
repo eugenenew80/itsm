@@ -6,12 +6,10 @@ import itdesign.web.dto.GroupDto;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import static itdesign.util.Util.first;
 
@@ -26,8 +24,6 @@ public class GroupRestController extends BaseController {
         logger.debug(getClass() .getName()+ ".init()");
 
         findById = repo::findOne;
-        save = repo::save;
-        transformToEntity = t -> mapper.map(t, Group.class);
         transformToDto = t -> mapper.map(t, GroupDto.class);
     }
 
@@ -51,35 +47,6 @@ public class GroupRestController extends BaseController {
             .apply(id);
     }
 
-    @PostMapping(value = "/api/v1/slices/groups", produces = "application/json")
-    public GroupDto create(@RequestBody GroupDto groupDto) {
-        logger.debug(getClass().getName() + ".create()");
-
-        return first(transformToEntity)
-            .andThen(save)
-            .andThen(transformToDto)
-            .apply(groupDto);
-    }
-
-    @PutMapping(value = "/api/v1/slices/groups/{id}", produces = "application/json")
-    public GroupDto update(@PathVariable Long id, @RequestBody GroupDto groupDto) {
-        logger.debug(getClass().getName() + ".update()");
-
-        return first(transformToEntity)
-            .andThen(save)
-            .andThen(transformToDto)
-            .apply(groupDto);
-    }
-
-    @DeleteMapping(value = "/api/v1/slices/groups/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
-        logger.debug(getClass().getName() + ".delete()");
-        repo.delete(id);
-    }
-
-    private UnaryOperator<Group> save;
     private Function<Long, Group> findById;
-    private Function<GroupDto, Group> transformToEntity;
     private Function<Group, GroupDto> transformToDto;
 }

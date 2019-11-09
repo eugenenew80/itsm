@@ -34,9 +34,9 @@
             <properties>
                 <activatedProperties>test</activatedProperties>
                 <driver>org.postgresql.Driver</driver>
-                <url>jdbc:postgresql://localhost:5432/postgres</url>
+                <url>jdbc:postgresql://localhost:5432/test</url>
                 <username>postgres</username>
-                <password>password</password>
+                <password>123456</password>
             </properties>
         </profile>
 
@@ -45,9 +45,9 @@
             <properties>
                 <activatedProperties>prod</activatedProperties>
                 <driver>org.postgresql.Driver</driver>
-                <url>jdbc:postgresql://localhost:5432/postgres</url>
+                <url>jdbc:postgresql://localhost:5432/prod</url>
                 <username>postgres</username>
-                <password>password</password>
+                <password>123456</password>
             </properties>
         </profile>
     </profiles>
@@ -134,6 +134,29 @@
             <version>1.5.22.RELEASE</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <version>2.5.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
+
     </dependencies>
 
     <build>
