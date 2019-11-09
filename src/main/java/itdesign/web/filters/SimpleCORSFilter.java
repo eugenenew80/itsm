@@ -1,7 +1,6 @@
 package itdesign.web.filters;
 
 import org.springframework.stereotype.Component;
-
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -21,5 +20,4 @@ public class SimpleCORSFilter implements Filter {
     public void init(FilterConfig filterConfig) {}
 
     public void destroy() {}
-
 }
