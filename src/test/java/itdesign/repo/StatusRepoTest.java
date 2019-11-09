@@ -30,10 +30,17 @@ public class StatusRepoTest {
 
     @Before
     public void setUp() throws Exception {
-        List<DataSetLoader> loaders = Arrays.asList(new DataSetLoader("slice", "rep_statuses.xml"));
+        List<DataSetLoader> loaders = Arrays.asList(
+            new DataSetLoader("slice", "slices.xml"),
+            new DataSetLoader("slice", "rep_statuses.xml")
+        );
 
         for (DataSetLoader loader : loaders)
             loader.deleteAll(dataSource.getConnection());
+
+        loaders = Arrays.asList(
+            new DataSetLoader("slice", "rep_statuses.xml")
+        );
 
         for (DataSetLoader loader : loaders)
             loader.cleanAndInsert(dataSource.getConnection());
