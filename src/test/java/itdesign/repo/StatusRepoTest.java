@@ -1,6 +1,7 @@
 package itdesign.repo;
 
 import itdesign.App;
+import itdesign.entity.Group;
 import itdesign.entity.Status;
 import itdesign.helper.DataSetLoader;
 import org.junit.Before;
@@ -12,9 +13,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
-import static itdesign.helper.EntitiesHelper.assertStatus;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+
+import static itdesign.helper.EntitiesHelper.*;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertThat;
 
@@ -47,14 +48,40 @@ public class StatusRepoTest {
     }
 
     @Test
-    public void listStatusesMayBeFind()  {
+    public void listStatusesMayBeFound()  {
         List<Status> list = repo.findAll();
         assertThat(list, is(not(empty())));
     }
 
     @Test
-    public void existingStatusMayBeFindById()  {
-        Status entity = repo.findOne(1l);
+    public void existingStatusMayBeFoundById()  {
+        long testedStatusId = 1l;
+        Status entity = repo.findOne(testedStatusId);
         assertStatus(entity);
+    }
+
+
+    @Test
+    public void statusShouldBeImmutable() {
+        long testedStatusId = 1l;
+        Status status = repo.findOne(testedStatusId);
+        String statusName = status.getName();
+
+        status.setName("New status 1");
+        repo.save(status);
+
+        Status savedStatus = repo.findOne(testedStatusId);
+        assertThat(savedStatus.getName(), equalTo(statusName));
+    }
+
+    @Test(expected=UnsupportedOperationException.class)
+    public void shouldFailWhenTryCreateStatus() {
+        repo.save(newStatus(null));
+    }
+
+    @Test(expected=UnsupportedOperationException.class)
+    public void shouldFailWhenTryRemoveStatus() {
+        long testedStatusId = 1l;
+        repo.delete(testedStatusId);
     }
 }

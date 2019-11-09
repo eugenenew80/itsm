@@ -2,4 +2,5 @@
 <dataset>
 	<rep_statuses id="1" name="Статус 1" />
 	<rep_statuses id="2" name="Статус 2" />
+	<rep_statuses id="3" name="Статус 3" />
 </dataset>

@@ -1,5 +1,6 @@
 package itdesign.entity;
 
+import itdesign.entity.util.PreventRemove;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor
 @Entity
 @Table(name = "slices")
+@EntityListeners(PreventRemove.class)
 
 @NamedEntityGraph(name="Slice.allJoins", attributeNodes = {
     @NamedAttributeNode("group"),

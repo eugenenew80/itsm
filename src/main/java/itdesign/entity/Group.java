@@ -1,14 +1,12 @@
 package itdesign.entity;
 
+import itdesign.entity.util.PreventAnyUpdate;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Immutable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @EqualsAndHashCode(of= {"id"})
@@ -16,6 +14,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "rep_groups")
 @Immutable
+@EntityListeners(PreventAnyUpdate.class)
 public class Group {
     public Group(Long id) { this.id = id; }
 

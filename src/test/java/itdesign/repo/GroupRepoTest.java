@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static itdesign.helper.EntitiesHelper.assertGroup;
+import static itdesign.helper.EntitiesHelper.newGroup;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.*;
@@ -47,14 +48,39 @@ public class GroupRepoTest {
     }
 
     @Test
-    public void listGroupsMayBeFind()  {
+    public void listGroupsMayBeFound()  {
         List<Group> groups = repo.findAll();
         assertThat(groups, is(not(empty())));
     }
 
     @Test
-    public void existingRoleMayBeFindById()  {
-        Group group = repo.findOne(1l);
+    public void existingGroupMayBeFoundById()  {
+        long testedGroupId = 1l;
+        Group group = repo.findOne(testedGroupId);
         assertGroup(group);
+    }
+
+    @Test
+    public void groupShouldBeImmutable() {
+        long testedGroupId = 1l;
+        Group group = repo.findOne(testedGroupId);
+        String groupName = group.getName();
+
+        group.setName("New group 1");
+        repo.save(group);
+
+        Group savedGroup = repo.findOne(testedGroupId);
+        assertThat(savedGroup.getName(), equalTo(groupName));
+    }
+
+    @Test(expected=UnsupportedOperationException.class)
+    public void shouldFailWhenTryCreateGroup() {
+        repo.save(newGroup(null));
+    }
+
+    @Test(expected=UnsupportedOperationException.class)
+    public void shouldFailWhenTryRemoveGroup() {
+        long testedGroupId = 1l;
+        repo.delete(testedGroupId);
     }
 }
