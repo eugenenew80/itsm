@@ -6,8 +6,6 @@ import itdesign.service.*;
 import itdesign.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
@@ -18,8 +16,10 @@ import static java.util.stream.Collectors.*;
 
 @RestController
 @RequiredArgsConstructor
-public class SliceRestController {
-    private static final Logger logger = LoggerFactory.getLogger(SliceRestController.class);
+public class SliceRestController extends BaseController {
+    private static final Long DEFAULT_STATUS = 0l;
+    private static final Long DELETED_STATUS = 3l;
+
     private final SliceRepo repo;
     private final CachedStatusService statusService;
     private final CachedGroupService groupService;
@@ -37,9 +37,9 @@ public class SliceRestController {
     @GetMapping(value = "/api/v1/slices", produces = "application/json")
     public List<SliceDto> getAll(@RequestParam(value = "deleted", defaultValue = "false") boolean deleted) {
         logger.debug(getClass().getName() + ".getAll()");
-        logger.debug("deleted: " + deleted);
+        logger.trace("deleted: " + deleted);
 
-        Status status = statusService.getStatus(3l);
+        Status status = statusService.getStatus(DELETED_STATUS);
 
         return repo.findAll()
             .stream()
@@ -51,7 +51,6 @@ public class SliceRestController {
     @GetMapping(value = "/api/v1/slices/max", produces = MediaType.APPLICATION_JSON_VALUE)
     public LongDto getMax() {
         logger.debug(getClass().getName() + ".getMax()");
-
         return new LongDto(9999l);
     }
 
@@ -72,7 +71,7 @@ public class SliceRestController {
             .map(transformToEntity::apply)
             .collect(toList());
 
-        Status status = statusService.getStatus(0l);
+        Status status = statusService.getStatus(DEFAULT_STATUS);
         for (Slice slice : slices) {
             Group group = groupService.getGroup(slice.getGroup().getId());
             slice.setStatus(status);
@@ -91,17 +90,9 @@ public class SliceRestController {
         logger.debug(getClass().getName() + ".delete()");
 
         Slice slice = repo.findOne(id);
-        Status status = statusService.getStatus(3l);
+        Status status = statusService.getStatus(DELETED_STATUS);
         slice.setStatus(status);
         repo.save(slice);
-    }
-
-    @ExceptionHandler( { Throwable.class } )
-    public ResponseEntity<ErrorDto> handleException(Throwable exc) {
-        ErrorDto errorDto = new ErrorDto(exc);
-        logger.error( errorDto.getErrType() + ": " + errorDto.getErrDetails());
-        logger.trace("view stack trace for details:", exc);
-        return new ResponseEntity<>(errorDto,  errorDto.getErrStatus());
     }
 
     private Function<Long, Slice> findById;
