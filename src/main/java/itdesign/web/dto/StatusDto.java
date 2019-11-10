@@ -12,5 +12,4 @@ public class StatusDto {
 
     @ApiModelProperty(value = "Наименование", example = "Группа отчётов 1", position = 1)
     private String name;
-
 }
