@@ -1,10 +1,10 @@
 package itdesign.web.dto;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@ApiModel(value = "Long", description = "Целое число")
 @Getter
 @RequiredArgsConstructor
 public class LongDto {

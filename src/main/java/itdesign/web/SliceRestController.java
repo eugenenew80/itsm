@@ -1,5 +1,8 @@
 package itdesign.web;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import itdesign.entity.*;
 import itdesign.repo.SliceRepo;
 import itdesign.service.*;
@@ -14,6 +17,7 @@ import java.util.function.Function;
 import static itdesign.util.Util.first;
 import static java.util.stream.Collectors.*;
 
+@Api(tags = "API для работы со срезами")
 @RestController
 @RequiredArgsConstructor
 public class SliceRestController extends BaseController {
@@ -34,8 +38,9 @@ public class SliceRestController extends BaseController {
         transformToEntity = t -> mapper.map(t, Slice.class);
     }
 
+    @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/slices", produces = "application/json")
-    public List<SliceDto> getAll(@RequestParam(value = "deleted", defaultValue = "false") boolean deleted) {
+    public List<SliceDto> getAll(@RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи", example = "false") boolean deleted) {
         logger.debug(getClass().getName() + ".getAll()");
         logger.trace("deleted: " + deleted);
 
@@ -48,14 +53,16 @@ public class SliceRestController extends BaseController {
             .collect(toList());
     }
 
+    @ApiOperation(value="Получить масимальный номер записи в базе данных")
     @GetMapping(value = "/api/v1/slices/max", produces = MediaType.APPLICATION_JSON_VALUE)
     public LongDto getMax() {
         logger.debug(getClass().getName() + ".getMax()");
         return new LongDto(9999l);
     }
 
+    @ApiOperation(value="Получить запись по идентификатору")
     @GetMapping(value = "/api/v1/slices/{id}", produces = "application/json")
-    public SliceDto getById(@PathVariable Long id) {
+    public SliceDto getById(@PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id) {
         logger.debug(getClass().getName() + ".getById()");
 
         return first(findById)
@@ -63,6 +70,7 @@ public class SliceRestController extends BaseController {
             .apply(id);
     }
 
+    @ApiOperation(value="Заказать формирование срезов")
     @PostMapping(value = "/api/v1/slices", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     public List<SliceDto> create(@RequestBody OrderSlicesDto orderSlicesDto) {
@@ -85,9 +93,10 @@ public class SliceRestController extends BaseController {
             .collect(toList());
     }
 
+    @ApiOperation(value="Пометить срез с указанным идентификатором как удаленный")
     @DeleteMapping(value = "/api/v1/slices/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id) {
         logger.debug(getClass().getName() + ".delete()");
 
         Slice slice = repo.findOne(id);

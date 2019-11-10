@@ -14,6 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.util.Arrays;
 
 import static java.time.Duration.ofMinutes;
@@ -22,6 +27,7 @@ import static org.ehcache.config.builders.ExpiryPolicyBuilder.timeToLiveExpirati
 import static org.ehcache.config.builders.ResourcePoolsBuilder.heap;
 
 @Configuration
+@EnableSwagger2
 public class AppConfig {
 
     @Bean
@@ -58,6 +64,15 @@ public class AppConfig {
                 newCacheConfigurationBuilder(Long.class, Group.class, heap(300))
                     .withExpiry(timeToLiveExpiration(ofMinutes(10))).build())
             .build(true);
+    }
+
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+            .select()
+            .apis(RequestHandlerSelectors.basePackage("itdesign.web"))
+            .paths(PathSelectors.any())
+            .build();
     }
 
     @Autowired

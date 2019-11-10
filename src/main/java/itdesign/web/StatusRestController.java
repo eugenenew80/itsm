@@ -1,5 +1,8 @@
 package itdesign.web;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import itdesign.entity.Status;
 import itdesign.repo.StatusRepo;
 import itdesign.web.dto.StatusDto;
@@ -13,6 +16,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import static itdesign.util.Util.first;
 
+@Api(tags = "API для работы со статусами")
 @RestController
 @RequiredArgsConstructor
 public class StatusRestController extends BaseController {
@@ -27,6 +31,7 @@ public class StatusRestController extends BaseController {
         transformToDto = t -> mapper.map(t, StatusDto.class);
     }
 
+    @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/slices/statuses", produces = "application/json")
     public List<StatusDto> getAll() {
         logger.debug(getClass().getName() + ".getAll()");
@@ -38,8 +43,9 @@ public class StatusRestController extends BaseController {
             .collect(Collectors.toList());
     }
 
+    @ApiOperation(value="Получить запись по идентификатору")
     @GetMapping(value = "/api/v1/slices/statuses/{id}", produces = "application/json")
-    public StatusDto getById(@PathVariable Long id) {
+    public StatusDto getById(@PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id) {
         logger.debug(getClass().getName() + ".getById()");
 
         return first(findById)
