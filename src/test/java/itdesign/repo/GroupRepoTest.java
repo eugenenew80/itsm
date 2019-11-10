@@ -58,6 +58,7 @@ public class GroupRepoTest {
         long testedGroupId = 1l;
         Group group = repo.findOne(testedGroupId);
         assertGroup(group);
+        assertThat(group.getId(), is(equalTo(testedGroupId)));
     }
 
     @Test

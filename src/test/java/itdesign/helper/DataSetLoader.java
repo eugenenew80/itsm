@@ -18,6 +18,7 @@ public class DataSetLoader {
 		IDataSet setupDataSet = getDataSet(dataSetPath + file);
 		DatabaseConnection databaseConnection = new DatabaseConnection(connection, scheme);
 		DatabaseOperation.DELETE_ALL.execute(databaseConnection, setupDataSet);
+		databaseConnection.close();
 		return this;
 	}
 	
@@ -25,6 +26,7 @@ public class DataSetLoader {
 		IDataSet setupDataSet = getDataSet(dataSetPath + file);
 		DatabaseConnection databaseConnection = new DatabaseConnection(connection, scheme);
 		DatabaseOperation.CLEAN_INSERT.execute(databaseConnection, setupDataSet);
+		databaseConnection.close();
 		return this;
 	}
 	

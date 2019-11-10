@@ -67,6 +67,7 @@ public class SliceRepoTest {
         long testedSliceId = 1l;
         Slice entity = repo.findOne(testedSliceId);
         assertSlice(entity);
+        assertThat(entity.getId(), is(equalTo(testedSliceId)));
     }
 
     @Test

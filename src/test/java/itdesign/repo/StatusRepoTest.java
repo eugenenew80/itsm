@@ -26,7 +26,7 @@ public class StatusRepoTest {
     private StatusRepo repo;
 
     @Autowired
-    private DataSource dataSource;
+    private  DataSource dataSource;
 
     @Before
     public void setUp() throws Exception {
@@ -57,6 +57,7 @@ public class StatusRepoTest {
         long testedStatusId = 1l;
         Status entity = repo.findOne(testedStatusId);
         assertStatus(entity);
+        assertThat(entity.getId(), is(equalTo(testedStatusId)));
     }
 
 
