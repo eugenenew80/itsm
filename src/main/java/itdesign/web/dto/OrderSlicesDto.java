@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import static java.util.stream.Collectors.*;
 
 @Data
@@ -21,7 +19,7 @@ public class OrderSlicesDto {
     private List<Long> groups;
 
     public List<OrderSliceDto> list() {
-        return groups.stream()
+        return getGroups().stream()
             .map(groupId -> {
                 OrderSliceDto t = new OrderSliceDto();
                 t.setStartDate(getStartDate());

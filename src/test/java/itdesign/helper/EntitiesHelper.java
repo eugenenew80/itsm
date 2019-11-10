@@ -14,13 +14,16 @@ public final class EntitiesHelper {
 	public final static String GROUP_NAME="Группа 1";
 
 	public final static Long SLICE_GROUP_ID = 1l;
-	public final static Long SLICE_STATUS_ID = 1l;
+	public final static Long SLICE_STATUS_ID = 0l;
 	public final static String SLICE_REGION = "19";
 	public final static LocalDate SLICE_START_DATE = LocalDate.of(2019, 1, 1);
 	public final static LocalDate SLICE_END_DATE = LocalDate.of(2019, 1, 31);
 	public final static LocalDateTime SLICE_CREATED_DATE = LocalDateTime.now().of(2019, 1, 31, 23, 59, 59);;
 	public final static Long SLICE_MAX_REC_NUM = 9999l;
 
+	public final static Long STATUS_DELETED_ID = 3l;
+	public final static Long STATUS_DEFAULT_ID = 0l;
+	public final static String STATUS_DEFAULT_NAME = "Статус 0";
 
 	public static Status newStatus() {
 		Status status = new Status();

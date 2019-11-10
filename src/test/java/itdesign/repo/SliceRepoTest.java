@@ -38,18 +38,18 @@ public class SliceRepoTest {
     @Before
     public void setUp() throws Exception {
         List<DataSetLoader> loaders = Arrays.asList(
-                new DataSetLoader("slice", "slices.xml"),
-                new DataSetLoader("slice", "rep_groups.xml"),
-                new DataSetLoader("slice", "rep_statuses.xml")
+            new DataSetLoader("slice", "slices.xml"),
+            new DataSetLoader("slice", "rep_groups.xml"),
+            new DataSetLoader("slice", "rep_statuses.xml")
         );
 
         for (DataSetLoader loader : loaders)
             loader.deleteAll(dataSource.getConnection());
 
         loaders = Arrays.asList(
-                new DataSetLoader("slice", "rep_statuses.xml"),
-                new DataSetLoader("slice", "rep_groups.xml"),
-                new DataSetLoader("slice", "slices.xml")
+            new DataSetLoader("slice", "rep_statuses.xml"),
+            new DataSetLoader("slice", "rep_groups.xml"),
+            new DataSetLoader("slice", "slices.xml")
         );
 
         for (DataSetLoader loader : loaders)

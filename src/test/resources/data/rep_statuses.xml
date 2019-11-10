@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
+	<rep_statuses id="0" name="Статус 0" />
 	<rep_statuses id="1" name="Статус 1" />
 	<rep_statuses id="2" name="Статус 2" />
 	<rep_statuses id="3" name="Статус 3" />

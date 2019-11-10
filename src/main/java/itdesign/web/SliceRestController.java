@@ -64,6 +64,7 @@ public class SliceRestController extends BaseController {
     }
 
     @PostMapping(value = "/api/v1/slices", produces = "application/json")
+    @ResponseStatus(HttpStatus.CREATED)
     public List<SliceDto> create(@RequestBody OrderSlicesDto orderSlicesDto) {
         logger.debug(getClass().getName() + ".create()");
 

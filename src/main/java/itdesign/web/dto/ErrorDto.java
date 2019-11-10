@@ -19,9 +19,15 @@ public class ErrorDto {
     public String getErrDetails() {
         if (exc instanceof DataAccessException) {
             if (exc instanceof DataIntegrityViolationException && exc.getCause().getCause() !=null && exc.getCause().getCause().getCause() != null)
+                return exc.getCause().getCause().getCause().getMessage();
+
+            if (exc instanceof DataIntegrityViolationException && exc.getCause().getCause() !=null)
                 return exc.getCause().getCause().getMessage();
+
+            if (exc instanceof DataIntegrityViolationException && exc.getCause() !=null)
+                return exc.getCause().getMessage();
         }
-        return exc.getMessage();
+        return exc.getMessage() != null ? exc.getMessage() : exc.getClass().getSimpleName();
     };
 
     public String getErrMsg() {
@@ -35,6 +41,9 @@ public class ErrorDto {
     };
 
     public HttpStatus getErrStatus() {
+        if (exc instanceof HttpMessageNotReadableException)
+            return HttpStatus.BAD_REQUEST;
+
         return HttpStatus.INTERNAL_SERVER_ERROR;
     }
 }
