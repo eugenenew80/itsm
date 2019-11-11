@@ -23,6 +23,7 @@ import static java.util.stream.Collectors.*;
 public class SliceRestController extends BaseController {
     private static final Long DEFAULT_STATUS = 0l;
     private static final Long DELETED_STATUS = 3l;
+    private static String DEFAULT_REGION = "19";
 
     private final SliceRepo repo;
     private final CachedStatusService statusService;
@@ -85,6 +86,8 @@ public class SliceRestController extends BaseController {
             Group group = groupService.getGroup(slice.getGroup().getId());
             slice.setStatus(status);
             slice.setGroup(group);
+            if (slice.getRegion() == null || slice.getRegion().isEmpty())
+                slice.setRegion(DEFAULT_REGION);
         }
         repo.save(slices);
 

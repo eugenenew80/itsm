@@ -253,4 +253,237 @@
                 sequenceName="slices_s"
                 startValue="1"/>
     </changeSet>
+
+    <changeSet id="slice-eug-13" logicalFilePath="path-independent" author="eugene" >
+        <comment>Creating table: template_codes</comment>
+        <createTable tableName="template_codes" schemaName="slice" remarks="Коды шаблонов отчётов">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="code" type="varchar(6)" remarks="Код шаблона">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="lang" type="varchar(2)" remarks="Язык шаблона">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="name" type="varchar(100)" remarks="Название шаблона">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="file_type" type="varchar(10)" remarks="Тип файла">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="binary_file" type="blob" remarks="Файл шаблона">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="slice-eug-14" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating primary key for table template_codes</comment>
+        <addPrimaryKey
+                columnNames="id"
+                constraintName="pk_template_codes"
+                schemaName="slice"
+                tableName="template_codes"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-15" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating sequence for table template_codes</comment>
+        <createSequence
+                incrementBy="1"
+                schemaName="slice"
+                sequenceName="template_codes_s"
+                startValue="1"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-16" logicalFilePath="path-independent" author="eugene">
+        <addUniqueConstraint
+                columnNames="code, lang"
+                constraintName="un_template_codes_1"
+                deferrable="true"
+                schemaName="slice"
+                tableName="template_codes" />
+    </changeSet>
+
+    <changeSet id="slice-eug-17" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: report_codes</comment>
+        <createTable tableName="report_codes" schemaName="slice" remarks="Коды отчётов">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="code" type="varchar(3)" remarks="Код отчёта">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="lang" type="varchar(2)" remarks="Язык отчёта">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="name" type="varchar(100)" remarks="Название отчёта">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="template_code" type="varchar(6)" remarks="Код шаблона отчёта">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="slice-eug-18" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating primary key for table report_codes</comment>
+        <addPrimaryKey
+                columnNames="id"
+                constraintName="pk_report_codes"
+                schemaName="slice"
+                tableName="report_codes"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-19" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating sequence for table report_codes</comment>
+        <createSequence
+                incrementBy="1"
+                schemaName="slice"
+                sequenceName="report_codes_s"
+                startValue="1"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-20" logicalFilePath="path-independent" author="eugene">
+        <addUniqueConstraint
+                columnNames="code, lang"
+                constraintName="un_report_codes_1"
+                deferrable="true"
+                schemaName="slice"
+                tableName="report_codes" />
+    </changeSet>
+
+
+    <changeSet id="slice-eug-21" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: sheet_codes</comment>
+        <createTable tableName="sheet_codes" schemaName="slice" remarks="Коды листов отчётов">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="code" type="varchar(5)" remarks="Код листа">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="version" type="varchar(2)" remarks="Версия отчёта">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="lang" type="varchar(2)" remarks="Язык отчёта">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="report_code" type="varchar(3)" remarks="Код отчёта">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="name" type="varchar(100)" remarks="Название листа">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="slice-eug-22" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating primary key for table sheet_codes</comment>
+        <addPrimaryKey
+                columnNames="id"
+                constraintName="pk_sheet_codes"
+                schemaName="slice"
+                tableName="sheet_codes"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-23" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating sequence for table sheet_codes</comment>
+        <createSequence
+                incrementBy="1"
+                schemaName="slice"
+                sequenceName="sheet_codes_s"
+                startValue="1"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-24" logicalFilePath="path-independent" author="eugene">
+        <addUniqueConstraint
+                columnNames="code, version, report_code, lang"
+                constraintName="un_sheet_codes_1"
+                deferrable="true"
+                schemaName="slice"
+                tableName="sheet_codes" />
+    </changeSet>
+
+    <changeSet id="slice-eug-25" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: reports</comment>
+        <createTable tableName="reports" schemaName="slice" remarks="Отчёты">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="slice_id" type="number" remarks="Идентификатор среза">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="template_code" type="varchar(6)" remarks="Код шаблона отчёта">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="report_code" type="varchar(3)" remarks="Код отчёта">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="table_data" type="varchar(20)" remarks="Таблица с данными для отчёта">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="start_row" type="number" remarks="Начальный номер строки">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="start_column" type="number" remarks="Начальный номер колонки">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="slice-eug-26" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating primary key for table reports</comment>
+        <addPrimaryKey
+                columnNames="id"
+                constraintName="pk_reports"
+                schemaName="slice"
+                tableName="reports"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-27" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating sequence for table reports</comment>
+        <createSequence
+                incrementBy="1"
+                schemaName="slice"
+                sequenceName="reports_s"
+                startValue="1"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-28" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating foreign constraint: reports to slices</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="slice"
+                baseTableName="reports"
+                baseColumnNames="slice_id"
+                constraintName="fk_reports_1"
+                deferrable="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="slice"
+                referencedTableName="slices"
+                referencedColumnNames="id"
+        />
+    </changeSet>
+
 </databaseChangeLog>
