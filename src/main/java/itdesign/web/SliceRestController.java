@@ -12,7 +12,6 @@ import org.dozer.DozerBeanMapper;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
 import static itdesign.util.Util.first;
@@ -22,7 +21,6 @@ import static java.util.stream.Collectors.*;
 @Api(tags = "API для работы со срезами")
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*",  maxAge = 3600)
 public class SliceRestController extends BaseController {
     private static final Long DEFAULT_STATUS = 0l;
     private static final Long DELETED_STATUS = 3l;

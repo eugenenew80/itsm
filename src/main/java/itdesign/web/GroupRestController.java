@@ -19,7 +19,6 @@ import static itdesign.util.Util.first;
 @Api(tags = "API для работы с группами отчётов")
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*",  maxAge = 3600)
 public class GroupRestController extends BaseController {
     private final GroupRepo repo;
     private final DozerBeanMapper mapper;

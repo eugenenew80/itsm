@@ -19,7 +19,6 @@ import static itdesign.util.Util.first;
 @Api(tags = "API для работы со статусами")
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*",  maxAge = 3600)
 public class StatusRestController extends BaseController {
     private final StatusRepo repo;
     private final DozerBeanMapper mapper;
