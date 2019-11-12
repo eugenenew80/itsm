@@ -77,6 +77,8 @@ public class SliceRestControllerTest {
             contentType(ContentType.fromContentType("application/json;charset=utf-8")).
             and().statusCode(200).
             and().header("access-control-allow-origin", equalTo("*")).
+            and().header("access-control-allow-methods", equalTo("*")).
+            and().header("access-control-allow-headers", equalTo("*")).
             body("id", hasSize(greaterThan(0))).
             body("statusId", is(not(hasItems(3)))).
             body("[0].id", is(not(nullValue()))).
@@ -104,6 +106,8 @@ public class SliceRestControllerTest {
             log().all().
             contentType(ContentType.fromContentType("application/json;charset=utf-8")).
             and().header("access-control-allow-origin", equalTo("*")).
+            and().header("access-control-allow-methods", equalTo("*")).
+            and().header("access-control-allow-headers", equalTo("*")).
             and().statusCode(200).
             body("id", is(equalTo(testedSliceId.intValue()))).
             body("groupName", is(equalTo(EntitiesHelper.GROUP_NAME))).
@@ -142,6 +146,9 @@ public class SliceRestControllerTest {
         then().
             log().all().
             contentType(ContentType.fromContentType("application/json;charset=utf-8")).
+            and().header("access-control-allow-origin", equalTo("*")).
+            and().header("access-control-allow-methods", equalTo("*")).
+            and().header("access-control-allow-headers", equalTo("*")).
             and().statusCode(201).
             body("id", hasSize(3)).
             body("[0].statusId", is(equalTo(0))).
@@ -169,9 +176,12 @@ public class SliceRestControllerTest {
             delete(testedSliceId.toString()).
         then().
             log().all().
+            and().header("access-control-allow-origin", equalTo("*")).
+            and().header("access-control-allow-methods", equalTo("*")).
+            and().header("access-control-allow-headers", equalTo("*")).
             and().statusCode(204);
 
-        //Проверяем, что фактически запись не удалилас, а статус сменился на Удалено
+        //Проверяем, что фактически запись не удалилась, а статус сменился на Удалено
         given().
             log().all().
             accept("application/json;charset=utf-8").
@@ -182,6 +192,8 @@ public class SliceRestControllerTest {
             log().all().
             contentType(ContentType.fromContentType("application/json;charset=utf-8")).
             and().header("access-control-allow-origin", equalTo("*")).
+            and().header("access-control-allow-methods", equalTo("*")).
+            and().header("access-control-allow-headers", equalTo("*")).
             and().statusCode(200).
             body("id", is(equalTo(testedSliceId.intValue()))).
             body("statusId", is(equalTo(EntitiesHelper.STATUS_DELETED_ID.intValue())));
@@ -204,6 +216,8 @@ public class SliceRestControllerTest {
             log().all().
             contentType(ContentType.fromContentType("application/json;charset=utf-8")).
             and().header("access-control-allow-origin", equalTo("*")).
+            and().header("access-control-allow-methods", equalTo("*")).
+            and().header("access-control-allow-headers", equalTo("*")).
             and().statusCode(200).
             body("value", is(not(nullValue())));
     }
@@ -229,6 +243,9 @@ public class SliceRestControllerTest {
         then().
             log().all().
             contentType(ContentType.fromContentType("application/json;charset=utf-8")).
+            and().header("access-control-allow-origin", equalTo("*")).
+            and().header("access-control-allow-methods", equalTo("*")).
+            and().header("access-control-allow-headers", equalTo("*")).
             and().statusCode(400);
     }
 
@@ -259,6 +276,9 @@ public class SliceRestControllerTest {
         then().
             log().all().
             contentType(ContentType.fromContentType("application/json;charset=utf-8")).
+            and().header("access-control-allow-origin", equalTo("*")).
+            and().header("access-control-allow-methods", equalTo("*")).
+            and().header("access-control-allow-headers", equalTo("*")).
             and().statusCode(500);
     }
 
