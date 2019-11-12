@@ -151,7 +151,8 @@ public class SliceRestControllerTest {
             body("[0].period", is(not(nullValue()))).
             body("[0].groupName", is(not(nullValue()))).
             body("[0].statusName", is(not(nullValue()))).
-            body("[0].maxRecNum", is(not(nullValue())));
+            body("[0].maxRecNum", is(not(nullValue()))).
+            body("[0].created", is(not(nullValue())));
     }
 
     @Test

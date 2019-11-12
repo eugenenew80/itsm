@@ -12,9 +12,11 @@ import org.dozer.DozerBeanMapper;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
 import static itdesign.util.Util.first;
+import static java.time.LocalDateTime.*;
 import static java.util.stream.Collectors.*;
 
 @Api(tags = "API для работы со срезами")
@@ -87,6 +89,7 @@ public class SliceRestController extends BaseController {
             Group group = groupService.getGroup(slice.getGroup().getId());
             slice.setStatus(status);
             slice.setGroup(group);
+            slice.setCreatedDate(now());
             if (slice.getRegion() == null || slice.getRegion().isEmpty())
                 slice.setRegion(DEFAULT_REGION);
         }
