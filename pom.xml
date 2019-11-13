@@ -214,14 +214,6 @@
                     <username>${username}</username>
                     <password>${password}</password>
                 </configuration>
-
-                <dependencies>
-                    <dependency>
-                        <groupId>org.liquibase.ext</groupId>
-                        <artifactId>liquibase-oracle</artifactId>
-                        <version>3.2</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
 
@@ -229,6 +221,17 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>**/*.xlsx</exclude>
+                </excludes>
+            </resource>
+
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.xlsx</include>
+                </includes>
             </resource>
         </resources>
     </build>

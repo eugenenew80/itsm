@@ -14,6 +14,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dozer.DozerBeanMapper;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -70,9 +71,12 @@ public class SheetCodeRestController extends BaseController {
     @PostMapping(value = "/api/v1/slices/sheetCodes/import", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     public LongDto importData() {
+        long count = repo.count();
+        if (count > 0)
+            return new LongDto(count);
 
         int i = 0;
-        try (InputStream ExcelFileToRead = new FileInputStream("d:/exc/kodsheet2.xlsx")) {
+        try (InputStream ExcelFileToRead = new FileInputStream(new ClassPathResource("kodsheet2.xlsx").getFile())) {
             Workbook workbook = new XSSFWorkbook(ExcelFileToRead);
             Sheet sheet = workbook.getSheetAt(0);
 

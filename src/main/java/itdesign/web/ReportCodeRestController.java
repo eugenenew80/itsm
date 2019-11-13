@@ -74,9 +74,12 @@ public class ReportCodeRestController extends BaseController {
     @PostMapping(value = "/api/v1/slices/reportCodes/import", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     public LongDto importData() {
+        long count = repo.count();
+        if (count > 0)
+            return new LongDto(count);
 
         int i = 0;
-        try (InputStream ExcelFileToRead = new FileInputStream("d:/exc/rCodeRep.xlsx")) {
+        try (InputStream ExcelFileToRead = new FileInputStream(new ClassPathResource("rCodeRep.xlsx").getFile())) {
             Workbook workbook = new XSSFWorkbook(ExcelFileToRead);
             Sheet sheet = workbook.getSheetAt(0);
 
@@ -97,7 +100,7 @@ public class ReportCodeRestController extends BaseController {
                     if (j == 3)
                         code = cell.getStringCellValue();
                     if (j > 3)
-                        continue;;
+                        continue;
                 }
                 if (code == null || code.isEmpty())
                     continue;

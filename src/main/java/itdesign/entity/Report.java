@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Table(name = "slices")
 @EntityListeners(PreventRemove.class)
 
-@NamedEntityGraph(name="Slice.allJoins", attributeNodes = {
+@NamedEntityGraph(name="Report.allJoins", attributeNodes = {
     @NamedAttributeNode("slice")
 })
 public class Report {
