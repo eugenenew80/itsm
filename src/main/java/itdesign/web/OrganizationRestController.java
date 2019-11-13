@@ -3,19 +3,32 @@ package itdesign.web;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import itdesign.entity.GroupOrg;
+import itdesign.entity.GroupReport;
 import itdesign.entity.Organization;
+import itdesign.entity.ReportCode;
 import itdesign.repo.GroupOrgRepo;
 import itdesign.repo.GroupReportRepo;
 import itdesign.repo.OrganizationRepo;
+import itdesign.web.dto.LongDto;
 import itdesign.web.dto.OrganizationDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dozer.DozerBeanMapper;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.PostConstruct;
-import java.util.Collections;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -41,14 +54,26 @@ public class OrganizationRestController extends BaseController {
 
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/slices/orgs", produces = "application/json")
-    public List<OrganizationDto> getAll() {
+    public List<OrganizationDto> getAll(@RequestParam(value = "reportCode", defaultValue = "") @ApiParam(value = "Код отчёта", example = "001") String reportCode) {
         logger.debug(getClass().getName() + ".getAll()");
 
         Sort sort = new Sort(Sort.Direction.ASC, "id");
-        return repo.findAll(sort)
-            .stream()
-            .map(transformToDto::apply)
-            .collect(Collectors.toList());
+
+        if (reportCode == null || reportCode.isEmpty())
+            return repo.findAll(sort)
+                .stream()
+                .map(transformToDto::apply)
+                .collect(Collectors.toList());
+        else {
+            List<GroupReport> groupReports = groupReportRepo.findAllByReportCode(reportCode);
+
+            return groupReports.stream()
+                .map(t -> repo.findAllByGroupReport(t.getGroupCode()))
+                .flatMap(t -> t.stream())
+                .distinct()
+                .map(transformToDto::apply)
+                .collect(Collectors.toList());
+        }
     }
 
     @ApiOperation(value="Получить запись по идентификатору")
@@ -90,6 +115,104 @@ public class OrganizationRestController extends BaseController {
             .map(t -> t.getReportCode())
             .collect(Collectors.toList());
     }
+
+
+
+    @ApiOperation(value="Импорт данных из файла Excel")
+    @PostMapping(value = "/api/v1/slices/orgs/import", produces = "application/json")
+    @ResponseStatus(HttpStatus.CREATED)
+    public LongDto importData() {
+        long count = repo.count();
+        if (count > 0)
+            return new LongDto(count);
+
+        Integer i = 0;
+        Integer k = 0;
+        Integer l = 0;
+        try (InputStream ExcelFileToRead = new FileInputStream(new ClassPathResource("Rep_ved.xlsx").getFile())) {
+            Workbook workbook = new XSSFWorkbook(ExcelFileToRead);
+            Sheet sheet = workbook.getSheetAt(0);
+
+            List<Organization> orgs = new ArrayList<>();
+            List<GroupReport> groupReports = new ArrayList<>();
+            List<GroupOrg> groupOrgs = new ArrayList<>();
+            for (Row row : sheet) {
+                i++;
+                if (i == 1) continue;
+                int j = 0;
+                String nameRu = "";
+                String code = "";
+                String reportCodesStr = "";
+                String orgCodesStr = "";
+                for (Cell cell : row) {
+                    j++;
+                    if (j == 1)
+                        nameRu = cell.getStringCellValue();
+                    if (j == 3)
+                        code = cell.getStringCellValue();
+                    if (j == 5)
+                        reportCodesStr = cell.getStringCellValue();;
+                    if (j == 9)
+                        orgCodesStr = cell.getStringCellValue();;
+                    if (j > 9)
+                        continue;
+                }
+                if (code == null || code.isEmpty())
+                    continue;
+
+                String groupCode = i.toString();
+                if (groupCode.length() == 1)
+                    groupCode = "0" + groupCode;
+
+                Organization o = new Organization();
+                o.setCode(code);
+                o.setLang("RU");
+                o.setName(nameRu);
+
+                if (reportCodesStr !=null && !reportCodesStr.isEmpty())
+                    o.setGroupReport(groupCode);
+
+                if (orgCodesStr !=null && !orgCodesStr.isEmpty())
+                    o.setGroupOrg(groupCode);
+
+                orgs.add(o);
+
+                if (reportCodesStr !=null && !reportCodesStr.isEmpty()) {
+                    logger.trace(reportCodesStr);
+
+                    String[] reportsCodes = reportCodesStr.split(",");
+                    for (String  reportCode : reportsCodes) {
+                        GroupReport gr = new GroupReport();
+                        gr.setReportCode(reportCode);
+                        gr.setGroupCode(groupCode);
+                        groupReports.add(gr);
+                    }
+                }
+
+                if (orgCodesStr !=null && !orgCodesStr.isEmpty()) {
+                    logger.trace(orgCodesStr);
+                    String[] orgCodes = orgCodesStr.split(",");
+                    for (String  orgCode : orgCodes) {
+                        GroupOrg go = new GroupOrg();
+                        go.setOrgCode(orgCode);
+                        go.setGroupCode(groupCode);
+                        groupOrgs.add(go);
+                    }
+                }
+
+            }
+
+            repo.save(orgs);
+            groupOrgRepo.save(groupOrgs);
+            groupReportRepo.save(groupReports);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new LongDto((long) i-1);
+    }
+
 
     private Function<Long, Organization> findById;
     private Function<Organization, OrganizationDto> transformToDto;

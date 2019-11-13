@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface GroupReportRepo extends JpaRepository<GroupReport, GroupOrg> {
     List<GroupReport> findAllByGroupCode(String groupCode);
+    List<GroupReport> findAllByReportCode(String reportCode);
 }
