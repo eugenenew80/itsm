@@ -482,4 +482,104 @@
         />
     </changeSet>
 
+    <changeSet id="slice-eug-29" logicalFilePath="path-independent" author="eugene" >
+        <comment>Creating table: organizations</comment>
+        <createTable tableName="organizations" schemaName="slice" remarks="Ведомства">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="code" type="varchar(3)" remarks="Код ведомства">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="lang" type="varchar(2)" remarks="Язык">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="name" type="varchar(100)" remarks="Название ведомства">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="group_org_code" type="varchar(2)" remarks="Код группировки ведомств">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="group_report_code" type="varchar(2)" remarks="Код группировки отчётов">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="slice-eug-30" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating primary key for table organizations</comment>
+        <addPrimaryKey
+                columnNames="id"
+                constraintName="pk_organizations"
+                schemaName="slice"
+                tableName="organizations"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-31" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating sequence for table organizations</comment>
+        <createSequence
+                incrementBy="1"
+                schemaName="slice"
+                sequenceName="organizations_s"
+                startValue="1"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-32" logicalFilePath="path-independent" author="eugene">
+        <addUniqueConstraint
+                columnNames="code, lang"
+                constraintName="un_organizations_1"
+                deferrable="true"
+                schemaName="slice"
+                tableName="organizations" />
+    </changeSet>
+
+    <changeSet id="slice-eug-33" logicalFilePath="path-independent" author="eugene" >
+        <comment>Creating table: group_orgs</comment>
+        <createTable tableName="group_orgs" schemaName="slice" remarks="Группировка ведомств">
+            <column name="group_code" type="varchar(2)" remarks="Код группы">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="org_code" type="varchar(3)" remarks="Код ведомства">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="slice-eug-34" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating primary key for table group_orgs</comment>
+        <addPrimaryKey
+            columnNames="group_code, org_code"
+            constraintName="pk_group_orgs"
+            schemaName="slice"
+            tableName="group_orgs"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-35" logicalFilePath="path-independent" author="eugene" >
+        <comment>Creating table: group_reports</comment>
+        <createTable tableName="group_reports" schemaName="slice" remarks="Группировка отчётов">
+            <column name="group_code" type="varchar(2)" remarks="Код группы">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="report_code" type="varchar(3)" remarks="Код отчёта">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="slice-eug-36" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating primary key for table group_reports</comment>
+        <addPrimaryKey
+                columnNames="group_code, report_code"
+                constraintName="pk_group_reports"
+                schemaName="slice"
+                tableName="group_reports"/>
+    </changeSet>
+
 </databaseChangeLog>
