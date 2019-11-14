@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 import static itdesign.util.Util.first;
 
 
-@Api(tags = "API для работы с ведомствами")
+@Api(value = "Regions API", tags = "API для работы с регионами")
 @RestController
 @RequiredArgsConstructor
 public class RegionRestController extends BaseController {
@@ -56,7 +56,7 @@ public class RegionRestController extends BaseController {
             .collect(Collectors.toList());
     }
 
-    @ApiOperation(value="Получить список всех записей")
+    @ApiOperation(value="Получить список всех записей в виде дерева")
     @GetMapping(value = "/api/v1/slices/regsTree", produces = "application/json")
     public RegionTreeDto getTree(@RequestParam(value = "lang", defaultValue = "RU") @ApiParam(value = "Язык", example = "RU") String lang) {
         logger.debug(getClass().getName() + ".getTree()");
