@@ -14,7 +14,6 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import static itdesign.util.Util.first;
 
 @Api(tags = "API для работы с группами отчётов")
 @RestController
@@ -26,33 +25,21 @@ public class GroupRestController extends BaseController {
     @PostConstruct
     private void init() {
         logger.debug(getClass() .getName()+ ".init()");
-
-        findById = repo::findOne;
         transformToDto = t -> mapper.map(t, GroupDto.class);
     }
 
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/slices/groups", produces = "application/json")
-    public List<GroupDto> getAll() {
+    public List<GroupDto> getAll(@RequestParam(value = "lang", defaultValue = "RU") @ApiParam(value = "Язык", example = "RU") String lang) {
         logger.debug(getClass().getName() + ".getAll()");
 
         Sort sort = new Sort(Sort.Direction.ASC, "id");
         return repo.findAll(sort)
             .stream()
+            .filter(t -> t.getLang().equals(lang.toUpperCase()))
             .map(transformToDto::apply)
             .collect(Collectors.toList());
     }
 
-    @ApiOperation(value="Получить запись по идентификатору")
-    @GetMapping(value = "/api/v1/slices/groups/{id}", produces = "application/json")
-    public GroupDto getById(@PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id) {
-        logger.debug(getClass().getName() + ".getById()");
-
-        return first(findById)
-            .andThen(transformToDto)
-            .apply(id);
-    }
-
-    private Function<Long, Group> findById;
     private Function<Group, GroupDto> transformToDto;
 }

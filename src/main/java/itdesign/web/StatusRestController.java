@@ -14,7 +14,6 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import static itdesign.util.Util.first;
 
 @Api(tags = "API для работы со статусами")
 @RestController
@@ -26,33 +25,21 @@ public class StatusRestController extends BaseController {
     @PostConstruct
     private void init() {
         logger.debug(getClass() .getName()+ ".init()");
-
-        findById = repo::findOne;
         transformToDto = t -> mapper.map(t, StatusDto.class);
     }
 
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/slices/statuses", produces = "application/json")
-    public List<StatusDto> getAll() {
+    public List<StatusDto> getAll(@RequestParam(value = "lang", defaultValue = "RU") @ApiParam(value = "Язык", example = "RU") String lang) {
         logger.debug(getClass().getName() + ".getAll()");
 
         Sort sort = new Sort(Sort.Direction.ASC, "id");
         return repo.findAll(sort)
             .stream()
+            .filter(t -> t.getLang().equals(lang.toUpperCase()))
             .map(transformToDto::apply)
             .collect(Collectors.toList());
     }
 
-    @ApiOperation(value="Получить запись по идентификатору")
-    @GetMapping(value = "/api/v1/slices/statuses/{id}", produces = "application/json")
-    public StatusDto getById(@PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id) {
-        logger.debug(getClass().getName() + ".getById()");
-
-        return first(findById)
-            .andThen(transformToDto)
-            .apply(id);
-    }
-
-    private Function<Long, Status> findById;
     private Function<Status, StatusDto> transformToDto;
 }

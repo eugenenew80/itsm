@@ -633,4 +633,73 @@
                 schemaName="slice"
                 tableName="regions" />
     </changeSet>
+
+    <changeSet id="slice-eug-41" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding fields to table rep_groups</comment>
+        <addColumn schemaName="slice" tableName="rep_groups">
+            <column name="lang" type="varchar(2)" defaultValue="RU" remarks="Язык">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="code" type="varchar(2)" remarks="Код">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="slice-eug-42" logicalFilePath="path-independent" author="eugene">
+        <comment>Autofill code field</comment>
+        <sql dbms="postgresql" endDelimiter=";">
+            UPDATE slice.rep_groups SET code = '0' || id;
+        </sql>
+    </changeSet>
+
+    <changeSet id="slice-eug-43" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding not null constraint for field code in table rep_groups</comment>
+        <addNotNullConstraint schemaName="slice" tableName="rep_groups" columnName="code" />
+    </changeSet>
+
+    <changeSet id="slice-eug-44" logicalFilePath="path-independent" author="eugene">
+        <addUniqueConstraint
+                columnNames="code, lang"
+                constraintName="un_rep_groups_1"
+                deferrable="true"
+                schemaName="slice"
+                tableName="rep_groups" />
+    </changeSet>
+
+    <changeSet id="slice-eug-45" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding fields to table rep_statuses</comment>
+        <addColumn schemaName="slice" tableName="rep_statuses">
+            <column name="lang" type="varchar(2)" defaultValue="RU" remarks="Язык">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="code" type="varchar(1)" remarks="Код">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="slice-eug-46" logicalFilePath="path-independent" author="eugene">
+        <comment>Autofill code field</comment>
+        <sql dbms="postgresql" endDelimiter=";">
+            UPDATE slice.rep_statuses SET code = '' || id;
+        </sql>
+    </changeSet>
+
+    <changeSet id="slice-eug-47" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding not null constraint for field code in table rep_groups</comment>
+        <addNotNullConstraint schemaName="slice" tableName="rep_statuses" columnName="code" />
+    </changeSet>
+
+    <changeSet id="slice-eug-48" logicalFilePath="path-independent" author="eugene">
+        <addUniqueConstraint
+                columnNames="code, lang"
+                constraintName="un_rep_statuses_1"
+                deferrable="true"
+                schemaName="slice"
+                tableName="rep_statuses" />
+    </changeSet>
+
 </databaseChangeLog>

@@ -21,5 +21,11 @@ public class Status {
     private Long id;
 
     @Column
+    private String code;
+
+    @Column
     private String name;
+
+    @Column
+    private String lang;
 }
