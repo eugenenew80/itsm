@@ -582,4 +582,55 @@
                 tableName="group_reports"/>
     </changeSet>
 
+    <changeSet id="slice-eug-37" logicalFilePath="path-independent" author="eugene" >
+        <comment>Creating table: regions</comment>
+        <createTable tableName="regions" schemaName="slice" remarks="Регионы">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="code" type="varchar(6)" remarks="Код региона">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="lang" type="varchar(2)" remarks="Язык">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="reg_type" type="varchar(2)" remarks="Тип региона: 00 - страна, 01 - город/область, 02 - район">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="name" type="varchar(100)" remarks="Название егиона">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="slice-eug-38" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating primary key for table regions</comment>
+        <addPrimaryKey
+                columnNames="id"
+                constraintName="pk_regions"
+                schemaName="slice"
+                tableName="regions"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-39" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating sequence for table regions</comment>
+        <createSequence
+                incrementBy="1"
+                schemaName="slice"
+                sequenceName="regions_s"
+                startValue="1"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-40" logicalFilePath="path-independent" author="eugene">
+        <addUniqueConstraint
+                columnNames="code, lang"
+                constraintName="un_regions_1"
+                deferrable="true"
+                schemaName="slice"
+                tableName="regions" />
+    </changeSet>
 </databaseChangeLog>
