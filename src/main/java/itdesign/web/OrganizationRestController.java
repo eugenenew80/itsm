@@ -53,7 +53,10 @@ public class OrganizationRestController extends BaseController {
 
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/slices/orgs", produces = "application/json")
-    public List<OrganizationDto> getAll(@RequestParam(value = "reportCode", defaultValue = "") @ApiParam(value = "Код отчёта", example = "001") String reportCode) {
+    public List<OrganizationDto> getAll(
+        @RequestParam(value = "reportCode", defaultValue = "")      @ApiParam(value = "Код отчёта", example = "001")    String reportCode,
+        @RequestParam(value = "lang",       defaultValue = "RU")    @ApiParam(value = "Язык",       example = "RU")     String lang
+    ) {
         logger.debug(getClass().getName() + ".getAll()");
 
         Sort sort = new Sort(Sort.Direction.ASC, "id");
@@ -61,6 +64,7 @@ public class OrganizationRestController extends BaseController {
         if (reportCode == null || reportCode.isEmpty())
             return repo.findAll(sort)
                 .stream()
+                .filter(t -> t.getLang().equals(lang.toUpperCase()))
                 .map(transformToDto::apply)
                 .collect(Collectors.toList());
         else {
@@ -69,6 +73,7 @@ public class OrganizationRestController extends BaseController {
             return groupReports.stream()
                 .map(t -> repo.findAllByGroupReport(t.getGroupCode()))
                 .flatMap(t -> t.stream())
+                .filter(t -> t.getLang().equals(lang.toUpperCase()))
                 .distinct()
                 .map(transformToDto::apply)
                 .collect(Collectors.toList());
