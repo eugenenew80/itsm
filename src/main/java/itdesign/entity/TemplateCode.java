@@ -23,12 +23,13 @@ public class TemplateCode {
     @Column
     private String lang;
 
-    @Column
+    @Column(name = "file_type")
     private String fileType;
 
     @Column
     private String name;
 
-    @Column
+    @Lob
+    @Column(name = "binary_file")
     private byte[] binaryFile;
 }

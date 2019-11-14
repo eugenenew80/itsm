@@ -12,9 +12,13 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dozer.DozerBeanMapper;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +27,9 @@ import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -76,49 +83,34 @@ public class TemplateCodeRestController extends BaseController {
         if (count > 0)
             return new LongDto(count);
 
-        int i = 0;
-        try (InputStream ExcelFileToRead = new FileInputStream(new ClassPathResource("tblshablon.xlsx").getFile())) {
-            Workbook workbook = new XSSFWorkbook(ExcelFileToRead);
-            Sheet sheet = workbook.getSheetAt(0);
-
-            List<TemplateCode> list = new ArrayList<>();
-            for (Row row : sheet) {
+        Long i = 0l;
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(getClass().getClassLoader());
+        try {
+            Resource resources[] = resolver.getResources("classpath:templates/**");
+            for (Resource resource : resources) {
                 i++;
-                if (i <=2) continue;
-                int j = 0;
-                String nameRu = "";
-                String code = "";
-                String fileType = "XLSX";
-                for (Cell cell : row) {
-                    j++;
-                    if (j == 1)
-                        nameRu = cell.getStringCellValue();
-
-                    if (nameRu == null || nameRu.isEmpty())
-                        continue;
-
-                    if (j == 3)
-                        code = new Double(cell.getNumericCellValue()).toString();
-
-                    if (j > 3)
-                        continue;
-                }
-
                 TemplateCode tc = new TemplateCode();
-                tc.setCode(code);
-                tc.setLang("RU");
-                tc.setName(nameRu);
-                tc.setFileType(fileType);
-                list.add(tc);
-            }
+                tc.setName(resource.getFilename());
 
-            repo.save(list);
+                int n = tc.getName().indexOf(".");
+                tc.setCode(resource.getFilename().substring(0, 6));
+                tc.setFileType(resource.getFilename().substring(n+1));
+
+                String l = resource.getFilename().substring(6, 8);
+                if (l.equals("_1"))
+                    tc.setLang("RU");
+                else
+                    tc.setLang("KZ");
+
+                tc.setBinaryFile(IOUtils.toByteArray(resource.getInputStream()));
+                repo.save(tc);
+            }
         }
         catch (IOException e) {
             e.printStackTrace();
         }
 
-        return new LongDto((long) i-1);
+        return new LongDto(i);
     }
 
     private Function<Long, TemplateCode> findById;
