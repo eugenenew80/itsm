@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiParam;
 import itdesign.entity.GroupOrg;
 import itdesign.entity.GroupReport;
 import itdesign.entity.Organization;
-import itdesign.entity.ReportCode;
 import itdesign.repo.GroupOrgRepo;
 import itdesign.repo.GroupReportRepo;
 import itdesign.repo.OrganizationRepo;

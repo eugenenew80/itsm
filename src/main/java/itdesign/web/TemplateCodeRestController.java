@@ -3,10 +3,10 @@ package itdesign.web;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import itdesign.entity.SheetCode;
-import itdesign.repo.SheetCodeRepo;
+import itdesign.entity.TemplateCode;
+import itdesign.repo.TemplateCodeRepo;
 import itdesign.web.dto.LongDto;
-import itdesign.web.dto.SheetCodeDto;
+import itdesign.web.dto.TemplateCodeDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -30,11 +30,11 @@ import java.util.stream.Collectors;
 
 import static itdesign.util.Util.first;
 
-@Api(tags = "API для работы с кодами листов")
+@Api(tags = "API для работы с кодами шаблонов")
 @RestController
 @RequiredArgsConstructor
-public class SheetCodeRestController extends BaseController {
-    private final SheetCodeRepo repo;
+public class TemplateCodeRestController extends BaseController {
+    private final TemplateCodeRepo repo;
     private final DozerBeanMapper mapper;
 
     @PostConstruct
@@ -42,12 +42,12 @@ public class SheetCodeRestController extends BaseController {
         logger.debug(getClass() .getName()+ ".init()");
 
         findById = repo::findOne;
-        transformToDto = t -> mapper.map(t, SheetCodeDto.class);
+        transformToDto = t -> mapper.map(t, TemplateCodeDto.class);
     }
 
     @ApiOperation(value="Получить список всех записей")
-    @GetMapping(value = "/api/v1/slices/sheetCodes", produces = "application/json")
-    public List<SheetCodeDto> getAll(@RequestParam(value = "lang", defaultValue = "RU") @ApiParam(value = "Язык", example = "RU") String lang) {
+    @GetMapping(value = "/api/v1/slices/templateCodes", produces = "application/json")
+    public List<TemplateCodeDto> getAll(@RequestParam(value = "lang", defaultValue = "RU") @ApiParam(value = "Язык", example = "RU") String lang) {
         logger.debug(getClass().getName() + ".getAll()");
 
         Sort sort = new Sort(Sort.Direction.ASC, "id");
@@ -59,8 +59,8 @@ public class SheetCodeRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить запись по идентификатору")
-    @GetMapping(value = "/api/v1/slices/sheetCodes/{id}", produces = "application/json")
-    public SheetCodeDto getById(@PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id) {
+    @GetMapping(value = "/api/v1/slices/templateCodes/{id}", produces = "application/json")
+    public TemplateCodeDto getById(@PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id) {
         logger.debug(getClass().getName() + ".getById()");
 
         return first(findById)
@@ -69,7 +69,7 @@ public class SheetCodeRestController extends BaseController {
     }
 
     @ApiOperation(value="Импорт данных из файла Excel")
-    @PostMapping(value = "/api/v1/slices/sheetCodes/import", produces = "application/json")
+    @PostMapping(value = "/api/v1/slices/templateCodes/import", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     public LongDto importData() {
         long count = repo.count();
@@ -77,44 +77,39 @@ public class SheetCodeRestController extends BaseController {
             return new LongDto(count);
 
         int i = 0;
-        try (InputStream ExcelFileToRead = new FileInputStream(new ClassPathResource("kodsheet2.xlsx").getFile())) {
+        try (InputStream ExcelFileToRead = new FileInputStream(new ClassPathResource("tblshablon.xlsx").getFile())) {
             Workbook workbook = new XSSFWorkbook(ExcelFileToRead);
             Sheet sheet = workbook.getSheetAt(0);
 
-            List<SheetCode> list = new ArrayList<>();
+            List<TemplateCode> list = new ArrayList<>();
             for (Row row : sheet) {
                 i++;
-                if (i == 1) continue;
+                if (i <=2) continue;
                 int j = 0;
-                String name = "";
+                String nameRu = "";
                 String code = "";
-                String reportCode = "";
+                String fileType = "XLSX";
                 for (Cell cell : row) {
                     j++;
                     if (j == 1)
-                        name = cell.getStringCellValue();
+                        nameRu = cell.getStringCellValue();
+
+                    if (nameRu == null || nameRu.isEmpty())
+                        continue;
+
                     if (j == 3)
-                        reportCode = cell.getStringCellValue();
-                    if (j == 4)
-                        code = cell.getStringCellValue();
-                    if (j > 4) continue;
+                        code = new Double(cell.getNumericCellValue()).toString();
+
+                    if (j > 3)
+                        continue;
                 }
-                if (code == null || code.isEmpty())
-                    continue;
 
-                SheetCode sc = new SheetCode();
-                sc.setCode(code);
-                sc.setLang("RU");
-                sc.setName(name);
-                sc.setReportCode(reportCode);
-                list.add(sc);
-
-                sc = new SheetCode();
-                sc.setCode(code);
-                sc.setLang("KZ");
-                sc.setName(name);
-                sc.setReportCode(reportCode);
-                list.add(sc);
+                TemplateCode tc = new TemplateCode();
+                tc.setCode(code);
+                tc.setLang("RU");
+                tc.setName(nameRu);
+                tc.setFileType(fileType);
+                list.add(tc);
             }
 
             repo.save(list);
@@ -126,6 +121,6 @@ public class SheetCodeRestController extends BaseController {
         return new LongDto((long) i-1);
     }
 
-    private Function<Long, SheetCode> findById;
-    private Function<SheetCode, SheetCodeDto> transformToDto;
+    private Function<Long, TemplateCode> findById;
+    private Function<TemplateCode, TemplateCodeDto> transformToDto;
 }

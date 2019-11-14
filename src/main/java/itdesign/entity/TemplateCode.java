@@ -27,5 +27,8 @@ public class TemplateCode {
     private String fileType;
 
     @Column
+    private String name;
+
+    @Column
     private byte[] binaryFile;
 }

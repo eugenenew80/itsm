@@ -50,12 +50,13 @@ public class ReportCodeRestController extends BaseController {
 
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/slices/reportCodes", produces = "application/json")
-    public List<ReportCodeDto> getAll() {
+    public List<ReportCodeDto> getAll(@RequestParam(value = "lang", defaultValue = "RU") @ApiParam(value = "Язык", example = "RU") String lang) {
         logger.debug(getClass().getName() + ".getAll()");
 
         Sort sort = new Sort(Sort.Direction.ASC, "id");
         return repo.findAll(sort)
             .stream()
+            .filter(t -> t.getLang().equals(lang.toUpperCase()))
             .map(transformToDto::apply)
             .collect(Collectors.toList());
     }

@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 import static itdesign.util.Util.first;
 
 
-@Api(value = "Regions API", tags = "API для работы с регионами")
+@Api(tags = "API для работы с регионами")
 @RestController
 @RequiredArgsConstructor
 public class RegionRestController extends BaseController {

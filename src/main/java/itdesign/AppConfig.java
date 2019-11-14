@@ -33,7 +33,7 @@ public class AppConfig {
     @Bean
     public DozerBeanMapper dozerBeanMapper() {
         DozerBeanMapper mapper = new DozerBeanMapper();
-        mapper.setMappingFiles(Arrays.asList(
+         mapper.setMappingFiles(Arrays.asList(
             "dozer/MappingConfig.xml",
             "dozer/StatusDto.xml",
             "dozer/GroupDto.xml",
@@ -41,9 +41,9 @@ public class AppConfig {
             "dozer/OrderSliceDto.xml",
             "dozer/ReportCodeDto.xml",
             "dozer/SheetCodeDto.xml",
-            "dozer/OrganizationDto.xml"
+            "dozer/OrganizationDto.xml",
+            "dozer/TemplateCodeDto.xml"
         ));
-
         return mapper;
     }
 
