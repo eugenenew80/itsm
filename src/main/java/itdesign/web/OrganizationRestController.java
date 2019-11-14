@@ -122,14 +122,17 @@ public class OrganizationRestController extends BaseController {
     @ResponseStatus(HttpStatus.CREATED)
     public LongDto importData() {
         long count = repo.count();
-        if (count > 0)
-            return new LongDto(count);
+        if (count > 0) {
+            repo.deleteAll();
+            groupOrgRepo.deleteAll();
+            groupReportRepo.deleteAll();
+        }
 
         Integer i = 0;
         Integer k = 0;
         Integer l = 0;
-        Map<String, List<GroupOrg>> morgs = new HashMap<>();
-        Map<String, List<GroupReport>> mreps = new HashMap<>();
+        Map<String, String> morgs = new HashMap<>();
+        Map<String, String> mreps = new HashMap<>();
 
         try (InputStream ExcelFileToRead = new FileInputStream(new ClassPathResource("Rep_ved.xlsx").getFile())) {
             Workbook workbook = new XSSFWorkbook(ExcelFileToRead);
@@ -165,66 +168,62 @@ public class OrganizationRestController extends BaseController {
                 String groupOrgCode = "";
                 String groupReportCode= "";
 
-
                 Organization o = new Organization();
                 o.setCode(code);
                 o.setLang("RU");
                 o.setName(nameRu);
 
-                if (reportCodesStr !=null && !reportCodesStr.isEmpty()) {
-                    l++;
-                    groupReportCode = l.toString();
-                    if (groupReportCode.length() == 1)
-                        groupReportCode = "0" + groupReportCode;
+                if (reportCodesStr !=null && !reportCodesStr.isEmpty() ) {
+                    groupReportCode = mreps.getOrDefault(reportCodesStr, null);
+                    if (groupReportCode == null) {
+                        l++;
+                        groupReportCode = l.toString();
+                        if (groupReportCode.length() == 1) groupReportCode = "0" + groupReportCode;
+
+                    }
                     o.setGroupReport(groupReportCode);
                 }
 
                 if (orgCodesStr !=null && !orgCodesStr.isEmpty()) {
-                    k++;
-                    groupOrgCode = k.toString();
-                    if (groupOrgCode.length() == 1)
-                        groupOrgCode = "0" + groupOrgCode;
+                    groupOrgCode = morgs.getOrDefault(orgCodesStr, null);
+                    if (groupOrgCode == null) {
+                        k++;
+                        groupOrgCode = k.toString();
+                        if (groupOrgCode.length() == 1) groupOrgCode = "0" + groupOrgCode;
+                    }
                     o.setGroupOrg(groupOrgCode);
                 }
 
                 orgs.add(o);
 
-                if (reportCodesStr !=null && !reportCodesStr.isEmpty()) {
-                    logger.trace(reportCodesStr);
 
-                    String[] reportsCodes = reportCodesStr.split(",");
-                    for (String  reportCode : reportsCodes) {
+                //Группировка отчётов
+                if (reportCodesStr !=null && !reportCodesStr.isEmpty() && !mreps.containsKey(reportCodesStr) ) {
+                    String[] reportsCodesArr = reportCodesStr.split(",");;
+
+                    for (String reportCode : reportsCodesArr) {
                         GroupReport gr = new GroupReport();
                         gr.setReportCode(reportCode);
                         gr.setGroupCode(groupReportCode);
                         groupReports.add(gr);
                     }
-
-                    mreps.put(reportCodesStr, groupReports);
                 }
+                mreps.putIfAbsent(reportCodesStr, groupReportCode);
 
-                if (orgCodesStr !=null && !orgCodesStr.isEmpty()) {
+
+                //Группировка ведомств
+                if (orgCodesStr !=null && !orgCodesStr.isEmpty() && !morgs.containsKey(orgCodesStr)) {
                     logger.trace(orgCodesStr);
 
-                    if (mreps.containsKey(groupReportCode)) {
-                        for (GroupReport go1 : mreps.get(groupReportCode))  {
-                            GroupOrg go = new GroupOrg();
-                            go.setOrgCode(go.getOrgCode());
-                            go.setGroupCode(go.getGroupCode());
-                            groupOrgs.add(go);
-                        }
-                    }
-                    else {
-                        String[] orgCodes = orgCodesStr.split(",");
-                        for (String orgCode : orgCodes) {
-                            GroupOrg go = new GroupOrg();
-                            go.setOrgCode(orgCode);
-                            go.setGroupCode(groupReportCode);
-                            groupOrgs.add(go);
-                        }
-                        mreps.put(reportCodesStr, groupReports);
+                    String[] orgCodes = orgCodesStr.split(",");
+                    for (String orgCode : orgCodes) {
+                        GroupOrg go = new GroupOrg();
+                        go.setOrgCode(orgCode);
+                        go.setGroupCode(groupReportCode);
+                        groupOrgs.add(go);
                     }
                 }
+                morgs.putIfAbsent(orgCodesStr, groupOrgCode);
             }
 
             repo.save(orgs);
