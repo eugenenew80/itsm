@@ -59,7 +59,7 @@ public class StatusRestControllerTest {
     @Test
     public void listStatusesMayBeFound() {
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/statuses/";
+        RestAssured.basePath = "/api/v1/ru/slices/statuses/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         given().
@@ -75,15 +75,16 @@ public class StatusRestControllerTest {
             and().header("access-control-allow-origin", equalTo("*")).
             body("id", hasSize(greaterThan(0))).
             body("[0].id", is(not(nullValue()))).
+            body("[0].code", is(not(nullValue()))).
             body("[0].name", is(not(nullValue())));
     }
 
     @Test
-    public void existingStatusMayBeFoundById() throws Exception {
+    public void shouldNotFoundWhenTryFoundById() throws Exception {
         Long testedStatusId = 1l;
 
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/statuses/";
+        RestAssured.basePath = "/api/v1/ru/slices/statuses/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         given().
@@ -95,16 +96,13 @@ public class StatusRestControllerTest {
         then().
             log().all().
             contentType(ContentType.fromContentType("application/json;charset=utf-8")).
-            and().header("access-control-allow-origin", equalTo("*")).
-            and().statusCode(200).
-            body("id", is(equalTo(testedStatusId.intValue()))).
-            body("name", is(equalTo(EntitiesHelper.STATUS_NAME)));
+            and().statusCode(404);
     }
 
     @Test
     public void shouldMethodNotAllowedWhenTryCreateStatus() throws JSONException {
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/statuses/";
+        RestAssured.basePath = "/api/v1/ru/slices/statuses/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         Status newStatus = newStatus(null);
@@ -129,7 +127,7 @@ public class StatusRestControllerTest {
         Long testedStatusId = 1l;
 
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/statuses/";
+        RestAssured.basePath = "/api/v1/ru/slices/statuses/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         Status newStatus = newStatus(1l);
@@ -147,7 +145,7 @@ public class StatusRestControllerTest {
         then().
             log().all().
             contentType(ContentType.fromContentType("application/json;charset=utf-8")).
-            and().statusCode(405);
+            and().statusCode(404);
     }
 
     @Test
@@ -155,7 +153,7 @@ public class StatusRestControllerTest {
         Long testedStatusId = 1l;
 
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/statuses/";
+        RestAssured.basePath = "/api/v1/ru/slices/statuses/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         given().
@@ -165,6 +163,6 @@ public class StatusRestControllerTest {
         then().
             log().all().
             contentType(ContentType.fromContentType("application/json;charset=utf-8")).
-            and().statusCode(405);
+            and().statusCode(404);
     }
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,25 +16,18 @@ import java.time.format.DateTimeFormatter;
 @Entity
 @Table(name = "slices")
 @EntityListeners(PreventRemove.class)
-
-@NamedEntityGraph(name="Slice.allJoins", attributeNodes = {
-    @NamedAttributeNode("group"),
-    @NamedAttributeNode("status")
-})
-public class Slice {
+public class Slice implements Serializable {
 
     @Id
     @SequenceGenerator(name="slices_s", sequenceName = "slices_s", allocationSize=1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "slices_s")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "group_id")
-    private Group group;
+    @Column(name = "group_code")
+    private String groupCode;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private Status status;
+    @Column(name = "status_code")
+    private String statusCode;
 
     @Column
     private String region;
@@ -54,8 +48,17 @@ public class Slice {
     private  Long maxRecNum;
 
     @Transient
+    private Group group;
+
+    @Transient
+    private Status status;
+
+    @Transient
+    private String lang;
+
+    @Transient
     public String getFullStatus() {
-        String fullStatus = status != null ? status.getName() : "";
+        String fullStatus = getStatus() != null ? getStatus().getName() : "";
         fullStatus = fullStatus + (startDate != null ? " " + startDate.getYear() : "");
         return fullStatus;
     }

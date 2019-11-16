@@ -29,8 +29,8 @@ public class StatusRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей")
-    @GetMapping(value = "/api/v1/slices/statuses", produces = "application/json")
-    public List<StatusDto> getAll(@RequestParam(value = "lang", defaultValue = "RU") @ApiParam(value = "Язык", example = "RU") String lang) {
+    @GetMapping(value = "/api/v1/{lang}/slices/statuses", produces = "application/json")
+    public List<StatusDto> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
         logger.debug(getClass().getName() + ".getAll()");
 
         Sort sort = new Sort(Sort.Direction.ASC, "id");

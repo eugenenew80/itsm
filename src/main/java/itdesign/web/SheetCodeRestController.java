@@ -46,8 +46,8 @@ public class SheetCodeRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей")
-    @GetMapping(value = "/api/v1/slices/sheetCodes", produces = "application/json")
-    public List<SheetCodeDto> getAll(@RequestParam(value = "lang", defaultValue = "RU") @ApiParam(value = "Язык", example = "RU") String lang) {
+    @GetMapping(value = "/api/v1/{lang}/slices/sheetCodes", produces = "application/json")
+    public List<SheetCodeDto> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
         logger.debug(getClass().getName() + ".getAll()");
 
         Sort sort = new Sort(Sort.Direction.ASC, "id");
@@ -59,8 +59,11 @@ public class SheetCodeRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить запись по идентификатору")
-    @GetMapping(value = "/api/v1/slices/sheetCodes/{id}", produces = "application/json")
-    public SheetCodeDto getById(@PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id) {
+    @GetMapping(value = "/api/v1/{lang}/slices/sheetCodes/{id}", produces = "application/json")
+    public SheetCodeDto getById(
+        @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
+        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
+    ) {
         logger.debug(getClass().getName() + ".getById()");
 
         return first(findById)
@@ -69,9 +72,9 @@ public class SheetCodeRestController extends BaseController {
     }
 
     @ApiOperation(value="Импорт данных из файла Excel")
-    @PostMapping(value = "/api/v1/slices/sheetCodes/import", produces = "application/json")
+    @PostMapping(value = "/api/v1/{lang}/slices/sheetCodes/import", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public LongDto importData() {
+    public LongDto importData(@PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang) {
         long count = repo.count();
         if (count > 0)
             return new LongDto(count);

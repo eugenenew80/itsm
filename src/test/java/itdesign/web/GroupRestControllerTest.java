@@ -60,7 +60,7 @@ public class GroupRestControllerTest {
     @Test
     public void listStatusesMayBeFound() {
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/groups/";
+        RestAssured.basePath = "/api/v1/ru/slices/groups/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         given().
@@ -76,15 +76,16 @@ public class GroupRestControllerTest {
             and().header("access-control-allow-origin", equalTo("*")).
             body("id", hasSize(greaterThan(0))).
             body("[0].id", is(not(nullValue()))).
+            body("[0].code", is(not(nullValue()))).
             body("[0].name", is(not(nullValue())));
     }
 
     @Test
-    public void existingStatusMayBeFoundById() throws Exception {
+    public void shouldNotFoundWhenTryFoundById() throws Exception {
         Long testedGroupId = 1l;
 
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/groups/";
+        RestAssured.basePath = "/api/v1/ru/slices/groups/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         given().
@@ -96,16 +97,13 @@ public class GroupRestControllerTest {
         then().
             log().all().
             contentType(ContentType.fromContentType("application/json;charset=utf-8")).
-            and().header("access-control-allow-origin", equalTo("*")).
-            and().statusCode(200).
-            body("id", is(equalTo(testedGroupId.intValue()))).
-            body("name", is(equalTo(EntitiesHelper.GROUP_NAME)));
+            and().statusCode(404);;
     }
 
     @Test
     public void shouldMethodNotAllowedWhenTryCreateStatus() throws JSONException {
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/groups/";
+        RestAssured.basePath = "/api/v1/ru/slices/groups/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         Group newGroup = newGroup(null);
@@ -126,11 +124,11 @@ public class GroupRestControllerTest {
     }
 
     @Test
-    public void shouldMethodNotAllowedWhenTryChangeGroup() throws JSONException {
+    public void shouldNotFoundWhenTryChangeGroup() throws JSONException {
         Long testedGroupId = 1l;
 
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/groups/";
+        RestAssured.basePath = "/api/v1/ru/slices/groups/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         Group newGroup = newGroup(testedGroupId);
@@ -148,15 +146,15 @@ public class GroupRestControllerTest {
         then().
             log().all().
             contentType(ContentType.fromContentType("application/json;charset=utf-8")).
-            and().statusCode(405);
+            and().statusCode(404);
     }
 
     @Test
-    public void shouldMethodNotAllowedWhenTryRemoveGroup() {
+    public void shouldТщеАщгтвWhenTryRemoveGroup() {
         Long testedGroupId = 1l;
 
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/groups/";
+        RestAssured.basePath = "/api/v1/ru/slices/groups/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         given().
@@ -166,6 +164,6 @@ public class GroupRestControllerTest {
         then().
             log().all().
             contentType(ContentType.fromContentType("application/json;charset=utf-8")).
-            and().statusCode(405);
+            and().statusCode(404);
     }
 }

@@ -3,30 +3,54 @@ package itdesign.web;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import itdesign.entity.TemplateCode;
+import itdesign.repo.TemplateCodeRepo;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 @Api(tags = "API для работы с отчётами")
 @RestController
 @RequiredArgsConstructor
 public class ReportRestController {
+    private final TemplateCodeRepo templateCodeRepo;
+
 
     @ApiOperation(value="Сформировать отчёт")
-    @GetMapping(value = "/api/v1/slices/reports/{id}/download")
+    @GetMapping(value = "/api/v1/{lang}/slices/reports/{id}/download")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void download(@PathVariable @ApiParam(value = "Идентификатор отчёта", required = true, example = "1") Long id) {
+    public void download(
+        @PathVariable @ApiParam(value = "Идентификатор отчёта", required = true, example = "1") Long id,
+        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
+    ) {
+
+        TemplateCode template = templateCodeRepo.findAll().stream().findFirst().get();
+
+        try (InputStream excelFileToRead = new ByteArrayInputStream(template.getBinaryFile())) {
+            Workbook workbook = new XSSFWorkbook(excelFileToRead);
+            FileOutputStream outputStream = new FileOutputStream(template.getName());
+            workbook.write(outputStream);
+            workbook.close();
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+        /*
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Persons");
         sheet.setColumnWidth(0, 6000);
@@ -80,5 +104,6 @@ public class ReportRestController {
         catch (IOException e) {
             e.printStackTrace();
         }
+        */
     }
 }

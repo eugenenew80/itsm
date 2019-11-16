@@ -702,4 +702,71 @@
                 tableName="rep_statuses" />
     </changeSet>
 
+    <changeSet id="slice-eug-49" logicalFilePath="path-independent" author="eugene">
+        <comment>Changing datatype of column report_code in reports table</comment>
+        <modifyDataType schemaName="slice" tableName="reports" columnName="report_code" newDataType="varchar(5)" />
+    </changeSet>
+
+    <changeSet id="slice-eug-50" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding fields to table slice</comment>
+        <addColumn schemaName="slice" tableName="slices">
+            <column name="group_code" type="varchar(2)" remarks="Код группы">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="slice-eug-51" logicalFilePath="path-independent" author="eugene">
+        <comment>Autofill group_code field</comment>
+        <sql dbms="postgresql" endDelimiter=";">
+            UPDATE slice.slices SET group_code = '0' || group_id;
+        </sql>
+    </changeSet>
+
+    <changeSet id="slice-eug-52" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding not null constraint for field group_code in table slice</comment>
+        <addNotNullConstraint schemaName="slice" tableName="slices" columnName="group_code" />
+    </changeSet>
+
+    <changeSet id="slice-eug-53" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding fields to table slice</comment>
+        <addColumn schemaName="slice" tableName="slices">
+            <column name="status_code" type="varchar(1)" remarks="Код статуса">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="slice-eug-54" logicalFilePath="path-independent" author="eugene">
+        <comment>Autofill status_code field</comment>
+        <sql dbms="postgresql" endDelimiter=";">
+            UPDATE slice.slices SET status_code = '' || status_id;
+        </sql>
+    </changeSet>
+
+    <changeSet id="slice-eug-55" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding not null constraint for field status_code in table slice</comment>
+        <addNotNullConstraint schemaName="slice" tableName="slices" columnName="status_code" />
+    </changeSet>
+
+    <changeSet id="slice-eug-56" logicalFilePath="path-independent" author="eugene">
+        <comment>Dropping foreign constraint fk_slices_1 in table slices</comment>
+        <dropForeignKeyConstraint baseTableSchemaName="slice" baseTableName="slices" constraintName="fk_slices_1" />
+    </changeSet>
+
+    <changeSet id="slice-eug-57" logicalFilePath="path-independent" author="eugene">
+        <comment>Dropping foreign constraint fk_slices_2 in table slices</comment>
+        <dropForeignKeyConstraint baseTableSchemaName="slice" baseTableName="slices" constraintName="fk_slices_2" />
+    </changeSet>
+
+    <changeSet id="slice-eug-58" logicalFilePath="path-independent" author="eugene">
+        <comment>Dropping column status_id from table slices</comment>
+        <dropColumn schemaName="slice" tableName="slices" columnName="status_id" />
+    </changeSet>
+
+    <changeSet id="slice-eug-59" logicalFilePath="path-independent" author="eugene">
+        <comment>Dropping column group_id from table slices</comment>
+        <dropColumn schemaName="slice" tableName="slices" columnName="group_id" />
+    </changeSet>
+
 </databaseChangeLog>

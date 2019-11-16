@@ -10,24 +10,28 @@ import java.time.LocalDateTime;
 import static org.junit.Assert.*;
 
 public final class EntitiesHelper {
+	public final static String STATUS_CODE="1";
 	public final static String STATUS_NAME="Статус 1";
+
+	public final static String GROUP_CODE="01";
 	public final static String GROUP_NAME="Группа 1";
 
-	public final static Long SLICE_GROUP_ID = 1l;
-	public final static Long SLICE_STATUS_ID = 0l;
+	public final static String SLICE_GROUP_CODE = "01";
+	public final static String SLICE_STATUS_CODE = "0";
 	public final static String SLICE_REGION = "19";
 	public final static LocalDate SLICE_START_DATE = LocalDate.of(2019, 1, 1);
 	public final static LocalDate SLICE_END_DATE = LocalDate.of(2019, 1, 31);
 	public final static LocalDateTime SLICE_CREATED_DATE = LocalDateTime.now().of(2019, 1, 31, 23, 59, 59);;
 	public final static Long SLICE_MAX_REC_NUM = 9999l;
 
-	public final static Long STATUS_DELETED_ID = 3l;
-	public final static Long STATUS_DEFAULT_ID = 0l;
+	public final static String STATUS_DELETED_CODE = "3";
+	public final static String STATUS_DEFAULT_CODE = "0";
 	public final static String STATUS_DEFAULT_NAME = "Статус 0";
 
 	public static Status newStatus() {
 		Status status = new Status();
 		status.setId(1l);
+		status.setCode(STATUS_CODE);
 		status.setName(STATUS_NAME);
 		return status;
 	}
@@ -43,11 +47,13 @@ public final class EntitiesHelper {
 		assertNotNull(status.getId());
 		assertTrue(status.getId()>0);
 		assertEquals(STATUS_NAME, status.getName());
+		assertEquals(STATUS_CODE, status.getCode());
 	}
 
 	public static Group newGroup() {
 		Group newGroup = new Group();
 		newGroup.setId(1l);
+		newGroup.setCode(GROUP_CODE);
 		newGroup.setName(GROUP_NAME);
 		return newGroup;
 	}
@@ -62,6 +68,7 @@ public final class EntitiesHelper {
 		assertNotNull(group);
 		assertNotNull(group.getId());
 		assertTrue(group.getId()>0);
+		assertEquals(GROUP_CODE, group.getCode());
 		assertEquals(GROUP_NAME, group.getName());
 	}
 
@@ -73,8 +80,8 @@ public final class EntitiesHelper {
 		slice.setCreatedDate(SLICE_CREATED_DATE);
 		slice.setRegion(SLICE_REGION);
 		slice.setMaxRecNum(SLICE_MAX_REC_NUM);
-		slice.setGroup(newGroup(SLICE_GROUP_ID));
-		slice.setStatus(newStatus(SLICE_STATUS_ID));
+		slice.setGroupCode(SLICE_GROUP_CODE);
+		slice.setStatusCode(SLICE_STATUS_CODE);
 		return slice;
 	}
 
@@ -94,11 +101,10 @@ public final class EntitiesHelper {
 		assertEquals(SLICE_REGION, slice.getRegion());
 		assertEquals(SLICE_MAX_REC_NUM, slice.getMaxRecNum());
 
-		assertNotNull(slice.getGroup());
-		assertEquals(SLICE_GROUP_ID, slice.getGroup().getId());
+		assertNotNull(slice.getGroupCode());
+		assertEquals(SLICE_GROUP_CODE, slice.getGroupCode());
 
-		assertNotNull(slice.getStatus());
-		assertEquals(SLICE_STATUS_ID, slice.getStatus().getId());
+		assertNotNull(slice.getStatusCode());
+		assertEquals(SLICE_STATUS_CODE, slice.getStatusCode());
 	}
-
 }

@@ -29,8 +29,8 @@ public class GroupRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей")
-    @GetMapping(value = "/api/v1/slices/groups", produces = "application/json")
-    public List<GroupDto> getAll(@RequestParam(value = "lang", defaultValue = "RU") @ApiParam(value = "Язык", example = "RU") String lang) {
+    @GetMapping(value = "/api/v1/{lang}/slices/groups", produces = "application/json")
+    public List<GroupDto> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
         logger.debug(getClass().getName() + ".getAll()");
 
         Sort sort = new Sort(Sort.Direction.ASC, "id");

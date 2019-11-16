@@ -2,7 +2,6 @@ package itdesign.repo;
 
 import itdesign.App;
 import itdesign.entity.Slice;
-import itdesign.entity.Status;
 import itdesign.helper.DataSetLoader;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,9 +27,6 @@ public class SliceRepoTest {
 
     @Autowired
     private SliceRepo repo;
-
-    @Autowired
-    private StatusRepo statusRepo;
 
     @Autowired
     private DataSource dataSource;
@@ -88,13 +84,12 @@ public class SliceRepoTest {
         Long testedSliceId = 1l;
         Slice slice = repo.findOne(testedSliceId);
 
-        Long newStatusId = 2l;
-        Status newStatus = statusRepo.findOne(newStatusId);
-        slice.setStatus(newStatus);
+        String newStatusCode = "2";
+        slice.setStatusCode(newStatusCode);
         repo.save(slice);
 
         Slice findSlice = repo.findOne(slice.getId());
-        assertThat(findSlice.getStatus(), equalTo(newStatus));
+        assertThat(findSlice.getStatusCode(), equalTo(newStatusCode));
     }
 
     @Test(expected=UnsupportedOperationException.class)

@@ -63,7 +63,7 @@ public class SliceRestControllerTest {
     @Test
     public void listSlicesMayBeFound() {
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/";
+        RestAssured.basePath = "/api/v1/ru/slices/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         given().
@@ -93,7 +93,7 @@ public class SliceRestControllerTest {
         Long testedSliceId = 1l;
 
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/";
+        RestAssured.basePath = "/api/v1/ru/slices/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         given().
@@ -123,7 +123,7 @@ public class SliceRestControllerTest {
     @Test
     public void newSliceMayBeCreated() throws JSONException {
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/";
+        RestAssured.basePath = "/api/v1/ru/slices/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         Slice slice = newSlice(null);
@@ -151,9 +151,9 @@ public class SliceRestControllerTest {
             and().header("access-control-allow-headers", equalTo("*")).
             and().statusCode(201).
             body("id", hasSize(3)).
-            body("[0].statusId", is(equalTo(0))).
-            body("[1].statusId", is(equalTo(0))).
-            body("[2].statusId", is(equalTo(0))).
+            body("[0].statusCode", is(equalTo(EntitiesHelper.STATUS_DEFAULT_CODE))).
+            body("[1].statusCode", is(equalTo(EntitiesHelper.STATUS_DEFAULT_CODE))).
+            body("[2].statusCode", is(equalTo(EntitiesHelper.STATUS_DEFAULT_CODE))).
             body("[0].id", is(not(nullValue()))).
             body("[0].period", is(not(nullValue()))).
             body("[0].groupName", is(not(nullValue()))).
@@ -165,7 +165,7 @@ public class SliceRestControllerTest {
     @Test
     public void existingSliceMayBeRemoved()  {
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/";
+        RestAssured.basePath = "/api/v1/ru/slices/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         //Помечаем запись как удаленную
@@ -196,14 +196,14 @@ public class SliceRestControllerTest {
             and().header("access-control-allow-headers", equalTo("*")).
             and().statusCode(200).
             body("id", is(equalTo(testedSliceId.intValue()))).
-            body("statusId", is(equalTo(EntitiesHelper.STATUS_DELETED_ID.intValue())));
+            body("statusCode", is(equalTo(EntitiesHelper.STATUS_DELETED_CODE)));
     }
 
 
     @Test
     public void maxRecNumMa()  {
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/max/";
+        RestAssured.basePath = "/api/v1/ru/slices/max/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         given().
@@ -227,7 +227,7 @@ public class SliceRestControllerTest {
     @Test
     public void shouldBadRequestWhenInvalidJSON() throws JSONException {
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/";
+        RestAssured.basePath = "/api/v1/ru/slices/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         JSONObject body = new JSONObject();
@@ -253,7 +253,7 @@ public class SliceRestControllerTest {
     @Test
     public void shouldInternalServerErrorWhenInconsistentData()throws JSONException {
         RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.basePath = "/api/v1/slices/";
+        RestAssured.basePath = "/api/v1/ru/slices/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         Slice slice = newSlice(null);

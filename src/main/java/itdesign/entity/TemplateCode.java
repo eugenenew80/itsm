@@ -30,6 +30,6 @@ public class TemplateCode {
     private String name;
 
     @Lob
-    @Column(name = "binary_file")
+    @Column(name = "binary_file", columnDefinition = "BLOB")
     private byte[] binaryFile;
 }

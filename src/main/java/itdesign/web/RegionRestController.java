@@ -45,8 +45,8 @@ public class RegionRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей")
-    @GetMapping(value = "/api/v1/slices/regs", produces = "application/json")
-    public List<RegionDto> getAll(@RequestParam(value = "lang", defaultValue = "RU") @ApiParam(value = "Язык", example = "RU") String lang) {
+    @GetMapping(value = "/api/v1/{lang}/slices/regs", produces = "application/json")
+    public List<RegionDto> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
         logger.debug(getClass().getName() + ".getAll()");
 
         return repo.findAll()
@@ -57,8 +57,8 @@ public class RegionRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей в виде дерева")
-    @GetMapping(value = "/api/v1/slices/regsTree", produces = "application/json")
-    public RegionTreeDto getTree(@RequestParam(value = "lang", defaultValue = "RU") @ApiParam(value = "Язык", example = "RU") String lang) {
+    @GetMapping(value = "/api/v1/{lang}/slices/regsTree", produces = "application/json")
+    public RegionTreeDto getTree(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
         logger.debug(getClass().getName() + ".getTree()");
 
         //Получаем список регионов
@@ -120,8 +120,11 @@ public class RegionRestController extends BaseController {
 
 
     @ApiOperation(value="Получить запись по идентификатору")
-    @GetMapping(value = "/api/v1/slices/regs/{id}", produces = "application/json")
-    public RegionDto getById(@PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id) {
+    @GetMapping(value = "/api/v1/{lang}/slices/regs/{id}", produces = "application/json")
+    public RegionDto getById(
+        @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
+        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
+    ) {
         logger.debug(getClass().getName() + ".getById()");
 
         return first(findById)
@@ -131,9 +134,9 @@ public class RegionRestController extends BaseController {
 
 
     @ApiOperation(value="Импорт данных из файла Excel")
-    @PostMapping(value = "/api/v1/slices/regs/import", produces = "application/json")
+    @PostMapping(value = "/api/v1/{lang}/slices/regs/import", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public LongDto importData() {
+    public LongDto importData(@PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang) {
         long count = repo.count();
         if (count > 0)
             repo.deleteAll();
@@ -149,39 +152,41 @@ public class RegionRestController extends BaseController {
                 if (i == 1) continue;
                 int j = 0;
                 String nameRu = "";
+                String nameKz = "";
                 String code = "";
                 String regType = "";
                 for (Cell cell : row) {
                     j++;
-                    if (j == 1)
-                        nameRu = cell.getStringCellValue();
-                    if (j == 3)
-                        code = cell.getStringCellValue();
+                    if (j == 1) nameRu = cell.getStringCellValue();
+                    if (j == 2) nameKz = cell.getStringCellValue();
+                    if (j == 3) code = cell.getStringCellValue();
                     if (j == 4) {
                         regType = cell.getStringCellValue();
-                        if (regType.equals("RESP"))
-                            regType = "00";
-
-                        if (regType.equals("OBL"))
-                            regType = "01";
-
-                        if (regType.equals("F10R04P1"))
-                            regType = "02";
+                        if (regType.equals("RESP")) regType = "00";
+                        if (regType.equals("OBL")) regType = "01";
+                        if (regType.equals("F10R04P1")) regType = "02";
                     }
-                    if (j > 4)
-                        continue;
+                    if (j > 4) continue;
                 }
                 if (code == null || code.isEmpty())
                     continue;
 
+                //на русском языке
                 Region r = new Region();
                 r.setCode(code);
                 r.setLang("RU");
                 r.setName(nameRu);
                 r.setRegType(regType);
                 regs.add(r);
-            }
 
+                //на казахском языке
+                r = new Region();
+                r.setCode(code);
+                r.setLang("KZ");
+                r.setName(nameKz);
+                r.setRegType(regType);
+                regs.add(r);
+            }
             repo.save(regs);
         }
 

@@ -51,10 +51,10 @@ public class OrganizationRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей")
-    @GetMapping(value = "/api/v1/slices/orgs", produces = "application/json")
+    @GetMapping(value = "/api/v1/{lang}/slices/orgs", produces = "application/json")
     public List<OrganizationDto> getAll(
         @RequestParam(value = "reportCode", defaultValue = "")      @ApiParam(value = "Код отчёта", example = "001")    String reportCode,
-        @RequestParam(value = "lang",       defaultValue = "RU")    @ApiParam(value = "Язык",       example = "RU")     String lang
+        @PathVariable(value = "lang")    @ApiParam(value = "Язык",       example = "RU")     String lang
     ) {
         logger.debug(getClass().getName() + ".getAll()");
 
@@ -80,8 +80,11 @@ public class OrganizationRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить запись по идентификатору")
-    @GetMapping(value = "/api/v1/slices/orgs/{id}", produces = "application/json")
-    public OrganizationDto getById(@PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id) {
+    @GetMapping(value = "/api/v1/{lang}/slices/orgs/{id}", produces = "application/json")
+    public OrganizationDto getById(
+        @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
+        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
+    ) {
         logger.debug(getClass().getName() + ".getById()");
 
         return first(findById)
@@ -90,8 +93,11 @@ public class OrganizationRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список ведоиств по идентификатору согласно заданной группировки")
-    @GetMapping(value = "/api/v1/slices/orgs/{id}/groupOrgs", produces = "application/json")
-    public List<String> getGroupOrgs(@PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id) {
+    @GetMapping(value = "/api/v1/{lang}/slices/orgs/{id}/groupOrgs", produces = "application/json")
+    public List<String> getGroupOrgs(
+        @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
+        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
+    ) {
         logger.debug(getClass().getName() + ".getGroupOrgs()");
 
         Organization org = repo.findOne(id);
@@ -105,8 +111,11 @@ public class OrganizationRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список отчетов по идентификатору согласно заданной группировки")
-    @GetMapping(value = "/api/v1/slices/orgs/{id}/groupReports", produces = "application/json")
-    public List<String> getGroupReports(@PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id) {
+    @GetMapping(value = "/api/v1/{lang}/slices/orgs/{id}/groupReports", produces = "application/json")
+    public List<String> getGroupReports(
+        @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
+        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
+    ) {
         logger.debug(getClass().getName() + ".getGroupOrgs()");
 
         Organization org = repo.findOne(id);
@@ -119,12 +128,10 @@ public class OrganizationRestController extends BaseController {
             .collect(Collectors.toList());
     }
 
-
-
     @ApiOperation(value="Импорт данных из файла Excel")
-    @PostMapping(value = "/api/v1/slices/orgs/import", produces = "application/json")
+    @PostMapping(value = "/api/v1/slices/{lang}/orgs/import", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public LongDto importData() {
+    public LongDto importData(@PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang) {
         long count = repo.count();
         if (count > 0) {
             repo.deleteAll();
@@ -150,21 +157,18 @@ public class OrganizationRestController extends BaseController {
                 if (i == 1) continue;
                 int j = 0;
                 String nameRu = "";
+                String nameKz = "";
                 String code = "";
                 String reportCodesStr = "";
                 String orgCodesStr = "";
                 for (Cell cell : row) {
                     j++;
-                    if (j == 1)
-                        nameRu = cell.getStringCellValue();
-                    if (j == 3)
-                        code = cell.getStringCellValue();
-                    if (j == 5)
-                        reportCodesStr = cell.getStringCellValue();;
-                    if (j == 9)
-                        orgCodesStr = cell.getStringCellValue();;
-                    if (j > 9)
-                        continue;
+                    if (j == 1) nameRu = cell.getStringCellValue();
+                    if (j == 2) nameKz = cell.getStringCellValue();
+                    if (j == 3) code = cell.getStringCellValue();
+                    if (j == 5) reportCodesStr = cell.getStringCellValue();;
+                    if (j == 9) orgCodesStr = cell.getStringCellValue();;
+                    if (j > 9) continue;
                 }
                 if (code == null || code.isEmpty())
                     continue;
@@ -197,9 +201,18 @@ public class OrganizationRestController extends BaseController {
                     }
                     o.setGroupOrg(groupOrgCode);
                 }
-
                 orgs.add(o);
 
+                //на казахском языке
+                o = new Organization();
+                o.setCode(code);
+                o.setLang("KZ");
+                o.setName(nameKz);
+                if (groupOrgCode != null && !groupOrgCode.isEmpty())
+                    o.setGroupOrg(groupOrgCode);
+                if (groupReportCode != null && !groupReportCode.isEmpty())
+                    o.setGroupReport(groupReportCode);
+                orgs.add(o);
 
                 //Группировка отчётов
                 if (reportCodesStr !=null && !reportCodesStr.isEmpty() && !mreps.containsKey(reportCodesStr) ) {

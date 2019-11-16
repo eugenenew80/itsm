@@ -16,5 +16,5 @@ public class OrderSliceDto {
 
     private Long maxRecNum;
     private String region;
-    private Long groupId;
+    private String groupCode;
 }
