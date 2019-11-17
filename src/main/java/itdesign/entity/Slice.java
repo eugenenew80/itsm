@@ -46,7 +46,7 @@ public class Slice implements HasLang {
     @Column(name = "max_rec_num")
     private  Long maxRecNum;
 
-    @Column
+    @Column(name = "err_msg")
     private String err_msg;
 
     @Transient
