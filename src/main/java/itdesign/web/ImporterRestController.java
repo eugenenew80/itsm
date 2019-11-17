@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "API для конвертации данных из файлов Excel")
 @RestController
 @RequiredArgsConstructor
-public class ImporterRestController { //extends BaseController {
+public class ImporterRestController extends BaseController {
     private final GroupImporter groupImporter;
     private final StatusImporter statusImporter;
     private final OrganizationImporter organizationImporter;
