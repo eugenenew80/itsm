@@ -804,4 +804,13 @@
                 startValue="1"/>
     </changeSet>
 
+    <changeSet id="slice-eug-65" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding fields to table slices</comment>
+        <addColumn schemaName="slice" tableName="slices">
+            <column name="err_msg" type="varchar(100)" remarks="Текст ошибки">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
