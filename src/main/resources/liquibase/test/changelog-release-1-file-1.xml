@@ -812,4 +812,11 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="slice-eug-66" logicalFilePath="path-independent" author="eugene">
+        <comment>Autofill group_code field</comment>
+        <sql dbms="postgresql" endDelimiter=";">
+            UPDATE slice.rep_groups SET code = '0' || code where length(code)=2;
+        </sql>
+    </changeSet>
 </databaseChangeLog>
