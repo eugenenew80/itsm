@@ -7,7 +7,6 @@ import itdesign.entity.Region;
 import itdesign.repo.RegionRepo;
 import itdesign.web.dto.RegionDto;
 import itdesign.web.dto.RegionTreeDto;
-import itdesign.web.external.RegionImporter;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
 import org.springframework.web.bind.annotation.*;
