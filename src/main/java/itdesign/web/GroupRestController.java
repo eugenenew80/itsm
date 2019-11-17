@@ -17,20 +17,20 @@ import java.util.stream.Collectors;
 @Api(tags = "API для работы с группами отчётов")
 @RestController
 @RequiredArgsConstructor
-public class GroupRestController {//extends BaseController {
+public class GroupRestController extends BaseController {
     private final GroupRepo repo;
     private final DozerBeanMapper mapper;
 
     @PostConstruct
     private void init() {
-        //logger.debug(getClass() .getName()+ ".init()");
+        logger.debug(getClass() .getName()+ ".init()");
         transformToDto = t -> mapper.map(t, GroupDto.class);
     }
 
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/{lang}/slices/groups", produces = "application/json")
     public List<GroupDto> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
-        //logger.debug(getClass().getName() + ".getAll()");
+        logger.debug(getClass().getName() + ".getAll()");
 
         return repo.findAllByLang(lang.toUpperCase())
             .stream()
