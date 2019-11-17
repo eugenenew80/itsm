@@ -1,6 +1,6 @@
 package itdesign.entity;
 
-import itdesign.entity.util.PreventUpdateAndRemove;
+import itdesign.entity.util.PreventUpdate;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "rep_statuses")
 @Immutable
-@EntityListeners(PreventUpdateAndRemove.class)
+@EntityListeners(PreventUpdate.class)
 public class Status implements HasLang {
 
     @Id

@@ -3,7 +3,7 @@ package itdesign.entity.util;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 
-public class PreventUpdateAndRemove {
+public class PreventUpdate {
     @PreUpdate
     void onPreUpdate(Object o) {
         throw new UnsupportedOperationException("Unsupported operation");

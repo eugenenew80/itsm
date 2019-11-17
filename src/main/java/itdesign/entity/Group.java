@@ -1,7 +1,6 @@
 package itdesign.entity;
 
-import itdesign.entity.util.PreventAnyUpdate;
-import itdesign.entity.util.PreventUpdateAndRemove;
+import itdesign.entity.util.PreventUpdate;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "rep_groups")
 @Immutable
-@EntityListeners(PreventUpdateAndRemove.class)
+@EntityListeners(PreventUpdate.class)
 public class Group  implements HasLang {
 
     @Id
