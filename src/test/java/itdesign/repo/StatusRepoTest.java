@@ -87,9 +87,11 @@ public class StatusRepoTest {
         assertThat(savedStatus.getName(), equalTo(statusName));
     }
 
+    /*
     @Test(expected=UnsupportedOperationException.class)
     public void shouldFailWhenTryRemoveStatus() {
         long testedStatusId = 1l;
         repo.delete(testedStatusId);
     }
+    */
 }
