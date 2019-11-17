@@ -58,21 +58,17 @@ public class OrganizationRestController extends BaseController {
     ) {
         logger.debug(getClass().getName() + ".getAll()");
 
-        Sort sort = new Sort(Sort.Direction.ASC, "id");
-
         if (reportCode == null || reportCode.isEmpty())
-            return repo.findAll(sort)
+            return repo.findAllByLang(lang)
                 .stream()
                 .filter(t -> t.getLang().equals(lang.toUpperCase()))
                 .map(transformToDto::apply)
                 .collect(Collectors.toList());
         else {
             List<GroupReport> groupReports = groupReportRepo.findAllByReportCode(reportCode);
-
             return groupReports.stream()
-                .map(t -> repo.findAllByGroupReport(t.getGroupCode()))
+                .map(t -> repo.findAllByGroupReportAndLang(t.getGroupCode(), lang.toUpperCase()))
                 .flatMap(t -> t.stream())
-                .filter(t -> t.getLang().equals(lang.toUpperCase()))
                 .distinct()
                 .map(transformToDto::apply)
                 .collect(Collectors.toList());

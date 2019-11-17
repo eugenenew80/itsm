@@ -57,10 +57,8 @@ public class TemplateCodeRestController extends BaseController {
     public List<TemplateCodeDto> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
         logger.debug(getClass().getName() + ".getAll()");
 
-        Sort sort = new Sort(Sort.Direction.ASC, "id");
-        return repo.findAll(sort)
+        return repo.findAllByLang(lang.toUpperCase())
             .stream()
-            .filter(t -> t.getLang().equals(lang.toUpperCase()))
             .map(transformToDto::apply)
             .collect(Collectors.toList());
     }

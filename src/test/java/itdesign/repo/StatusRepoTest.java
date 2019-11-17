@@ -16,6 +16,7 @@ import java.util.List;
 import static itdesign.helper.EntitiesHelper.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -62,6 +63,18 @@ public class StatusRepoTest {
 
 
     @Test
+    public void newStatusMayBeCreated() {
+        Status status = newStatus(null);
+
+        repo.save(status);
+        assertThat(status.getId(), is(not(equalTo(null))));
+        assertThat(status.getId(), is(greaterThan(0L)));
+
+        Status findStatus = repo.findOne(status.getId());
+        assertStatus(findStatus);
+    }
+
+    @Test
     public void statusShouldBeImmutable() {
         long testedStatusId = 1l;
         Status status = repo.findOne(testedStatusId);
@@ -72,11 +85,6 @@ public class StatusRepoTest {
 
         Status savedStatus = repo.findOne(testedStatusId);
         assertThat(savedStatus.getName(), equalTo(statusName));
-    }
-
-    @Test(expected=UnsupportedOperationException.class)
-    public void shouldFailWhenTryCreateStatus() {
-        repo.save(newStatus(null));
     }
 
     @Test(expected=UnsupportedOperationException.class)

@@ -11,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "sheet_codes")
-public class SheetCode {
+public class SheetCode implements HasLang {
 
     @Id
     @SequenceGenerator(name="sheet_codes_s", sequenceName = "sheet_codes_s", allocationSize=1)

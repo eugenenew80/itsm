@@ -13,10 +13,10 @@ import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 
-import static itdesign.helper.EntitiesHelper.assertGroup;
-import static itdesign.helper.EntitiesHelper.newGroup;
+import static itdesign.helper.EntitiesHelper.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
@@ -62,6 +62,18 @@ public class GroupRepoTest {
     }
 
     @Test
+    public void newGroupMayBeCreated() {
+        Group group = newGroup(null);
+
+        repo.save(group);
+        assertThat(group.getId(), is(not(equalTo(null))));
+        assertThat(group.getId(), is(greaterThan(0L)));
+
+        Group findGroup = repo.findOne(group.getId());
+        assertGroup(findGroup);
+    }
+
+    @Test
     public void groupShouldBeImmutable() {
         long testedGroupId = 1l;
         Group group = repo.findOne(testedGroupId);
@@ -72,11 +84,6 @@ public class GroupRepoTest {
 
         Group savedGroup = repo.findOne(testedGroupId);
         assertThat(savedGroup.getName(), equalTo(groupName));
-    }
-
-    @Test(expected=UnsupportedOperationException.class)
-    public void shouldFailWhenTryCreateGroup() {
-        repo.save(newGroup(null));
     }
 
     @Test(expected=UnsupportedOperationException.class)

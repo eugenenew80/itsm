@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "template_codes")
-public class TemplateCode {
+public class TemplateCode implements HasLang {
 
     @Id
     @SequenceGenerator(name="template_codes_s", sequenceName = "template_codes_s", allocationSize=1)

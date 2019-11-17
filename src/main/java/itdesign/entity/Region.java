@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "regions")
-public class Region {
+public class Region implements HasLang {
 
     @Id
     @SequenceGenerator(name="regions_s", sequenceName = "regions_s", allocationSize=1)

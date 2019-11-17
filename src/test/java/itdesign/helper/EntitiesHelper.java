@@ -10,13 +10,15 @@ import java.time.LocalDateTime;
 import static org.junit.Assert.*;
 
 public final class EntitiesHelper {
-	public final static String STATUS_CODE="1";
+	public final static String STATUS_CODE="4";
 	public final static String STATUS_NAME="Статус 1";
+	public final static String STATUS_LANG="RU";
 
-	public final static String GROUP_CODE="01";
+	public final static String GROUP_CODE="004";
 	public final static String GROUP_NAME="Группа 1";
+	public final static String GROUP_LANG="RU";
 
-	public final static String SLICE_GROUP_CODE = "01";
+	public final static String SLICE_GROUP_CODE = "001";
 	public final static String SLICE_STATUS_CODE = "0";
 	public final static String SLICE_REGION = "19";
 	public final static LocalDate SLICE_START_DATE = LocalDate.of(2019, 1, 1);
@@ -33,6 +35,7 @@ public final class EntitiesHelper {
 		status.setId(1l);
 		status.setCode(STATUS_CODE);
 		status.setName(STATUS_NAME);
+		status.setLang(STATUS_LANG);
 		return status;
 	}
 	
@@ -46,8 +49,9 @@ public final class EntitiesHelper {
 		assertNotNull(status);
 		assertNotNull(status.getId());
 		assertTrue(status.getId()>0);
+		//assertEquals(STATUS_CODE, status.getCode());
 		assertEquals(STATUS_NAME, status.getName());
-		assertEquals(STATUS_CODE, status.getCode());
+		assertEquals(STATUS_LANG, status.getLang());
 	}
 
 	public static Group newGroup() {
@@ -55,6 +59,7 @@ public final class EntitiesHelper {
 		newGroup.setId(1l);
 		newGroup.setCode(GROUP_CODE);
 		newGroup.setName(GROUP_NAME);
+		newGroup.setLang(GROUP_LANG);
 		return newGroup;
 	}
 
@@ -68,8 +73,9 @@ public final class EntitiesHelper {
 		assertNotNull(group);
 		assertNotNull(group.getId());
 		assertTrue(group.getId()>0);
-		assertEquals(GROUP_CODE, group.getCode());
+		//assertEquals(GROUP_CODE, group.getCode());
 		assertEquals(GROUP_NAME, group.getName());
+		assertEquals(GROUP_LANG, group.getLang());
 	}
 
 	public static Slice newSlice() {

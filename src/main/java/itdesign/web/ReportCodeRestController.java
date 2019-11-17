@@ -8,9 +8,6 @@ import itdesign.repo.ReportCodeRepo;
 import itdesign.web.dto.LongDto;
 import itdesign.web.dto.ReportCodeDto;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.util.ZipSecureFile;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -18,12 +15,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dozer.DozerBeanMapper;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,10 +48,8 @@ public class ReportCodeRestController extends BaseController {
     public List<ReportCodeDto> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
         logger.debug(getClass().getName() + ".getAll()");
 
-        Sort sort = new Sort(Sort.Direction.ASC, "id");
-        return repo.findAll(sort)
+        return repo.findAllByLang(lang.toUpperCase())
             .stream()
-            .filter(t -> t.getLang().equals(lang.toUpperCase()))
             .map(transformToDto::apply)
             .collect(Collectors.toList());
     }

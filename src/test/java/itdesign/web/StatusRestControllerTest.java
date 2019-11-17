@@ -80,7 +80,7 @@ public class StatusRestControllerTest {
     }
 
     @Test
-    public void shouldNotFoundWhenTryFoundById() throws Exception {
+    public void shouldNotFoundWhenTryFoundStatusById() throws Exception {
         Long testedStatusId = 1l;
 
         RestAssured.baseURI = "http://localhost:" + port;

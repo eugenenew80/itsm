@@ -37,7 +37,7 @@ public class OrderSlicesDto {
                 t.setEndDate(getEndDate());
                 t.setMaxRecNum(getMaxRecNum());
                 t.setRegion(getRegion());
-                t.setGroupCode("0" + groupId);
+                t.setGroupCode("00" + groupId);
                 return t;
             })
             .collect(toList());

@@ -769,4 +769,39 @@
         <dropColumn schemaName="slice" tableName="slices" columnName="group_id" />
     </changeSet>
 
+    <changeSet id="slice-eug-60" logicalFilePath="path-independent" author="eugene">
+        <comment>Changing datatype of column code in rep_groups table</comment>
+        <modifyDataType schemaName="slice" tableName="rep_groups" columnName="code" newDataType="varchar(3)" />
+    </changeSet>
+
+    <changeSet id="slice-eug-61" logicalFilePath="path-independent" author="eugene">
+        <comment>Changing datatype of column group_code in slices table</comment>
+        <modifyDataType schemaName="slice" tableName="slices" columnName="group_code" newDataType="varchar(3)" />
+    </changeSet>
+
+    <changeSet id="slice-eug-62" logicalFilePath="path-independent" author="eugene">
+        <comment>Autofill group_code field</comment>
+        <sql dbms="postgresql" endDelimiter=";">
+            UPDATE slice.slices SET group_code = '0' || group_code;
+        </sql>
+    </changeSet>
+
+    <changeSet id="slice-eug-63" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating sequence for table rep_groups</comment>
+        <createSequence
+                incrementBy="1"
+                schemaName="slice"
+                sequenceName="rep_groups_s"
+                startValue="4"/>
+    </changeSet>
+
+    <changeSet id="slice-eug-64" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating sequence for table rep_statuses</comment>
+        <createSequence
+                incrementBy="1"
+                schemaName="slice"
+                sequenceName="rep_statuses_s"
+                startValue="4"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -49,9 +49,8 @@ public class RegionRestController extends BaseController {
     public List<RegionDto> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
         logger.debug(getClass().getName() + ".getAll()");
 
-        return repo.findAll()
+        return repo.findAllByLang(lang.toUpperCase())
             .stream()
-            .filter(t -> t.getLang().equals(lang.toUpperCase()))
             .map(transformToDto::apply)
             .collect(Collectors.toList());
     }
@@ -62,9 +61,8 @@ public class RegionRestController extends BaseController {
         logger.debug(getClass().getName() + ".getTree()");
 
         //Получаем список регионов
-        List<Region> list = repo.findAll()
+        List<Region> list = repo.findAllByLang(lang)
             .stream()
-            .filter(t -> t.getLang().equals(lang.toUpperCase()))
             .collect(Collectors.toList());
 
         if (list.size() == 0)

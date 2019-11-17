@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 @Entity
 @Table(name = "slices")
 @EntityListeners(PreventRemove.class)
-public class Slice implements Serializable {
+public class Slice implements HasLang {
 
     @Id
     @SequenceGenerator(name="slices_s", sequenceName = "slices_s", allocationSize=1)

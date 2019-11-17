@@ -201,7 +201,7 @@ public class SliceRestControllerTest {
 
 
     @Test
-    public void maxRecNumMa()  {
+    public void maxRecNumMayBeRetrieved()  {
         RestAssured.baseURI = "http://localhost:" + port;
         RestAssured.basePath = "/api/v1/ru/slices/max/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();

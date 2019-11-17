@@ -58,7 +58,7 @@ public class GroupRestControllerTest {
     }
 
     @Test
-    public void listStatusesMayBeFound() {
+    public void listGroupsMayBeFound() {
         RestAssured.baseURI = "http://localhost:" + port;
         RestAssured.basePath = "/api/v1/ru/slices/groups/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
@@ -81,7 +81,7 @@ public class GroupRestControllerTest {
     }
 
     @Test
-    public void shouldNotFoundWhenTryFoundById() throws Exception {
+    public void shouldNotFoundWhenTryFoundGroupById() throws Exception {
         Long testedGroupId = 1l;
 
         RestAssured.baseURI = "http://localhost:" + port;
@@ -101,7 +101,7 @@ public class GroupRestControllerTest {
     }
 
     @Test
-    public void shouldMethodNotAllowedWhenTryCreateStatus() throws JSONException {
+    public void shouldMethodNotAllowedWhenTryCreateGroup() throws JSONException {
         RestAssured.baseURI = "http://localhost:" + port;
         RestAssured.basePath = "/api/v1/ru/slices/groups/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
@@ -134,6 +134,7 @@ public class GroupRestControllerTest {
         Group newGroup = newGroup(testedGroupId);
         JSONObject body = new JSONObject();
         body.put("id", newGroup.getId());
+        body.put("code", newGroup.getCode());
         body.put("name", newGroup.getName());
 
         given().
@@ -150,7 +151,7 @@ public class GroupRestControllerTest {
     }
 
     @Test
-    public void shouldТщеАщгтвWhenTryRemoveGroup() {
+    public void shouldNotFoundWhenTryRemoveGroup() {
         Long testedGroupId = 1l;
 
         RestAssured.baseURI = "http://localhost:" + port;

@@ -68,8 +68,7 @@ public class SliceRepoTest {
 
     @Test
     public void newSliceMayBeCreated() {
-        Slice slice = newSlice();
-        slice.setId(null);
+        Slice slice = newSlice(null);
 
         repo.save(slice);
         assertThat(slice.getId(), is(not(equalTo(null))));
