@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -56,6 +57,9 @@ public class ReportRestController extends BaseController {
         List<String> reportCodes = reportRepo.findAllBySliceId(sliceId).stream()
             .map(t -> t.getReportCode())
             .collect(Collectors.toList());
+
+        if (reportCodes.size() == 0)
+            return Collections.emptyList();
 
         return repo.findByCodesAndLang(reportCodes, lang.toUpperCase())
             .stream()
