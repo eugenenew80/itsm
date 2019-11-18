@@ -19,18 +19,8 @@
     </field>
 
     <field>
-      <a>group.id</a>
-      <b>groupId</b>
-    </field>
-
-    <field>
       <a>group.name</a>
       <b>groupName</b>
-    </field>
-
-    <field>
-      <a>status.id</a>
-      <b>statusId</b>
     </field>
 
     <field>
