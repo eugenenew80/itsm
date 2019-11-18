@@ -40,6 +40,7 @@ public class AppConfig {
             "dozer/SliceDto.xml",
             "dozer/OrderSliceDto.xml",
             "dozer/ReportCodeDto.xml",
+            "dozer/ReportCodeDto2.xml",
             "dozer/SheetCodeDto.xml",
             "dozer/OrganizationDto.xml",
             "dozer/TemplateCodeDto.xml",

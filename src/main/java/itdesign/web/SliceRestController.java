@@ -52,12 +52,12 @@ public class SliceRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список групп и статусов")
-    @GetMapping(value = "/api/v1/{lang}/slices/all", produces = "application/json")
-    public List<GroupAndStatusDto> getAll(
+    @GetMapping(value = "/api/v1/{lang}/slices/groupsAndStatuses", produces = "application/json")
+    public List<GroupAndStatusDto> getGroupsAndStatuses(
         @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
-        logger.debug(getClass().getName() + ".getAll()");
+        logger.debug(getClass().getName() + ".getGroupsAndStatuses()");
         logger.trace("deleted: " + deleted);
 
         return repo.findAll()
@@ -70,10 +70,9 @@ public class SliceRestController extends BaseController {
             .collect(toList());
     }
 
-
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/{lang}/slices", produces = "application/json")
-    public List<SliceDto> getByGroupAndStatus(
+    public List<SliceDto> getAll(
         @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
         @RequestParam(value = "groupCode")  @ApiParam(value = "Код группы отчетов",  example = "001") String groupCode,
         @RequestParam(value = "statusCode") @ApiParam(value = "Код статуса",  example = "0") String statusCode,
@@ -84,6 +83,7 @@ public class SliceRestController extends BaseController {
         logger.trace("deleted: " + deleted);
         logger.trace("groupCode: " + groupCode);
         logger.trace("statusCode: " + statusCode);
+        logger.trace("year: " + year);
 
         return repo.findAllByGroupCodeAndStatusCode(groupCode, statusCode)
             .stream()

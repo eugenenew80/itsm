@@ -10,9 +10,8 @@ import javax.persistence.*;
 @EqualsAndHashCode(of= {"id"})
 @NoArgsConstructor
 @Entity
-@Table(name = "slices")
+@Table(name = "reports")
 @EntityListeners(PreventRemove.class)
-
 @NamedEntityGraph(name="Report.allJoins", attributeNodes = {
     @NamedAttributeNode("slice")
 })

@@ -13,7 +13,6 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import static itdesign.util.Util.first;
 
 @Api(tags = "API для работы с кодами отчётов")
 @RestController
@@ -25,8 +24,6 @@ public class ReportCodeRestController extends BaseController {
     @PostConstruct
     private void init() {
         logger.debug(getClass() .getName()+ ".init()");
-
-        findById = repo::findOne;
         transformToDto = t -> mapper.map(t, ReportCodeDto.class);
     }
 
@@ -41,19 +38,5 @@ public class ReportCodeRestController extends BaseController {
             .collect(Collectors.toList());
     }
 
-    @ApiOperation(value="Получить запись по идентификатору")
-    @GetMapping(value = "/api/v1/{lang}/slices/reportCodes/{id}", produces = "application/json")
-    public ReportCodeDto getById(
-        @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
-        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
-    ) {
-        logger.debug(getClass().getName() + ".getById()");
-
-        return first(findById)
-            .andThen(transformToDto)
-            .apply(id);
-    }
-
-    private Function<Long, ReportCode> findById;
     private Function<ReportCode, ReportCodeDto> transformToDto;
 }

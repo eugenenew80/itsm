@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import static itdesign.util.Util.first;
 
 @Api(tags = "API для работы с регионами")
 @RestController
@@ -27,8 +26,6 @@ public class RegionRestController extends BaseController {
     @PostConstruct
     private void init() {
         logger.debug(getClass() .getName()+ ".init()");
-
-        findById = repo::findOne;
         transformToDto = t -> mapper.map(t, RegionDto.class);
     }
 
@@ -104,20 +101,5 @@ public class RegionRestController extends BaseController {
         return rootDto;
     }
 
-
-    @ApiOperation(value="Получить запись по идентификатору")
-    @GetMapping(value = "/api/v1/{lang}/slices/regs/{id}", produces = "application/json")
-    public RegionDto getById(
-        @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
-        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
-    ) {
-        logger.debug(getClass().getName() + ".getById()");
-
-        return first(findById)
-            .andThen(transformToDto)
-            .apply(id);
-    }
-
-    private Function<Long, Region> findById;
     private Function<Region, RegionDto> transformToDto;
 }

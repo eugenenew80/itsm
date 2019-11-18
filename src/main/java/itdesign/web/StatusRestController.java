@@ -36,7 +36,6 @@ public class StatusRestController extends BaseController {
 
         return repo.findAllByLang(lang.toUpperCase())
             .stream()
-            .filter(t -> t.getLang().equals(lang.toUpperCase()))
             .map(transformToDto::apply)
             .collect(Collectors.toList());
     }
