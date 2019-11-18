@@ -69,21 +69,18 @@ public class ReportRestController extends BaseController {
         @PathVariable @ApiParam(value = "Идентификатор отчёта", required = true, example = "1") Long id,
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
-        TemplateCode template = templateCodeRepo.findAll().stream().findFirst().get();
+        TemplateCode template = templateCodeRepo.findByCodeAndLang("F00113", lang);
+        if (template == null)
+            return null;
 
         try (InputStream excelFileToRead = new ByteArrayInputStream(template.getBinaryFile())) {
             Workbook workbook = new XSSFWorkbook(excelFileToRead);
 
-            /*
-            Sheet sheet = workbook.getSheetAt(0);
-            Row row = sheet.getRow(0);
-            Cell cell = row.getCell(0);
-            cell.setCellValue("QQQQQ");
-            */
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             workbook.write(bos);
             ByteArrayResource resource = new ByteArrayResource(bos.toByteArray());
+            bos.close();
 
             return ResponseEntity.ok()
                 .header("Content-disposition", "attachment; filename=" + template.getName())
