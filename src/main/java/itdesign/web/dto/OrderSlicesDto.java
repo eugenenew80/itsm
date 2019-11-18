@@ -26,18 +26,18 @@ public class OrderSlicesDto {
     @ApiModelProperty(value = "Регион", example = "19", position = 3)
     private String region;
 
-    @ApiModelProperty(value = "Список групп, которые необходимо включить в срез", example = "[1, 2, 3]", position = 4)
-    private List<Long> groups;
+    @ApiModelProperty(value = "Список групп, которые необходимо включить в срез", example = "['001', '002', '003']", position = 4)
+    private List<String> groups;
 
     public List<OrderSliceDto> list() {
         return getGroups().stream()
-            .map(groupId -> {
+            .map(groupCode -> {
                 OrderSliceDto t = new OrderSliceDto();
                 t.setStartDate(getStartDate());
                 t.setEndDate(getEndDate());
                 t.setMaxRecNum(getMaxRecNum());
                 t.setRegion(getRegion());
-                t.setGroupCode("00" + groupId);
+                t.setGroupCode(groupCode);
                 return t;
             })
             .collect(toList());

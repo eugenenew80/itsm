@@ -7,12 +7,10 @@ import lombok.Data;
 @ApiModel(value = "Status", description = "Статус")
 @Data
 public class StatusDto {
-    @ApiModelProperty(value = "Идентификатор", example = "1", position = 0)
-    private Long id;
 
-    @ApiModelProperty(value = "Код", example = "1", position = 1)
+    @ApiModelProperty(value = "Код", example = "1", position = 0)
     private String code;
 
-    @ApiModelProperty(value = "Наименование", example = "Статус 1", position = 2)
+    @ApiModelProperty(value = "Наименование", example = "Статус 1", position = 1)
     private String name;
 }

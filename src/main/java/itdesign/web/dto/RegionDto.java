@@ -8,12 +8,9 @@ import lombok.Data;
 @Data
 public class RegionDto {
 
-    @ApiModelProperty(value = "Идентификатор", example = "", position = 0)
-    private Long id;
-
-    @ApiModelProperty(value = "Код", example = "", position = 1)
+    @ApiModelProperty(value = "Код", example = "", position = 0)
     private String code;
 
-    @ApiModelProperty(value = "Название", example = "", position = 2)
+    @ApiModelProperty(value = "Название", example = "", position = 1)
     private String name;
 }

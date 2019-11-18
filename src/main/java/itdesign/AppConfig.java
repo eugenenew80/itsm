@@ -42,7 +42,8 @@ public class AppConfig {
             "dozer/ReportCodeDto.xml",
             "dozer/SheetCodeDto.xml",
             "dozer/OrganizationDto.xml",
-            "dozer/TemplateCodeDto.xml"
+            "dozer/TemplateCodeDto.xml",
+            "dozer/GroupAndStatusDto.xml"
         ));
         return mapper;
     }

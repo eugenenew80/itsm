@@ -59,8 +59,13 @@ public class Slice implements HasLang {
     private String lang;
 
     @Transient
+    public Integer getYear() {
+        return startDate != null ? startDate.getYear() : null;
+    }
+
+    @Transient
     public String getFullStatus() {
-        String fullStatus = getStatus() != null ? getStatus().getName() : "";
+        String fullStatus = getStatus() != null ? getStatus().getName() : ""  + getYear();
         fullStatus = fullStatus + (startDate != null ? " " + startDate.getYear() : "");
         return fullStatus;
     }
