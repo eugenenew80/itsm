@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 @Transactional
 public interface SheetCodeRepo extends JpaRepository<SheetCode, Long> {
-    SheetCode findByCodeAndLang(String code, String lang);
+    SheetCode findByCodeAndReportCodeAndLang(String code, String reportCode, String lang);
     List<SheetCode> findAllByLang(String lang);
 }

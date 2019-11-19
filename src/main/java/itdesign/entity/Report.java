@@ -36,8 +36,8 @@ public class Report {
     private String tableData;
 
     @Column(name = "start_row")
-    private String startRow;
+    private Integer startRow;
 
     @Column(name = "start_column")
-    private String startColumn;
+    private Integer startColumn;
 }
