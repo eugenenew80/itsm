@@ -74,7 +74,7 @@ public class ReportRestController extends BaseController {
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang,
         @RequestBody CreateReportDto dto
     ) {
-        logger.debug(className + ".download()");
+        logger.debug(className + ".createReport()");
         logger.trace("lang: " + lang);
 
         Workbook workbook = buildReport(dto, lang);
