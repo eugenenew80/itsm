@@ -8,6 +8,7 @@ import itdesign.repo.*;
 import itdesign.web.dto.CreateReportDto;
 import itdesign.web.dto.ReportCodeDto2;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dozer.DozerBeanMapper;
@@ -103,8 +104,17 @@ public class ReportRestController extends BaseController {
         List<Object[]> resultList = getData(report.getTableData(), dto, lang);
 
         //Формируем отчёт, используя шаблон
-        try (InputStream templateInputStream = new ByteArrayInputStream(template.getBinaryFile())) {
-            Workbook workbook = new XSSFWorkbook(templateInputStream);
+        try  {
+            String templateFileName = template.getName();
+            try (FileOutputStream fos = new FileOutputStream(templateFileName)) {
+                fos.write(template.getBinaryFile());
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+
+            Workbook workbook = new XSSFWorkbook(new File(templateFileName));
             Map<String, SheetCode> mapSheetTemplates = new HashMap<>();
 
             for (Object[] objRow : resultList) {
@@ -147,6 +157,10 @@ public class ReportRestController extends BaseController {
 
         //Обработка исключений
         catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        catch (InvalidFormatException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
