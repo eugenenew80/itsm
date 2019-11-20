@@ -8,8 +8,6 @@ import itdesign.repo.*;
 import itdesign.web.dto.CreateReportDto;
 import itdesign.web.dto.ReportCodeDto2;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dozer.DozerBeanMapper;
@@ -105,20 +103,10 @@ public class ReportRestController extends BaseController {
         List<Object[]> resultList = getData(report.getTableData(), dto, lang);
 
         //Формируем отчёт, используя шаблон
-        try  {
-            String templateFileName = dto.getSliceId() + "_" + template.getName();
-            try (FileOutputStream fos = new FileOutputStream(templateFileName)) {
-                fos.write(template.getBinaryFile());
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
-
-            OPCPackage pkg = OPCPackage.open(new File(templateFileName));
-            XSSFWorkbook workbook = new XSSFWorkbook(pkg);
-
+        try (InputStream templateInputStream = new ByteArrayInputStream(template.getBinaryFile())) {
+            Workbook workbook = new XSSFWorkbook(templateInputStream);
             Map<String, SheetCode> mapSheetTemplates = new HashMap<>();
+
             for (Object[] objRow : resultList) {
                 String sheetCode = objRow[0].toString();
                 int rowIndex = (short)objRow[1] + report.getStartRow() - 2;
@@ -162,10 +150,6 @@ public class ReportRestController extends BaseController {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        catch (InvalidFormatException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
     }
 
     private List<Object[]> getData(String tableName, CreateReportDto dto, String lang) {
@@ -202,11 +186,9 @@ public class ReportRestController extends BaseController {
         logger.trace("buildResponse()");
 
         ByteArrayResource resource;
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             workbook.write(bos);
             resource = new ByteArrayResource(bos.toByteArray());
-            bos.close();
         }
         catch (IOException e) {
             throw new RuntimeException(e);
