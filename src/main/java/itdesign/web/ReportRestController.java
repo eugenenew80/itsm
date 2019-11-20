@@ -3,14 +3,8 @@ package itdesign.web;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import itdesign.entity.Report;
-import itdesign.entity.ReportCode;
-import itdesign.entity.SheetCode;
-import itdesign.entity.TemplateCode;
-import itdesign.repo.ReportCodeRepo;
-import itdesign.repo.ReportRepo;
-import itdesign.repo.SheetCodeRepo;
-import itdesign.repo.TemplateCodeRepo;
+import itdesign.entity.*;
+import itdesign.repo.*;
 import itdesign.web.dto.CreateReportDto;
 import itdesign.web.dto.ReportCodeDto2;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +21,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.io.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -43,6 +34,8 @@ public class ReportRestController extends BaseController {
     private final ReportCodeRepo reportCodeRepo;
     private final SheetCodeRepo sheetCodeRepo;
     private final ReportRepo reportRepo;
+    private final OrganizationRepo organizationRepo;
+    private final GroupOrgRepo groupOrgRepo;
     private final DozerBeanMapper mapper;
     private final EntityManager em;
 
@@ -90,20 +83,22 @@ public class ReportRestController extends BaseController {
             .findFirst()
             .orElse(null);
 
+        //Отчёт не найден для указанного среза и кода отчёта
         if (report == null)
-            return null;
+            throw new RuntimeException("Report not found: sliceId: " + dto.getSliceId() + ", reportCode: " + dto.getReportCode());
 
+        //Шаблон не найден для указанного код шаблона и языка
         TemplateCode template = templateCodeRepo.findByCodeAndLang(report.getTemplateCode(), lang);
         if (template == null)
-            return null;
+            throw new RuntimeException("Template not found: templateCode: " + report.getTemplateCode() + ", lang: " + lang);
 
-        String sql = "select d_divtbl, d_row, d_col, sum(d_summ) as d_summ from slice." + report.getTableData() + " group by d_divtbl, d_row, d_col order by d_divtbl, d_row, d_col";
-        Query query = em.createNativeQuery(sql);
-        List<Object[]> resultList = query.getResultList();
+        //Получаем данные для отчёта
+        List<Object[]> resultList = getData(report.getTableData(), dto, lang);
 
-        Map<String, SheetCode> mapSheetTemplates = new HashMap<>();
+        //Формируем отчёт, используя шаблон
         try (InputStream templateInputStream = new ByteArrayInputStream(template.getBinaryFile())) {
             Workbook workbook = new XSSFWorkbook(templateInputStream);
+            Map<String, SheetCode> mapSheetTemplates = new HashMap<>();
 
             for (Object[] objRow : resultList) {
                 String sheetCode = objRow[0].toString();
@@ -117,7 +112,7 @@ public class ReportRestController extends BaseController {
                 );
 
                 if (sheetTemplate == null)
-                    continue;
+                    throw new RuntimeException("Sheet not found: sheetCode: " + sheetCode + ", reportCode: " + report.getReportCode() + ", lang: " + lang);
 
                 mapSheetTemplates.putIfAbsent(sheetCode, sheetTemplate);
 
@@ -142,14 +137,46 @@ public class ReportRestController extends BaseController {
             return buildResponse(template.getName(), workbook);
         }
 
+        //Обработка исключений
         catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
+    }
 
-        return null;
+    private List<Object[]> getData(String tableName, CreateReportDto dto, String lang) {
+        logger.trace("getData()");
+
+        String regCode = dto.getRegCode() + "%";
+        String orgCodes = getOrgCodes(dto, lang)
+            .stream()
+            .collect(Collectors.joining(","));
+
+        //Формируем и выполняем запрос к таблице данных
+        String sql = "select d_divtbl, d_row, d_col, sum(d_summ) as d_summ from slice." + tableName + " where d_organ like :regCode and d_vedomst in :orgCodes group by d_divtbl, d_row, d_col order by d_divtbl, d_row, d_col";
+        Query query = em.createNativeQuery(sql);
+        query.setParameter("regCode", regCode);
+        query.setParameter("orgCodes", orgCodes);
+        List<Object[]> list = query.getResultList();
+        return list;
+    }
+
+    private List<String> getOrgCodes(CreateReportDto dto, String lang) {
+        logger.trace("getOrgCodes()");
+
+        Organization org = organizationRepo.findByCodeAndLang(dto.getOrgCode(), lang);
+        if (org.getGroupOrg() != null) {
+            return groupOrgRepo.findAllByGroupCode(org.getGroupOrg())
+                .stream()
+                .map(t -> t.getOrgCode())
+                .collect(Collectors.toList());
+        }
+        return  Arrays.asList(dto.getOrgCode());
     }
 
     private ResponseEntity<Resource> buildResponse(String templateName, Workbook workbook) throws IOException {
+        logger.trace("buildResponse()");
+
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         workbook.write(bos);
         ByteArrayResource resource = new ByteArrayResource(bos.toByteArray());

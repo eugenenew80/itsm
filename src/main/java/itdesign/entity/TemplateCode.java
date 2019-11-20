@@ -30,6 +30,7 @@ public class TemplateCode implements HasLang {
     private String name;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     @Column(name = "binary_file", columnDefinition = "BLOB")
     private byte[] binaryFile;
 }
