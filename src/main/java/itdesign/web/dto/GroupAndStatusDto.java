@@ -6,6 +6,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @EqualsAndHashCode(of= {"groupCode", "statusCode", "year"})
 @ApiModel(value = "Slice", description = "Срез")
 @Data
@@ -26,4 +29,7 @@ public class GroupAndStatusDto {
 
     @ApiModelProperty(value = "Год", example = "2019", position = 4)
     private Integer year;
+
+    @ApiModelProperty(value = "Срезы", example = "", position = 5)
+    private List<SliceDto> children = new ArrayList<>();
 }

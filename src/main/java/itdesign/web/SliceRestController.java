@@ -74,7 +74,7 @@ public class SliceRestController extends BaseController {
 
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/{lang}/slices", produces = "application/json")
-    public List<SliceDto> getAll(
+    public GroupAndStatusDto getAll(
         @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
         @RequestParam(value = "groupCode")  @ApiParam(value = "Код группы отчетов",  example = "001") String groupCode,
         @RequestParam(value = "statusCode") @ApiParam(value = "Код статуса",  example = "0") String statusCode,
@@ -88,14 +88,32 @@ public class SliceRestController extends BaseController {
         logger.trace("year: " + year);
         logger.trace("lang: " + lang);
 
-        return repo.findAllByGroupCodeAndStatusCode(groupCode, statusCode)
+        //Ищем статус и группу
+        Group group = groupRepo.findByCodeAndLang(groupCode, lang.toUpperCase());
+        Status status = statusRepo.findByCodeAndLang(statusCode, lang.toUpperCase());
+
+        //Список срезов
+        List<SliceDto> list = repo.findAllByGroupCodeAndStatusCode(groupCode, statusCode)
             .stream()
-            .filter(t -> deleted  || t.getStatusCode() == null || !t.getStatusCode().equals(DELETED_STATUS))
+            .filter(t -> deleted || t.getStatusCode() == null || !t.getStatusCode().equals(DELETED_STATUS))
             .filter(t -> t.getStartDate().getYear() == year)
-            .map(t ->  { t.setLang(lang); return t; } )
+            .map(t -> {
+                t.setLang(lang);
+                return t;
+            })
             .map(beforeTransform::apply)
             .map(transformToDto::apply)
             .collect(toList());
+
+        //Заворачиваем список срезов в объект Группа и статус
+        GroupAndStatusDto grDto = new GroupAndStatusDto();
+        grDto.setGroupCode(group.getCode());
+        grDto.setGroupName(group.getName());
+        grDto.setStatusCode(status.getCode());
+        grDto.setStatusName(status.getName() + " " + year);
+        grDto.setYear(year);
+        grDto.setChildren(list);
+        return grDto;
     }
 
     @ApiOperation(value="Получить масимальный номер записи в базе данных")
