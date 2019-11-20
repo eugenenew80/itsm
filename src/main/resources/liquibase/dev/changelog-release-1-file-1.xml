@@ -829,4 +829,9 @@
         <comment>Changing datatype of column err_msg in slices table</comment>
         <modifyDataType schemaName="slice" tableName="slices" columnName="region" newDataType="varchar(300)" />
     </changeSet>
+
+    <changeSet id="slice-eug-69" logicalFilePath="path-independent" author="eugene">
+        <comment>Changing datatype of column err_msg in slices table</comment>
+        <modifyDataType schemaName="slice" tableName="slices" columnName="err_msg" newDataType="varchar(500)" />
+    </changeSet>
 </databaseChangeLog>
