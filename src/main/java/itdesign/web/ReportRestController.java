@@ -69,8 +69,8 @@ public class ReportRestController extends BaseController {
     }
 
     @ApiOperation(value="Сформировать отчёт")
-    @PostMapping(value = "/api/v1/{lang}/slices/reports/download")
-    public ResponseEntity<Resource> download(
+    @PostMapping(value = "/api/v1/{lang}/slices/reports/createReport")
+    public ResponseEntity<Resource> createReport(
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang,
         @RequestBody CreateReportDto dto
     ) {
