@@ -76,9 +76,19 @@ public class ReportRestController extends BaseController {
         logger.debug(className + ".createReport()");
         logger.trace("lang: " + lang);
 
+        //формируем отчет
         Workbook workbook = buildReport(dto, lang);
         String fileName = dto.getReportCode() + "_" + dto.getOrgCode() + "_" + dto.getRegCode() + "_" + dto.getSliceId() + ".xlsx";
-        return buildResponse(fileName, workbook);
+
+        //формируем ответ
+        ResponseEntity<Resource> response = buildResponse(fileName, workbook);
+
+        //закрываем файл
+        try { workbook.close(); }
+        catch (IOException e) { e.printStackTrace(); }
+
+        //возвращаем ответ
+        return response;
     }
 
     private Workbook buildReport(CreateReportDto dto, String lang) {

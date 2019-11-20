@@ -49,12 +49,9 @@ public class RegionRestController extends BaseController {
         logger.trace("lang: " + lang);
 
         //Получаем список регионов
-        List<Region> list = repo.findAllByLang(lang)
-            .stream()
-            .collect(Collectors.toList());
-
+        List<Region> list = new ArrayList<>(repo.findAllByLang(lang));
         if (list.size() == 0)
-            return null;
+            return new RegionTreeDto();
 
         //Корневой элемент
         Region rootEntity = list.stream()

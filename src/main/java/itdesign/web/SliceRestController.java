@@ -53,8 +53,8 @@ public class SliceRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список групп и статусов")
-    @GetMapping(value = "/api/v1/{lang}/slices/groupsAndStatuses", produces = "application/json")
-    public List<GroupAndStatusDto> getGroupsAndStatuses(
+    @GetMapping(value = "/api/v1/{lang}/slices/parents", produces = "application/json")
+    public List<GroupAndStatusDto> getParents(
         @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
@@ -73,8 +73,8 @@ public class SliceRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей")
-    @GetMapping(value = "/api/v1/{lang}/slices", produces = "application/json")
-    public GroupAndStatusDto getAll(
+    @GetMapping(value = "/api/v1/{lang}/slices/children", produces = "application/json")
+    public GroupAndStatusDto getChildren(
         @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
         @RequestParam(value = "groupCode")  @ApiParam(value = "Код группы отчетов",  example = "001") String groupCode,
         @RequestParam(value = "statusCode") @ApiParam(value = "Код статуса",  example = "0") String statusCode,
@@ -97,10 +97,7 @@ public class SliceRestController extends BaseController {
             .stream()
             .filter(t -> deleted || t.getStatusCode() == null || !t.getStatusCode().equals(DELETED_STATUS))
             .filter(t -> t.getStartDate().getYear() == year)
-            .map(t -> {
-                t.setLang(lang);
-                return t;
-            })
+            .map(t -> { t.setLang(lang); return t; })
             .map(beforeTransform::apply)
             .map(transformToDto::apply)
             .collect(toList());
@@ -114,6 +111,32 @@ public class SliceRestController extends BaseController {
         grDto.setYear(year);
         grDto.setChildren(list);
         return grDto;
+    }
+
+    @ApiOperation(value="Получить список всех записей")
+    @GetMapping(value = "/api/v1/{lang}/slices", produces = "application/json")
+    public List<SliceDto> getAll(
+        @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
+        @RequestParam(value = "groupCode")  @ApiParam(value = "Код группы отчетов",  example = "001") String groupCode,
+        @RequestParam(value = "statusCode") @ApiParam(value = "Код статуса",  example = "0") String statusCode,
+        @RequestParam(value = "year")       @ApiParam(value = "Год",  example = "2019") int year,
+        @PathVariable(value = "lang")       @ApiParam(value = "Язык",  example = "RU")  String lang
+    ) {
+        logger.debug(className + ".getAll()");
+        logger.trace("deleted: " + deleted);
+        logger.trace("groupCode: " + groupCode);
+        logger.trace("statusCode: " + statusCode);
+        logger.trace("year: " + year);
+        logger.trace("lang: " + lang);
+
+        return repo.findAllByGroupCodeAndStatusCode(groupCode, statusCode)
+            .stream()
+            .filter(t -> deleted || t.getStatusCode() == null || !t.getStatusCode().equals(DELETED_STATUS))
+            .filter(t -> t.getStartDate().getYear() == year)
+            .map(t -> { t.setLang(lang); return t; })
+            .map(beforeTransform::apply)
+            .map(transformToDto::apply)
+            .collect(toList());
     }
 
     @ApiOperation(value="Получить масимальный номер записи в базе данных")
