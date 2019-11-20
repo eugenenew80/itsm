@@ -77,6 +77,14 @@ public class ReportRestController extends BaseController {
         logger.debug(className + ".download()");
         logger.trace("lang: " + lang);
 
+        Workbook workbook = buildReport(dto, lang);
+        String fileName = dto.getReportCode() + "_" + dto.getOrgCode() + "_" + dto.getRegCode() + "_" + dto.getSliceId() + ".xlsx";
+        return buildResponse(fileName, workbook);
+    }
+
+    private Workbook buildReport(CreateReportDto dto, String lang) {
+        logger.trace("buildReport()");
+
         Report report = reportRepo.findAllBySliceId(dto.getSliceId())
             .stream()
             .filter(t -> t.getReportCode().startsWith(dto.getReportCode()))
@@ -107,8 +115,8 @@ public class ReportRestController extends BaseController {
                 Number val = (Number) objRow[3];
 
                 SheetCode sheetTemplate = mapSheetTemplates.getOrDefault(
-                    sheetCode,
-                    sheetCodeRepo.findByCodeAndReportCodeAndLang(sheetCode, report.getReportCode(), lang)
+                        sheetCode,
+                        sheetCodeRepo.findByCodeAndReportCodeAndLang(sheetCode, report.getReportCode(), lang)
                 );
 
                 if (sheetTemplate == null)
@@ -134,7 +142,8 @@ public class ReportRestController extends BaseController {
                     cell.setCellValue(val.doubleValue());
             }
 
-            return buildResponse(template.getName(), workbook);
+            //return buildResponse(template.getName(), workbook);
+            return workbook;
         }
 
         //Обработка исключений
@@ -174,13 +183,20 @@ public class ReportRestController extends BaseController {
         return  Arrays.asList(dto.getOrgCode());
     }
 
-    private ResponseEntity<Resource> buildResponse(String templateName, Workbook workbook) throws IOException {
+    private ResponseEntity<Resource> buildResponse(String templateName, Workbook workbook)  {
         logger.trace("buildResponse()");
 
+        ByteArrayResource resource;
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        workbook.write(bos);
-        ByteArrayResource resource = new ByteArrayResource(bos.toByteArray());
-        bos.close();
+        try {
+            workbook.write(bos);
+            resource = new ByteArrayResource(bos.toByteArray());
+            bos.close();
+
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return ResponseEntity.ok()
             .header("Content-disposition", "attachment; filename=" + templateName)
