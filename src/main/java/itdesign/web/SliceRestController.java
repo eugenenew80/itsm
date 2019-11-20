@@ -24,10 +24,11 @@ import static java.util.stream.Collectors.*;
 @RestController
 @RequiredArgsConstructor
 public class SliceRestController extends BaseController {
+    private static final String className = SliceRestController.class.getName();
     private static final String DEFAULT_LANG = "RU";
-    private static final String DEFAULT_STATUS = "0";
+    private static final String DEFAULT_STATUS = "6";
     private static final String DELETED_STATUS = "3";
-    private static String DEFAULT_REGION = "19";
+    private static final String DEFAULT_REGION = "19";
     private final SliceRepo repo;
     private final GroupRepo groupRepo;
     private final StatusRepo statusRepo;
@@ -57,8 +58,9 @@ public class SliceRestController extends BaseController {
         @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
-        logger.debug(getClass().getName() + ".getGroupsAndStatuses()");
+        logger.debug(className + ".getGroupsAndStatuses()");
         logger.trace("deleted: " + deleted);
+        logger.trace("lang: " + lang);
 
         return repo.findAll()
             .stream()
@@ -79,11 +81,12 @@ public class SliceRestController extends BaseController {
         @RequestParam(value = "year")       @ApiParam(value = "Год",  example = "2019") int year,
         @PathVariable(value = "lang")       @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
-        logger.debug(getClass().getName() + ".getAll()");
+        logger.debug(className + ".getAll()");
         logger.trace("deleted: " + deleted);
         logger.trace("groupCode: " + groupCode);
         logger.trace("statusCode: " + statusCode);
         logger.trace("year: " + year);
+        logger.trace("lang: " + lang);
 
         return repo.findAllByGroupCodeAndStatusCode(groupCode, statusCode)
             .stream()
@@ -95,11 +98,11 @@ public class SliceRestController extends BaseController {
             .collect(toList());
     }
 
-
     @ApiOperation(value="Получить масимальный номер записи в базе данных")
     @GetMapping(value = "/api/v1/{lang}/slices/max", produces = MediaType.APPLICATION_JSON_VALUE)
     public LongDto getMax(@PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang) {
         logger.debug(getClass().getName() + ".getMax()");
+        logger.trace("lang: " + lang);
         return new LongDto(9999l);
     }
 
@@ -109,7 +112,9 @@ public class SliceRestController extends BaseController {
         @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
-        logger.debug(getClass().getName() + ".getById()");
+        logger.debug(className + ".getById()");
+        logger.trace("id: " + id);
+        logger.trace("lang: " + lang);
 
         return first(findById)
             .andThen(t ->  { t.setLang(lang); return t; } )
@@ -125,7 +130,8 @@ public class SliceRestController extends BaseController {
         @RequestBody OrderSlicesDto orderSlicesDto,
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
-        logger.debug(getClass().getName() + ".create()");
+        logger.debug(className + ".create()");
+        logger.trace("lang: " + lang);
 
         List<Slice> slices = orderSlicesDto.list().stream()
             .map(transformToEntity::apply)
@@ -153,7 +159,9 @@ public class SliceRestController extends BaseController {
         @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
-        logger.debug(getClass().getName() + ".delete()");
+        logger.debug(className + ".delete()");
+        logger.trace("id: " + id);
+        logger.trace("lang: " + lang);
 
         Slice slice = repo.findOne(id);
         slice.setStatusCode(DELETED_STATUS);

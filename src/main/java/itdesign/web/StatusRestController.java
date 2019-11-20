@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiParam;
 import itdesign.entity.Status;
 import itdesign.repo.StatusRepo;
 import itdesign.web.dto.StatusDto;
-import itdesign.web.external.StatusImporter;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +18,9 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 public class StatusRestController extends BaseController {
+    private static final String className = StatusRestController.class.getName();
     private final StatusRepo repo;
     private final DozerBeanMapper mapper;
-    private final StatusImporter importer;
 
     @PostConstruct
     private void init() {
@@ -32,7 +31,8 @@ public class StatusRestController extends BaseController {
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/{lang}/slices/statuses", produces = "application/json")
     public List<StatusDto> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
-        logger.debug(getClass().getName() + ".getAll()");
+        logger.debug(className + ".getAll()");
+        logger.trace("lang: " + lang);
 
         return repo.findAllByLang(lang.toUpperCase())
             .stream()

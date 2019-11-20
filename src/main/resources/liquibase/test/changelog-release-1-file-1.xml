@@ -819,4 +819,9 @@
             UPDATE slice.rep_groups SET code = '0' || code where length(code)=2;
         </sql>
     </changeSet>
+
+    <changeSet id="slice-eug-67" logicalFilePath="path-independent" author="eugene">
+        <comment>Changing datatype of column err_msg in slices table</comment>
+        <modifyDataType schemaName="slice" tableName="slices" columnName="err_msg" newDataType="varchar(300)" />
+    </changeSet>
 </databaseChangeLog>

@@ -28,7 +28,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.io.*;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -36,6 +38,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 public class ReportRestController extends BaseController {
+    private static final String className = ReportRestController.class.getName();
     private final TemplateCodeRepo templateCodeRepo;
     private final ReportCodeRepo reportCodeRepo;
     private final SheetCodeRepo sheetCodeRepo;
@@ -55,7 +58,9 @@ public class ReportRestController extends BaseController {
         @PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang,
         @RequestParam(value = "sliceId") @ApiParam(value = "Идентификатор среза",  example = "1") long sliceId
     ) {
-        logger.debug(getClass().getName() + ".getAll()");
+        logger.debug(className + ".getAll()");
+        logger.trace("sliceId: " + sliceId);
+        logger.trace("lang: " + lang);
 
         List<String> reportCodes = reportRepo.findAllBySliceId(sliceId).stream()
             .map(t -> t.getReportCode().substring(0,3))
@@ -76,6 +81,8 @@ public class ReportRestController extends BaseController {
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang,
         @RequestBody CreateReportDto dto
     ) {
+        logger.debug(className + ".download()");
+        logger.trace("lang: " + lang);
 
         Report report = reportRepo.findAllBySliceId(dto.getSliceId())
             .stream()
@@ -90,62 +97,69 @@ public class ReportRestController extends BaseController {
         if (template == null)
             return null;
 
-
-        Query query = em.createNativeQuery("select d_divtbl, d_row, d_col, SUM(d_summ) AS d_summ from slice." + report.getTableData() + " group by d_divtbl, d_row, d_col order by d_divtbl, d_row, d_col");
+        String sql = "select d_divtbl, d_row, d_col, sum(d_summ) as d_summ from slice." + report.getTableData() + " group by d_divtbl, d_row, d_col order by d_divtbl, d_row, d_col";
+        Query query = em.createNativeQuery(sql);
         List<Object[]> resultList = query.getResultList();
 
+        Map<String, SheetCode> mapSheetTemplates = new HashMap<>();
+        try (InputStream templateInputStream = new ByteArrayInputStream(template.getBinaryFile())) {
+            Workbook workbook = new XSSFWorkbook(templateInputStream);
 
-        try (InputStream excelFileToRead = new ByteArrayInputStream(template.getBinaryFile())) {
-            Workbook workbook = new XSSFWorkbook(excelFileToRead);
+            for (Object[] objRow : resultList) {
+                String sheetCode = objRow[0].toString();
+                int rowIndex = (short)objRow[1] + report.getStartRow() - 2;
+                int colIndex = (short)objRow[2] + report.getStartColumn() - 2;
+                Number val = (Number) objRow[3];
 
-            for (Object[] obj : resultList) {
-                String codeSheet = obj[0].toString();
-                SheetCode sheetCode = sheetCodeRepo.findByCodeAndReportCodeAndLang(codeSheet, report.getReportCode(), lang);
+                SheetCode sheetTemplate = mapSheetTemplates.getOrDefault(
+                    sheetCode,
+                    sheetCodeRepo.findByCodeAndReportCodeAndLang(sheetCode, report.getReportCode(), lang)
+                );
 
-                Sheet sheet = workbook.getSheet(sheetCode.getName());
+                if (sheetTemplate == null)
+                    continue;
 
-                int rowIndex = (short)obj[1] + report.getStartRow() - 2;
-                int colIndex = (short)obj[2] + report.getStartColumn() - 2;
-                Number val = (Number) obj[2];
+                mapSheetTemplates.putIfAbsent(sheetCode, sheetTemplate);
 
-                logger.trace( "sheetCode=" + sheetCode.getCode()  + ", sheet=" + sheetCode.getName()  + ", row=" + rowIndex + ", col=" + colIndex + ", val=" + val);
+                //Получаем ссылку лист
+                Sheet sheet = workbook.getSheet(sheetTemplate.getName());
 
+                //Получаем ссылку на строку
                 Row row = sheet.getRow(rowIndex);
-                if (row == null) {
+                if (row == null)
                     continue;
-                }
 
+                //Получаем ссылку на ячейку
                 Cell cell = row.getCell(colIndex);
-                if (cell == null) {
+                if (cell == null)
                     continue;
-                }
 
-                if (val == null) {
-                    continue;
-                }
-
-                cell.setCellValue(val.doubleValue());
+                //Вывордим значение в ячейку
+                if (val != null)
+                    cell.setCellValue(val.doubleValue());
             }
 
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            workbook.write(bos);
-            ByteArrayResource resource = new ByteArrayResource(bos.toByteArray());
-            bos.close();
+            return buildResponse(template.getName(), workbook);
+        }
 
-            return ResponseEntity.ok()
-                .header("Content-disposition", "attachment; filename=" + template.getName())
-                .contentLength(resource.contentLength())
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-                .body(resource);
-        }
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
         catch (IOException e) {
             e.printStackTrace();
         }
 
         return null;
+    }
+
+    private ResponseEntity<Resource> buildResponse(String templateName, Workbook workbook) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        workbook.write(bos);
+        ByteArrayResource resource = new ByteArrayResource(bos.toByteArray());
+        bos.close();
+
+        return ResponseEntity.ok()
+            .header("Content-disposition", "attachment; filename=" + templateName)
+            .contentLength(resource.contentLength())
+            .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+            .body(resource);
     }
 
     private Function<ReportCode, ReportCodeDto2> transformToDto;

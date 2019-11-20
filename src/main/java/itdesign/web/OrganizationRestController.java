@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import itdesign.entity.GroupReport;
 import itdesign.entity.Organization;
-import itdesign.repo.GroupOrgRepo;
 import itdesign.repo.GroupReportRepo;
 import itdesign.repo.OrganizationRepo;
 import itdesign.web.dto.OrganizationDto;
@@ -21,8 +20,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 public class OrganizationRestController extends BaseController {
+    private static final String className = OrganizationRestController.class.getName();
     private final OrganizationRepo repo;
-    private final GroupOrgRepo groupOrgRepo;
     private final GroupReportRepo groupReportRepo;
     private final DozerBeanMapper mapper;
 
@@ -38,7 +37,9 @@ public class OrganizationRestController extends BaseController {
         @RequestParam(value = "reportCode", defaultValue = "") @ApiParam(value = "Код отчёта", example = "001") String reportCode,
         @PathVariable(value = "lang") @ApiParam(value = "Язык",  example = "RU") String lang
     ) {
-        logger.debug(getClass().getName() + ".getAll()");
+        logger.debug(className + ".getAll()");
+        logger.trace("reportCode: " + reportCode);
+        logger.trace("lang: " + lang);
 
         if (reportCode == null || reportCode.isEmpty())
             return repo.findAllByLang(lang)

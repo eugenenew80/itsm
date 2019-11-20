@@ -20,19 +20,21 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 public class RegionRestController extends BaseController {
+    private static final String className = RegionRestController.class.getName();
     private final RegionRepo repo;
     private final DozerBeanMapper mapper;
 
     @PostConstruct
     private void init() {
-        logger.debug(getClass() .getName()+ ".init()");
+        logger.debug(className + ".init()");
         transformToDto = t -> mapper.map(t, RegionDto.class);
     }
 
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/{lang}/slices/regs", produces = "application/json")
     public List<RegionDto> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
-        logger.debug(getClass().getName() + ".getAll()");
+        logger.debug(className + ".getAll()");
+        logger.trace("lang: " + lang);
 
         return repo.findAllByLang(lang.toUpperCase())
             .stream()
@@ -43,7 +45,8 @@ public class RegionRestController extends BaseController {
     @ApiOperation(value="Получить список всех записей в виде дерева")
     @GetMapping(value = "/api/v1/{lang}/slices/regsTree", produces = "application/json")
     public RegionTreeDto getTree(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
-        logger.debug(getClass().getName() + ".getTree()");
+        logger.debug(className + ".getTree()");
+        logger.trace("lang: " + lang);
 
         //Получаем список регионов
         List<Region> list = repo.findAllByLang(lang)
