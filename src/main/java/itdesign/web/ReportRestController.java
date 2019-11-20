@@ -9,6 +9,7 @@ import itdesign.web.dto.CreateReportDto;
 import itdesign.web.dto.ReportCodeDto2;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dozer.DozerBeanMapper;
@@ -105,7 +106,7 @@ public class ReportRestController extends BaseController {
 
         //Формируем отчёт, используя шаблон
         try  {
-            String templateFileName = template.getName();
+            String templateFileName = dto.getSliceId() + "_" + template.getName();
             try (FileOutputStream fos = new FileOutputStream(templateFileName)) {
                 fos.write(template.getBinaryFile());
             }
@@ -114,9 +115,10 @@ public class ReportRestController extends BaseController {
                 throw new RuntimeException(e);
             }
 
-            Workbook workbook = new XSSFWorkbook(new File(templateFileName));
-            Map<String, SheetCode> mapSheetTemplates = new HashMap<>();
+            OPCPackage pkg = OPCPackage.open(new File(templateFileName));
+            XSSFWorkbook workbook = new XSSFWorkbook(pkg);
 
+            Map<String, SheetCode> mapSheetTemplates = new HashMap<>();
             for (Object[] objRow : resultList) {
                 String sheetCode = objRow[0].toString();
                 int rowIndex = (short)objRow[1] + report.getStartRow() - 2;
