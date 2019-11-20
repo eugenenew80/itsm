@@ -161,7 +161,9 @@ public class ReportRestController extends BaseController {
             .collect(Collectors.joining(","));
 
         //Формируем и выполняем запрос к таблице данных
-        String sql = "select d_divtbl, d_row, d_col, sum(d_summ) as d_summ from slice." + tableName + " where d_organ like :regCode and d_vedomst in :orgCodes group by d_divtbl, d_row, d_col order by d_divtbl, d_row, d_col";
+        String sql = "select d_divtbl, d_row, d_col, sum(d_summ) as d_summ from slice.#table_name# where d_organ like :regCode and d_vedomst in :orgCodes group by d_divtbl, d_row, d_col order by d_divtbl, d_row, d_col";
+        sql = sql.replace("#table_name#", tableName);
+
         Query query = em.createNativeQuery(sql);
         query.setParameter("regCode", regCode);
         query.setParameter("orgCodes", orgCodes);
