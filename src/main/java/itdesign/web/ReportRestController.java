@@ -207,7 +207,6 @@ public class ReportRestController extends BaseController {
             workbook.write(bos);
             resource = new ByteArrayResource(bos.toByteArray());
             bos.close();
-
         }
         catch (IOException e) {
             throw new RuntimeException(e);
