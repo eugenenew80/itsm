@@ -113,15 +113,15 @@ public class ReportRestController extends BaseController {
                 int colIndex = (short)objRow[2] + report.getStartColumn() - 2;
                 Number val = (Number) objRow[3];
 
-                SheetCode sheetTemplate = mapSheetTemplates.getOrDefault(
-                        sheetCode,
-                        sheetCodeRepo.findByCodeAndReportCodeAndLang(sheetCode, report.getReportCode(), lang)
-                );
+                SheetCode sheetTemplate = mapSheetTemplates.get(sheetCode);
+                if (sheetTemplate == null) {
+                    logger.trace("Finding sheet code: " + sheetCode);
+                    sheetTemplate = sheetCodeRepo.findByCodeAndReportCodeAndLang(sheetCode, report.getReportCode(), lang);
+                    mapSheetTemplates.put(sheetCode, sheetTemplate);
+                }
 
                 if (sheetTemplate == null)
                     throw new RuntimeException("Sheet not found: sheetCode: " + sheetCode + ", reportCode: " + report.getReportCode() + ", lang: " + lang);
-
-                mapSheetTemplates.putIfAbsent(sheetCode, sheetTemplate);
 
                 //Получаем ссылку лист
                 Sheet sheet = workbook.getSheet(sheetTemplate.getName());
@@ -156,17 +156,15 @@ public class ReportRestController extends BaseController {
         logger.trace("getData()");
 
         String regCode = dto.getRegCode() + "%";
-        String orgCodes = getOrgCodes(dto, lang)
-            .stream()
-            .collect(Collectors.joining(","));
+        List<String> orgCodes = getOrgCodes(dto, lang);
 
         //Формируем и выполняем запрос к таблице данных
-        String sql = "select d_divtbl, d_row, d_col, sum(d_summ) as d_summ from slice.#table_name# where d_organ like :regCode and d_vedomst in :orgCodes group by d_divtbl, d_row, d_col order by d_divtbl, d_row, d_col";
+        String sql = "select d_divtbl, d_row, d_col, sum(d_summ) as d_summ from slice.#table_name# where d_organ like ?1 and d_vedomst in (?2) group by d_divtbl, d_row, d_col order by d_divtbl, d_row, d_col";
         sql = sql.replace("#table_name#", tableName);
 
         Query query = em.createNativeQuery(sql);
-        query.setParameter("regCode", regCode);
-        query.setParameter("orgCodes", orgCodes);
+        query.setParameter(1, regCode);
+        query.setParameter(2,  orgCodes);
         List<Object[]> list = query.getResultList();
         return list;
     }
