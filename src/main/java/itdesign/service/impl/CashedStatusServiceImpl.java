@@ -32,7 +32,7 @@ public class CashedStatusServiceImpl implements CachedStatusService {
         }
 
         logger.debug("status from db, key: " + key);
-        status = repo.findByCodeAndLang(statusCode, key);
+        status = repo.findByCodeAndLang(statusCode, lang);
         cache.putIfAbsent(key, status);
         return status;
     }

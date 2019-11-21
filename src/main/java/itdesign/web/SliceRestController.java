@@ -45,7 +45,6 @@ public class SliceRestController extends BaseController {
 
         findById = repo::findOne;
         transformToDto = t -> mapper.map(t, SliceDto.class);
-        transformToDto2 = t -> mapper.map(t, GroupAndStatusDto.class);
         transformToEntity = t -> mapper.map(t, Slice.class);
 
         beforeTransform = t -> {
@@ -76,9 +75,9 @@ public class SliceRestController extends BaseController {
         List<GroupSliceDto> listGrDto = slices.stream()
             .map(t -> {
                 GroupSliceDto grDto = new GroupSliceDto();
-                grDto.setGroupCode(t.getGroupCode());
+                grDto.setCode(t.getGroupCode());
                 if (t.getGroup() != null)
-                    grDto.setGroupName(t.getGroup().getName());
+                    grDto.setName(t.getGroup().getName());
                 return grDto;
             })
             .distinct()
@@ -86,12 +85,12 @@ public class SliceRestController extends BaseController {
 
         for (GroupSliceDto grDto : listGrDto) {
             List<StatusSliceDto> listStDto = slices.stream()
-                .filter(t -> t.getGroup().getCode().equals(grDto.getGroupCode()))
+                .filter(t -> t.getGroup().getCode().equals(grDto.getCode()))
                 .map(t -> {
                     StatusSliceDto stDto = new StatusSliceDto();
-                    stDto.setStatusCode(t.getStatusCode());
-                    stDto.setStatusName(t.getFullStatus());
-                    stDto.setYear(t.getYear());
+                    stDto.setCode(t.getStatusCode());
+                    stDto.setName(t.getFullStatus());
+                    stDto.setStatusYear(t.getYear());
                     return stDto;
                 })
                 .collect(toList());
@@ -134,13 +133,13 @@ public class SliceRestController extends BaseController {
 
         //Возвращаем в виде дерева
         GroupSliceDto grDto = new GroupSliceDto();
-        grDto.setGroupCode(group.getCode());
-        grDto.setGroupName(group.getName());
+        grDto.setCode(group.getCode());
+        grDto.setName(group.getName());
 
         StatusSliceDto stDto = new StatusSliceDto();
-        stDto.setStatusCode(status.getCode());
-        stDto.setStatusName(status.getName() + " " + year);
-        stDto.setYear(year);
+        stDto.setCode(status.getCode());
+        stDto.setName(status.getName() + " " + year);
+        stDto.setStatusYear(year);
         grDto.setChildren(asList(stDto));
 
         stDto.setChildren(list);
@@ -245,7 +244,6 @@ public class SliceRestController extends BaseController {
 
     private Function<Long, Slice> findById;
     private Function<Slice, SliceDto> transformToDto;
-    private Function<Slice, GroupAndStatusDto> transformToDto2;
     private Function<Slice, Slice> beforeTransform;
     private Function<OrderSliceDto, Slice> transformToEntity;
 }
