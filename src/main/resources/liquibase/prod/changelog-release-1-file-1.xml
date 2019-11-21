@@ -6,24 +6,10 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
 
-
-    <changeSet id="slice-eug-0" logicalFilePath="path-independent" author="eugene">
-        <comment>Creating user reports</comment>
-        <sql dbms="postgresql" endDelimiter=";">
-            create user reports with encrypted password 'Qwerty123'
-        </sql>
-
-        <rollback>
-            <sql dbms="postgresql" endDelimiter=";">
-                drop user reports
-            </sql>
-        </rollback>
-    </changeSet>
-
     <changeSet id="slice-eug-1" logicalFilePath="path-independent" author="eugene">
         <comment>Creating schema for reports app</comment>
         <sql dbms="postgresql" endDelimiter=";">
-            create schema reports
+            create schema authorization reports
         </sql>
 
         <rollback>
