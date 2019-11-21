@@ -130,7 +130,8 @@ public class ReportRestController extends BaseController {
             dto.getReportCode(),
             dto.getOrgCode(),
             dto.getRegCode(),
-            dto.getSliceId()
+            dto.getSliceId(),
+            lang
         );
 
         //формируем отчет
