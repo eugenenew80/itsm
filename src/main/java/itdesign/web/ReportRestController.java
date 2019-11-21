@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiParam;
 import itdesign.entity.*;
 import itdesign.repo.*;
 import itdesign.web.dto.CreateReportDto;
+import itdesign.web.dto.LongDto;
 import itdesign.web.dto.ReportCodeDto2;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
@@ -22,7 +23,8 @@ import javax.persistence.Query;
 import java.io.*;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.*;
 
 @Api(tags = "API для работы с отчётами")
 @RestController
@@ -35,6 +37,7 @@ public class ReportRestController extends BaseController {
     private final ReportRepo reportRepo;
     private final OrganizationRepo organizationRepo;
     private final GroupOrgRepo groupOrgRepo;
+    private final ReportFileRepo reportFileRepo;
     private final DozerBeanMapper mapper;
     private final EntityManager em;
 
@@ -56,7 +59,7 @@ public class ReportRestController extends BaseController {
 
         List<String> reportCodes = reportRepo.findAllBySliceId(sliceId).stream()
             .map(t -> t.getReportCode().substring(0,3))
-            .collect(Collectors.toList());
+            .collect(toList());
 
         if (reportCodes.size() == 0)
             return Collections.emptyList();
@@ -64,35 +67,103 @@ public class ReportRestController extends BaseController {
         return reportCodeRepo.findByCodesAndLang(reportCodes, lang.toUpperCase())
             .stream()
             .map(transformToDto::apply)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
-    @ApiOperation(value="Сформировать отчёт")
+    @ApiOperation(value="Сформировать список отчётов")
+    @PostMapping(value = "/api/v1/{lang}/slices/reports/createReports")
+    public List<LongDto> createReports(
+        @PathVariable(value = "lang") @ApiParam(value = "Язык",  example = "RU")  String lang,
+        @RequestBody List<CreateReportDto> repListDto
+    ) {
+        logger.debug(className + ".createReports()");
+        logger.trace("lang: " + lang);
+
+        List<LongDto> list = new ArrayList<>();
+        for (CreateReportDto dto : repListDto) {
+            ReportFile rf = buildReportFile(dto, lang);
+            list.add(new LongDto(rf.getId()));
+        }
+
+        return list;
+    }
+
+    @ApiOperation(value="Сформировать отчёта")
     @PostMapping(value = "/api/v1/{lang}/slices/reports/createReport")
-    public ResponseEntity<Resource> createReport(
-        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang,
+    public LongDto createReport(
+        @PathVariable(value = "lang") @ApiParam(value = "Язык",  example = "RU")  String lang,
         @RequestBody CreateReportDto dto
     ) {
         logger.debug(className + ".createReport()");
         logger.trace("lang: " + lang);
 
-        //формируем отчет
-        Workbook workbook = buildReport(dto, lang);
-        String fileName = dto.getReportCode() + "_" + dto.getOrgCode() + "_" + dto.getRegCode() + "_" + dto.getSliceId() + ".xlsx";
-
-        //формируем ответ
-        ResponseEntity<Resource> response = buildResponse(fileName, workbook);
-
-        //закрываем файл
-        try { workbook.close(); }
-        catch (IOException e) { e.printStackTrace(); }
-
-        //возвращаем ответ
-        return response;
+        ReportFile rf = buildReportFile(dto, lang);
+        return  new LongDto(rf.getId());
     }
 
-    private Workbook buildReport(CreateReportDto dto, String lang) {
-        logger.trace("buildReport()");
+    @ApiOperation(value="Выгрузить отчёт")
+    @GetMapping(value = "/api/v1/{lang}/slices/reports/{id}/download")
+    public ResponseEntity<Resource> downloadReport(@PathVariable(value = "id") @ApiParam(value = "Идентификатор файла",  example = "1") long id) {
+        logger.debug(className + ".downloadReport()");
+
+        //Ищем файл
+        ReportFile rf = reportFileRepo.findOne(id);
+        if (rf == null)
+            throw new RuntimeException("Report file no found, id: " + id);
+
+        //Формируем ответ
+        ByteArrayResource resource = new ByteArrayResource(rf.getBinaryFile());
+        return ResponseEntity.ok()
+            .header("Content-disposition", "attachment; filename=" + rf.getName())
+            .contentLength(resource.contentLength())
+            .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+            .body(resource);
+    }
+
+    private ReportFile buildReportFile(CreateReportDto dto, String lang) {
+        //Выясняем, не сформирован ли уже файл
+        ReportFile rf = reportFileRepo.findExisting(
+            dto.getReportCode(),
+            dto.getOrgCode(),
+            dto.getRegCode(),
+            dto.getSliceId()
+        );
+
+        //формируем отчет
+        if (rf == null) {
+            Workbook workbook = null;
+            try {
+                workbook = buildWorkbook(dto, lang);
+                String fileName = dto.getReportCode() + "_" + dto.getOrgCode() + "_" + dto.getRegCode() + "_" + dto.getSliceId() + ".xlsx";
+                rf = new ReportFile();
+                rf.setReportCode(dto.getReportCode());
+                rf.setOrgCode(dto.getOrgCode());
+                rf.setRegCode(dto.getRegCode());
+                rf.setSliceId(dto.getSliceId());
+                rf.setLang(lang);
+                rf.setName(fileName);
+                rf.setFileType("XLSX");
+                rf.setBinaryFile(workbookToBytes(workbook));
+                reportFileRepo.save(rf);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+            finally {
+                try {
+                    if (workbook != null) workbook.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return rf;
+    }
+
+    private Workbook buildWorkbook(CreateReportDto dto, String lang) throws IOException {
+        logger.trace("buildWorkbook()");
 
         Report report = reportRepo.findAllBySliceId(dto.getSliceId())
             .stream()
@@ -115,8 +186,8 @@ public class ReportRestController extends BaseController {
         //Формируем отчёт, используя шаблон
         try (InputStream templateInputStream = new ByteArrayInputStream(template.getBinaryFile())) {
             Workbook workbook = new XSSFWorkbook(templateInputStream);
-            Map<String, SheetCode> mapSheetTemplates = new HashMap<>();
 
+            Map<String, SheetCode> mapSheetTemplates = new HashMap<>();
             for (Object[] objRow : resultList) {
                 String sheetCode = objRow[0].toString();
                 int rowIndex = (short)objRow[1] + report.getStartRow() - 2;
@@ -154,12 +225,6 @@ public class ReportRestController extends BaseController {
             //return buildResponse(template.getName(), workbook);
             return workbook;
         }
-
-        //Обработка исключений
-        catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
     }
 
     private List<Object[]> getData(String tableName, CreateReportDto dto, String lang) {
@@ -175,8 +240,7 @@ public class ReportRestController extends BaseController {
         Query query = em.createNativeQuery(sql);
         query.setParameter(1, regCode);
         query.setParameter(2,  orgCodes);
-        List<Object[]> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     private List<String> getOrgCodes(CreateReportDto dto, String lang) {
@@ -187,28 +251,19 @@ public class ReportRestController extends BaseController {
             return groupOrgRepo.findAllByGroupCode(org.getGroupOrg())
                 .stream()
                 .map(t -> t.getOrgCode())
-                .collect(Collectors.toList());
+                .collect(toList());
         }
-        return  Arrays.asList(dto.getOrgCode());
+        return  asList(dto.getOrgCode());
     }
 
-    private ResponseEntity<Resource> buildResponse(String templateName, Workbook workbook)  {
-        logger.trace("buildResponse()");
-
-        ByteArrayResource resource;
+    private byte[] workbookToBytes(Workbook workbook) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             workbook.write(bos);
-            resource = new ByteArrayResource(bos.toByteArray());
+            return bos.toByteArray();
         }
         catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        return ResponseEntity.ok()
-            .header("Content-disposition", "attachment; filename=" + templateName)
-            .contentLength(resource.contentLength())
-            .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-            .body(resource);
     }
 
     private Function<ReportCode, ReportCodeDto2> transformToDto;
