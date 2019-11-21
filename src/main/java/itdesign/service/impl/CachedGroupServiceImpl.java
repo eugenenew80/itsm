@@ -18,21 +18,22 @@ public class CachedGroupServiceImpl implements CachedGroupService {
     private static final Logger logger = LoggerFactory.getLogger(CachedGroupServiceImpl.class);
     private final GroupRepo repo;
     private final CacheManager ehcacheManager;
-    private Cache<Long, Group> cache = null;
+    private Cache<String, Group> cache = null;
 
     @Override
-    public Group getGroup(Long groupId) {
-        cache = (cache == null) ? ehcacheManager.getCache("groupCache", Long.class, Group.class) : cache;
+    public Group getGroup(String groupCode, String lang) {
+        cache = (cache == null) ? ehcacheManager.getCache("groupCache", String.class, Group.class) : cache;
 
-        Group group = cache.get(groupId);
+        String key = groupCode + "#" + lang;
+        Group group = cache.get(key);
         if (group != null) {
-            logger.debug("group from cache, groupId: " + groupId);
+            logger.debug("group from cache, key: " + key);
             return group;
         }
 
-        logger.debug("group from db, groupId: " + groupId);
-        group = repo.findOne(groupId);
-        cache.putIfAbsent(groupId, group);
+        logger.debug("group from db, key: " + key);
+        group = repo.findByCodeAndLang(groupCode, lang);
+        cache.putIfAbsent(key, group);
         return group;
     }
 }

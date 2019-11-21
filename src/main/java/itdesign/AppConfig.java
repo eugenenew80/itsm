@@ -63,10 +63,10 @@ public class AppConfig {
     public CacheManager ehcacheManager() {
         return CacheManagerBuilder.newCacheManagerBuilder()
             .withCache("statusCache",
-                newCacheConfigurationBuilder(Long.class, Status.class, heap(20))
+                newCacheConfigurationBuilder(String.class, Status.class, heap(20))
                         .withExpiry(timeToLiveExpiration(ofMinutes(60))).build())
             .withCache("groupCache",
-                newCacheConfigurationBuilder(Long.class, Group.class, heap(300))
+                newCacheConfigurationBuilder(String.class, Group.class, heap(300))
                     .withExpiry(timeToLiveExpiration(ofMinutes(10))).build())
             .build(true);
     }

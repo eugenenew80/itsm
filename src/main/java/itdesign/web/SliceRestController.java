@@ -7,6 +7,8 @@ import itdesign.entity.*;
 import itdesign.repo.GroupRepo;
 import itdesign.repo.SliceRepo;
 import itdesign.repo.StatusRepo;
+import itdesign.service.CachedGroupService;
+import itdesign.service.CachedStatusService;
 import itdesign.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
@@ -34,6 +36,8 @@ public class SliceRestController extends BaseController {
     private final GroupRepo groupRepo;
     private final StatusRepo statusRepo;
     private final DozerBeanMapper mapper;
+    private final CachedGroupService groupService;
+    private final CachedStatusService statusService;
 
     @PostConstruct
     private void init() {
@@ -45,9 +49,9 @@ public class SliceRestController extends BaseController {
         transformToEntity = t -> mapper.map(t, Slice.class);
 
         beforeTransform = t -> {
-            Group group = groupRepo.findByCodeAndLang(t.getGroupCode(), ofNullable(t.getLang()).orElse(DEFAULT_LANG).toUpperCase());
+            Group group = groupService.getGroup(t.getGroupCode(), ofNullable(t.getLang()).orElse(DEFAULT_LANG).toUpperCase());
             t.setGroup(group);
-            Status status = statusRepo.findByCodeAndLang(t.getStatusCode(), ofNullable(t.getLang()).orElse(DEFAULT_LANG).toUpperCase());
+            Status status = statusService.getStatus(t.getStatusCode(), ofNullable(t.getLang()).orElse(DEFAULT_LANG).toUpperCase());
             t.setStatus(status);
             return t;
         };
@@ -64,7 +68,10 @@ public class SliceRestController extends BaseController {
         logger.trace("lang: " + lang);
 
         List<Slice> slices = repo.findAll();
-        slices.forEach(t -> beforeTransform.apply(t));
+        slices.forEach(t -> {
+            t.setLang(lang);
+            beforeTransform.apply(t);
+        });
 
         List<GroupSliceDto> listGrDto = slices.stream()
             .map(t -> {

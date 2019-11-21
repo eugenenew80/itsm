@@ -18,21 +18,22 @@ public class CashedStatusServiceImpl implements CachedStatusService {
     private static final Logger logger = LoggerFactory.getLogger(CashedStatusServiceImpl.class);
     private final StatusRepo repo;
     private final CacheManager ehcacheManager;
-    private Cache<Long, Status> cache = null;
+    private Cache<String, Status> cache = null;
 
     @Override
-    public Status getStatus(Long statusId) {
-        cache = (cache == null) ? ehcacheManager.getCache("statusCache", Long.class, Status.class) : cache;
+    public Status getStatus(String statusCode, String lang) {
+        cache = (cache == null) ? ehcacheManager.getCache("statusCache", String.class, Status.class) : cache;
 
-        Status status = cache.get(statusId);
+        String key = statusCode + "#" + lang;
+        Status status = cache.get(key);
         if (status != null) {
-            logger.debug("status from cache, statusId: " + statusId);
+            logger.debug("status from cache, key: " + key);
             return status;
         }
 
-        logger.debug("status from db, statusId: " + statusId);
-        status = repo.findOne(statusId);
-        cache.putIfAbsent(statusId, status);
+        logger.debug("status from db, key: " + key);
+        status = repo.findByCodeAndLang(statusCode, key);
+        cache.putIfAbsent(key, status);
         return status;
     }
 }
