@@ -93,6 +93,7 @@ public class SliceRestController extends BaseController {
                     stDto.setStatusYear(t.getYear());
                     return stDto;
                 })
+                .distinct()
                 .collect(toList());
 
             grDto.setChildren(listStDto);
