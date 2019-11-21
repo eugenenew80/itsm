@@ -79,7 +79,7 @@ public class SliceRestController extends BaseController {
 
         for (GroupSliceDto grDto : listGrDto) {
             List<StatusSliceDto> listStDto = slices.stream()
-                .filter(t -> t.getGroup().getName().equals(grDto.getGroupCode()))
+                .filter(t -> t.getGroup().getCode().equals(grDto.getGroupCode()))
                 .map(t -> {
                     StatusSliceDto stDto = new StatusSliceDto();
                     stDto.setStatusCode(t.getStatusCode());
