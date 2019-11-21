@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.function.Function;
 import static itdesign.util.Util.first;
 import static java.time.LocalDateTime.*;
+import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.*;
 
@@ -54,7 +55,7 @@ public class SliceRestController extends BaseController {
 
     @ApiOperation(value="Получить список групп и статусов")
     @GetMapping(value = "/api/v1/{lang}/slices/parents", produces = "application/json")
-    public List<GroupAndStatusDto> getParents(
+    public List<GroupSliceDto> getParents(
         @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
@@ -62,19 +63,41 @@ public class SliceRestController extends BaseController {
         logger.trace("deleted: " + deleted);
         logger.trace("lang: " + lang);
 
-        return repo.findAll()
-            .stream()
-            .filter(t -> deleted  || t.getStatusCode() == null || !t.getStatusCode().equals(DELETED_STATUS))
-            .map(t ->  { t.setLang(lang); return t; } )
-            .map(beforeTransform::apply)
-            .map(transformToDto2::apply)
+        List<Slice> slices = repo.findAll();
+        slices.forEach(t -> beforeTransform.apply(t));
+
+        List<GroupSliceDto> listGrDto = slices.stream()
+            .map(t -> {
+                GroupSliceDto grDto = new GroupSliceDto();
+                grDto.setGroupCode(t.getGroupCode());
+                if (t.getGroup() != null)
+                    grDto.setGroupName(t.getGroup().getName());
+                return grDto;
+            })
             .distinct()
             .collect(toList());
+
+        for (GroupSliceDto grDto : listGrDto) {
+            List<StatusSliceDto> listStDto = slices.stream()
+                .filter(t -> t.getGroup().getName().equals(grDto.getGroupCode()))
+                .map(t -> {
+                    StatusSliceDto stDto = new StatusSliceDto();
+                    stDto.setStatusCode(t.getStatusCode());
+                    stDto.setStatusName(t.getFullStatus());
+                    stDto.setYear(t.getYear());
+                    return stDto;
+                })
+                .collect(toList());
+
+            grDto.setChildren(listStDto);
+        }
+
+        return listGrDto;
     }
 
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/{lang}/slices/children", produces = "application/json")
-    public GroupAndStatusDto getChildren(
+    public GroupSliceDto getChildren(
         @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
         @RequestParam(value = "groupCode")  @ApiParam(value = "Код группы отчетов",  example = "001") String groupCode,
         @RequestParam(value = "statusCode") @ApiParam(value = "Код статуса",  example = "0") String statusCode,
@@ -102,14 +125,18 @@ public class SliceRestController extends BaseController {
             .map(transformToDto::apply)
             .collect(toList());
 
-        //Заворачиваем список срезов в объект Группа и статус
-        GroupAndStatusDto grDto = new GroupAndStatusDto();
+        //Возвращаем в виде дерева
+        GroupSliceDto grDto = new GroupSliceDto();
         grDto.setGroupCode(group.getCode());
         grDto.setGroupName(group.getName());
-        grDto.setStatusCode(status.getCode());
-        grDto.setStatusName(status.getName() + " " + year);
-        grDto.setYear(year);
-        grDto.setChildren(list);
+
+        StatusSliceDto stDto = new StatusSliceDto();
+        stDto.setStatusCode(status.getCode());
+        stDto.setStatusName(status.getName() + " " + year);
+        stDto.setYear(year);
+        grDto.setChildren(asList(stDto));
+
+        stDto.setChildren(list);
         return grDto;
     }
 
