@@ -27,11 +27,11 @@ public class CachedGroupServiceImpl implements CachedGroupService {
         String key = groupCode + "#" + lang;
         Group group = cache.get(key);
         if (group != null) {
-            logger.debug("group from cache, key: " + key);
+            logger.trace("group from cache, key: " + key);
             return group;
         }
 
-        logger.debug("group from db, key: " + key);
+        logger.trace("group from db, key: " + key);
         group = repo.findByCodeAndLang(groupCode, lang);
         if (group != null)
             cache.putIfAbsent(key, group);

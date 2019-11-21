@@ -27,11 +27,11 @@ public class CashedStatusServiceImpl implements CachedStatusService {
         String key = statusCode + "#" + lang;
         Status status = cache.get(key);
         if (status != null) {
-            logger.debug("status from cache, key: " + key);
+            logger.trace("status from cache, key: " + key);
             return status;
         }
 
-        logger.debug("status from db, key: " + key);
+        logger.trace("status from db, key: " + key);
         status = repo.findByCodeAndLang(statusCode, lang);
 
         if (status != null)
