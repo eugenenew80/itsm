@@ -63,7 +63,7 @@ public class SliceRestController extends BaseController {
         @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
-        logger.debug(className + ".getGroupsAndStatuses()");
+        logger.debug(className + ".getParents()");
         logger.trace("deleted: " + deleted);
         logger.trace("lang: " + lang);
 
@@ -111,7 +111,7 @@ public class SliceRestController extends BaseController {
         @RequestParam(value = "year")       @ApiParam(value = "Год",  example = "2019") int year,
         @PathVariable(value = "lang")       @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
-        logger.debug(className + ".getAll()");
+        logger.debug(className + ".getChildren()");
         logger.trace("deleted: " + deleted);
         logger.trace("groupCode: " + groupCode);
         logger.trace("statusCode: " + statusCode);
