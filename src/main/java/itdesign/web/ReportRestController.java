@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dozer.DozerBeanMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -40,6 +41,9 @@ public class ReportRestController extends BaseController {
     private final ReportFileRepo reportFileRepo;
     private final DozerBeanMapper mapper;
     private final EntityManager em;
+
+    @Value( "${spring.jpa.properties.hibernate.default_schema}" )
+    private String schema;
 
     @PostConstruct
     private void init() {
@@ -234,7 +238,8 @@ public class ReportRestController extends BaseController {
         List<String> orgCodes = getOrgCodes(dto, lang);
 
         //Формируем и выполняем запрос к таблице данных
-        String sql = "select d_divtbl, d_row, d_col, sum(d_summ) as d_summ from slice.#table_name# where d_organ like ?1 and d_vedomst in (?2) group by d_divtbl, d_row, d_col order by d_divtbl, d_row, d_col";
+        String sql = "select d_divtbl, d_row, d_col, sum(d_summ) as d_summ from #schema#.#table_name# where d_organ like ?1 and d_vedomst in (?2) group by d_divtbl, d_row, d_col order by d_divtbl, d_row, d_col";
+        sql = sql.replace("#schema#", schema);
         sql = sql.replace("#table_name#", tableName);
 
         Query query = em.createNativeQuery(sql);

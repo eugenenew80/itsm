@@ -33,7 +33,9 @@ public class CachedGroupServiceImpl implements CachedGroupService {
 
         logger.debug("group from db, key: " + key);
         group = repo.findByCodeAndLang(groupCode, lang);
-        cache.putIfAbsent(key, group);
+        if (group != null)
+            cache.putIfAbsent(key, group);
+
         return group;
     }
 }

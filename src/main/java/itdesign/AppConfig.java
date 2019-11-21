@@ -13,11 +13,9 @@ import org.ehcache.config.builders.CacheManagerBuilder;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
@@ -35,10 +33,10 @@ import static org.ehcache.config.builders.ResourcePoolsBuilder.heap;
 public class AppConfig {
 
     @Value( "${itdesign.redis.address}" )
-    private String redisAddress = "18.140.232.52:6379";
+    private final String redisAddress = "18.140.232.52:6379";
 
     @Value( "${itdesign.redis.password}" )
-    private  String redisPassword = "123456";
+    private final String redisPassword = "123456";
 
     @Bean
     public DozerBeanMapper dozerBeanMapper() {
@@ -98,7 +96,4 @@ public class AppConfig {
 
         return Redisson.create(config);
     }
-
-    @Autowired
-    private Environment env;
 }
