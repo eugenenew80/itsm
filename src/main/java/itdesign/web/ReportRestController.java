@@ -7,6 +7,7 @@ import itdesign.entity.*;
 import itdesign.repo.*;
 import itdesign.web.dto.CreateReportDto;
 import itdesign.web.dto.LongDto;
+import itdesign.web.dto.OrganizationDto;
 import itdesign.web.dto.ReportCodeDto2;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
@@ -24,6 +25,7 @@ import javax.persistence.Query;
 import java.io.*;
 import java.util.*;
 import java.util.function.Function;
+
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.*;
 
@@ -39,6 +41,7 @@ public class ReportRestController extends BaseController {
     private final OrganizationRepo organizationRepo;
     private final GroupOrgRepo groupOrgRepo;
     private final ReportFileRepo reportFileRepo;
+    private final GroupReportRepo groupReportRepo;
     private final DozerBeanMapper mapper;
     private final EntityManager em;
 
@@ -49,13 +52,15 @@ public class ReportRestController extends BaseController {
     private void init() {
         logger.debug(getClass() .getName()+ ".init()");
         transformToDto = t -> mapper.map(t, ReportCodeDto2.class);
+        transformToDto2 = t -> mapper.map(t, OrganizationDto.class);
     }
 
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/{lang}/slices/reports", produces = "application/json")
     public List<ReportCodeDto2> getAll(
         @PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang,
-        @RequestParam(value = "sliceId") @ApiParam(value = "Идентификатор среза",  example = "1") long sliceId
+        @RequestParam(value = "sliceId") @ApiParam(value = "Идентификатор среза",  example = "1") long sliceId,
+        @RequestParam(value = "withOrgs", defaultValue = "false") @ApiParam(value = "Показать ведомства",  example = "false") boolean wthOrgs
     ) {
         logger.debug(className + ".getAll()");
         logger.trace("sliceId: " + sliceId);
@@ -68,10 +73,26 @@ public class ReportRestController extends BaseController {
         if (reportCodes.size() == 0)
             return Collections.emptyList();
 
-        return reportCodeRepo.findByCodesAndLang(reportCodes, lang.toUpperCase())
+        List<ReportCodeDto2> listReportDto = reportCodeRepo.findByCodesAndLang(reportCodes, lang.toUpperCase())
             .stream()
             .map(transformToDto::apply)
             .collect(toList());
+
+        if (wthOrgs) {
+            for (ReportCodeDto2 repCodeDto : listReportDto) {
+                List<GroupReport> groupReports = groupReportRepo.findAllByReportCode(repCodeDto.getCode());
+                List<OrganizationDto> listOrgDto = groupReports.stream()
+                    .map(t -> organizationRepo.findAllByGroupReportAndLang(t.getGroupCode(), lang.toUpperCase()))
+                    .flatMap(t -> t.stream())
+                    .distinct()
+                    .map(transformToDto2::apply)
+                    .collect(toList());
+
+                repCodeDto.setOrgs(listOrgDto);
+            }
+        }
+
+        return listReportDto;
     }
 
     @ApiOperation(value="Сформировать список отчётов")
@@ -273,4 +294,6 @@ public class ReportRestController extends BaseController {
     }
 
     private Function<ReportCode, ReportCodeDto2> transformToDto;
+
+    private Function<Organization, OrganizationDto> transformToDto2;
 }
