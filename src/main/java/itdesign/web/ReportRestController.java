@@ -275,10 +275,15 @@ public class ReportRestController extends BaseController {
 
         Organization org = organizationRepo.findByCodeAndLang(dto.getOrgCode(), lang);
         if (org.getGroupOrg() != null) {
-            return groupOrgRepo.findAllByGroupCode(org.getGroupOrg())
+            List<String> orgCodes = groupOrgRepo.findAllByGroupCode(org.getGroupOrg())
                 .stream()
                 .map(t -> t.getOrgCode())
                 .collect(toList());
+
+            if (orgCodes.isEmpty())
+                asList(dto.getOrgCode());
+
+            return orgCodes;
         }
         return  asList(dto.getOrgCode());
     }
