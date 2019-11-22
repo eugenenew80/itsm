@@ -281,7 +281,7 @@ public class ReportRestController extends BaseController {
                 .collect(toList());
 
             if (orgCodes.isEmpty())
-                asList(dto.getOrgCode());
+                return asList(dto.getOrgCode());
 
             return orgCodes;
         }
