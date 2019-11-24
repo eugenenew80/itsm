@@ -205,8 +205,8 @@ public class SliceRestController extends BaseController {
     @ApiOperation(value="Пометить срез с указанным идентификатором как удаленный")
     @PutMapping(value = "/api/v1/{lang}/slices/{id}/delete")
     public ResponseEntity<Void> delete(
-        @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
-        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
+        @PathVariable(value = "id") @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
+        @PathVariable(value = "lang") @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
         Slice slice = repo.findOne(id);
         slice.setStatusCode(DELETED_STATUS);
@@ -219,8 +219,8 @@ public class SliceRestController extends BaseController {
     @ApiOperation(value="Пометить срез с указанным идентификатором как предварительный")
     @PutMapping(value = "/api/v1/{lang}/slices/{id}/preliminary")
     public ResponseEntity<Void> preliminary(
-        @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
-        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
+        @PathVariable(value = "id") @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
+        @PathVariable(value = "lang") @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
         Slice slice = repo.findOne(id);
         slice.setStatusCode(PRELIMINARY_STATUS);
@@ -233,8 +233,8 @@ public class SliceRestController extends BaseController {
     @ApiOperation(value="Пометить срез с указанным идентификатором как окончательный")
     @PutMapping(value = "/api/v1/{lang}/slices/{id}/confirm")
     public ResponseEntity<Void> confirm(
-        @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
-        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
+        @PathVariable(value = "id") @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
+        @PathVariable(value = "lang") @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
         Slice slice = repo.findOne(id);
         slice.setStatusCode(FINAL_STATUS);
@@ -247,13 +247,33 @@ public class SliceRestController extends BaseController {
     @ApiOperation(value="Пометить срез с указанным идентификатором как отмененный")
     @PutMapping(value = "/api/v1/{lang}/slices/{id}/cancel")
     public ResponseEntity<Void> cancel(
-        @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
-        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
+        @PathVariable(value = "id") @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
+        @PathVariable(value = "lang") @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
         Slice slice = repo.findOne(id);
         slice.setStatusCode(CANCEL_STATUS);
         repo.save(slice);
 
+        return ResponseEntity.noContent()
+            .build();
+    }
+
+    @ApiOperation(value="Отправить срез с указанным идентификатором на согласование")
+    @PutMapping(value = "/api/v1/{lang}/slices/{id}/send")
+    public ResponseEntity<Void> send(
+        @PathVariable(value = "id") @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
+        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
+    ) {
+        return ResponseEntity.noContent()
+            .build();
+    }
+
+    @ApiOperation(value="Согласовать срез с указанным идентификатором")
+    @PutMapping(value = "/api/v1/{lang}/slices/{id}/approve")
+    public ResponseEntity<Void> approve(
+        @PathVariable(value = "id") @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
+        @PathVariable(value = "lang") @ApiParam(value = "Язык",  example = "RU")  String lang
+    ) {
         return ResponseEntity.noContent()
             .build();
     }
