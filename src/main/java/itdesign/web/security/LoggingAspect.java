@@ -46,7 +46,7 @@ public class LoggingAspect {
         }
 
         //Ищем текущего пользователя в redis по ключу сессии
-        imitateLogon();
+        imitateLogon(sessionInfo.getSessionKey());
         RBucket<UserInfo> bucket = redissonClient.getBucket(sessionInfo.getSessionKey());
         UserInfo userInfo = bucket.get();
         if (userInfo == null) {
@@ -89,12 +89,12 @@ public class LoggingAspect {
         return result;
     }
 
-    private void imitateLogon() {
+    private void imitateLogon(String sessionKey) {
         UserInfo userInfo = new UserInfo();
         userInfo.setUserName("admin");
         userInfo.setIdn("111111222222");
         userInfo.setRegion("19");
-        userInfo.setOrgan("19");
+        userInfo.setOrgan("1900");
         userInfo.setRoles(new HashSet<>(asList(
             "SLICE_ORDER",
             "SLICE_SEND_ON_APPROVE",
@@ -104,7 +104,7 @@ public class LoggingAspect {
             "SLICE_SET_ON_PRELIMINARY"
         )));
 
-        RBucket<UserInfo> temporarySessionKey = redissonClient.getBucket("temporarySessionKey");
+        RBucket<UserInfo> temporarySessionKey = redissonClient.getBucket(sessionKey);
         temporarySessionKey.set(userInfo, 3, TimeUnit.MINUTES);
     }
 }
