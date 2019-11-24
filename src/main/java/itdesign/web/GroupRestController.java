@@ -1,8 +1,6 @@
 package itdesign.web;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import itdesign.entity.Group;
 import itdesign.repo.GroupRepo;
 import itdesign.web.dto.GroupDto;
@@ -29,6 +27,9 @@ public class GroupRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @GetMapping(value = "/api/v1/{lang}/slices/groups", produces = "application/json")
     public ResponseEntity<List<GroupDto>> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
         List<GroupDto> list = repo.findAllByLang(lang.toUpperCase())

@@ -7,10 +7,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import itdesign.entity.Group;
 import itdesign.entity.Status;
+import itdesign.web.security.UserInfo;
 import org.dozer.DozerBeanMapper;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.redisson.Redisson;
+import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,8 +24,14 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import static java.time.Duration.ofMinutes;
+import static java.util.Arrays.*;
 import static org.ehcache.config.builders.CacheConfigurationBuilder.newCacheConfigurationBuilder;
 import static org.ehcache.config.builders.ExpiryPolicyBuilder.timeToLiveExpiration;
 import static org.ehcache.config.builders.ResourcePoolsBuilder.heap;
@@ -41,7 +49,7 @@ public class AppConfig {
     @Bean
     public DozerBeanMapper dozerBeanMapper() {
         DozerBeanMapper mapper = new DozerBeanMapper();
-         mapper.setMappingFiles(Arrays.asList(
+         mapper.setMappingFiles(asList(
             "dozer/MappingConfig.xml",
             "dozer/StatusDto.xml",
             "dozer/GroupDto.xml",
@@ -94,6 +102,36 @@ public class AppConfig {
             .setAddress(redisAddress)
             .setPassword(redisPassword);
 
-        return Redisson.create(config);
+        RedissonClient redissonClient = Redisson.create(config);
+
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserName("admin");
+        userInfo.setRegion("19");
+        userInfo.setOrgan("19");
+        userInfo.setRoles(new HashSet<>(asList(
+            "SLICE_ORDER",
+            "SLICE_SEND_ON_APPROVE",
+            "SLICE_APPROVE",
+            "SLICE_DELETE",
+            "SLICE_CONFIRM",
+            "SLICE_SET_ON_PRELIMINARY"
+        )));
+
+        RBucket<UserInfo> temporarySessionKey = redissonClient.getBucket("temporarySessionKey");
+        temporarySessionKey.set(userInfo, 3, TimeUnit.MINUTES);
+
+        return redissonClient;
+    }
+
+    @Bean
+    public Map<String, Set<String>> mapMethodsOnRoles() {
+        ConcurrentHashMap<String, Set<String>> map = new ConcurrentHashMap<>();
+        map.put("itdesign.web.SliceRestController.create",      new HashSet<>(asList("SLICE_ORDER")));
+        map.put("itdesign.web.SliceRestController.send",        new HashSet<>(asList("SLICE_SEND_ON_APPROVE")));
+        map.put("itdesign.web.SliceRestController.approve",     new HashSet<>(asList("SLICE_APPROVE")));
+        map.put("itdesign.web.SliceRestController.delete",      new HashSet<>(asList("SLICE_DELETE")));
+        map.put("itdesign.web.SliceRestController.confirm",     new HashSet<>(asList("SLICE_CONFIRM")));
+        map.put("itdesign.web.SliceRestController.preliminary", new HashSet<>(asList("SLICE_SET_ON_PRELIMINARY")));
+        return map;
     }
 }
