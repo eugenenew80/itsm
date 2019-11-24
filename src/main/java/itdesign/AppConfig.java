@@ -115,6 +115,7 @@ public class AppConfig {
         map.put("itdesign.web.SliceRestController.delete",      new HashSet<>(asList("SLICE_DELETE")));
         map.put("itdesign.web.SliceRestController.confirm",     new HashSet<>(asList("SLICE_CONFIRM")));
         map.put("itdesign.web.SliceRestController.preliminary", new HashSet<>(asList("SLICE_SET_ON_PRELIMINARY")));
+        map.put("itdesign.web.SliceRestController.cancel",      new HashSet<>(asList("SLICE_CANCEL")));
         return map;
     }
 }

@@ -27,7 +27,10 @@ import static java.util.stream.Collectors.*;
 public class SliceRestController extends BaseController {
     private static final String DEFAULT_LANG = "RU";
     private static final String DEFAULT_STATUS = "6";
+    private static final String PRELIMINARY_STATUS = "2";
+    private static final String FINAL_STATUS = "1";
     private static final String DELETED_STATUS = "3";
+    private static final String CANCEL_STATUS = "4";
     private static final String DEFAULT_REGION = "19";
     private final SliceRepo repo;
     private final DozerBeanMapper mapper;
@@ -200,13 +203,55 @@ public class SliceRestController extends BaseController {
     }
 
     @ApiOperation(value="Пометить срез с указанным идентификатором как удаленный")
-    @DeleteMapping(value = "/api/v1/{lang}/slices/{id}")
+    @PutMapping(value = "/api/v1/{lang}/slices/{id}/delete")
     public ResponseEntity<Void> delete(
         @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
         Slice slice = repo.findOne(id);
         slice.setStatusCode(DELETED_STATUS);
+        repo.save(slice);
+
+        return ResponseEntity.noContent()
+            .build();
+    }
+
+    @ApiOperation(value="Пометить срез с указанным идентификатором как предварительный")
+    @PutMapping(value = "/api/v1/{lang}/slices/{id}/preliminary")
+    public ResponseEntity<Void> preliminary(
+        @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
+        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
+    ) {
+        Slice slice = repo.findOne(id);
+        slice.setStatusCode(PRELIMINARY_STATUS);
+        repo.save(slice);
+
+        return ResponseEntity.noContent()
+            .build();
+    }
+
+    @ApiOperation(value="Пометить срез с указанным идентификатором как окончательный")
+    @PutMapping(value = "/api/v1/{lang}/slices/{id}/confirm")
+    public ResponseEntity<Void> confirm(
+        @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
+        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
+    ) {
+        Slice slice = repo.findOne(id);
+        slice.setStatusCode(FINAL_STATUS);
+        repo.save(slice);
+
+        return ResponseEntity.noContent()
+            .build();
+    }
+
+    @ApiOperation(value="Пометить срез с указанным идентификатором как отмененный")
+    @PutMapping(value = "/api/v1/{lang}/slices/{id}/cancel")
+    public ResponseEntity<Void> cancel(
+        @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
+        @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
+    ) {
+        Slice slice = repo.findOne(id);
+        slice.setStatusCode(CANCEL_STATUS);
         repo.save(slice);
 
         return ResponseEntity.noContent()
