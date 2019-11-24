@@ -41,11 +41,19 @@ public class LoggingAspect {
             return new ResponseEntity<>(errorDto,  errorDto.getErrStatus());
         }
 
+        //Выводим название метода и аргументы
         String methodName = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
+        logger.debug("{} started", methodName);
+        logger.debug("argument[s] = {}", Arrays.toString(joinPoint.getArgs()));
 
+        //Ищем текущего пользователя
         RBucket<UserInfo> bucket = redissonClient.getBucket(sessionInfo.getSessionKey());
         UserInfo userInfo = bucket.get();
-        if (userInfo != null) {
+        if (userInfo == null) {
+            ErrorDto errorDto = new ErrorDto(new NotAuthorizedException("Not Authorized"));
+            return new ResponseEntity<>(errorDto,  errorDto.getErrStatus());
+        }
+        else {
             logger.debug("user name: {}", userInfo.getUserName());
             logger.debug("region: {}", userInfo.getRegion());
             logger.debug("organ: {}", userInfo.getOrgan());
@@ -53,6 +61,8 @@ public class LoggingAspect {
             logger.debug(methodName);
         }
 
+        if (!mapMethodsOnRoles.containsKey(methodName))
+            logger.debug("Access for all authenticated users");
 
         if (mapMethodsOnRoles.containsKey(methodName)) {
             Set<String> requiredRoles = mapMethodsOnRoles.get(methodName);
@@ -72,9 +82,6 @@ public class LoggingAspect {
                 }
             }
         }
-
-        logger.debug("{} started", methodName);
-        logger.debug("argument[s] = {}", Arrays.toString(joinPoint.getArgs()));
 
         Object result = joinPoint.proceed();
         logger.trace("result: {}", result);
