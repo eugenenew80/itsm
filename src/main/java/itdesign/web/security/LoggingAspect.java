@@ -30,23 +30,24 @@ public class LoggingAspect {
 
     @Around("within(itdesign.web.*)")
     public Object logging(ProceedingJoinPoint joinPoint) throws Throwable {
-
-        SecurityManager securityManager = new SecurityManager();
-        SessionInfo sessionInfo = securityManager.currentSession();
-        if (sessionInfo != null)
-            logger.debug("session key: {}", sessionInfo.getSessionKey());
-
-        if (Strings.isNullOrEmpty(sessionInfo.getSessionKey())) {
-            ErrorDto errorDto = new ErrorDto(new NotAuthorizedException("Not Authorized"));
-            return new ResponseEntity<>(errorDto,  errorDto.getErrStatus());
-        }
-
         //Выводим название метода и аргументы
         String methodName = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
         logger.debug("{} started", methodName);
         logger.debug("argument[s] = {}", Arrays.toString(joinPoint.getArgs()));
 
-        //Ищем текущего пользователя
+        //Получаем ключ сессии
+        SecurityManager securityManager = new SecurityManager();
+        SessionInfo sessionInfo = securityManager.currentSession();
+        if (sessionInfo != null)
+            logger.debug("session key: {}", sessionInfo.getSessionKey());
+
+        //Ключ сессии не найден - возвращаем ошибку
+        if (Strings.isNullOrEmpty(sessionInfo.getSessionKey())) {
+            ErrorDto errorDto = new ErrorDto(new NotAuthorizedException("Not Authorized"));
+            return new ResponseEntity<>(errorDto,  errorDto.getErrStatus());
+        }
+
+        //Ищем текущего пользователя в redis по ключу сессии
         RBucket<UserInfo> bucket = redissonClient.getBucket(sessionInfo.getSessionKey());
         UserInfo userInfo = bucket.get();
         if (userInfo == null) {
@@ -58,7 +59,6 @@ public class LoggingAspect {
             logger.debug("region: {}", userInfo.getRegion());
             logger.debug("organ: {}", userInfo.getOrgan());
             logger.debug("roles: {}", userInfo.getRoles());
-            logger.debug(methodName);
         }
 
         if (!mapMethodsOnRoles.containsKey(methodName))
