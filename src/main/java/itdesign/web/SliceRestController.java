@@ -278,6 +278,16 @@ public class SliceRestController extends BaseController {
             .build();
     }
 
+    @ApiOperation(value="Отказать в согласовании срез с указанным идентификатором")
+    @PutMapping(value = "/api/v1/{lang}/slices/{id}/disapprove")
+    public ResponseEntity<Void> disapprove(
+        @PathVariable(value = "id") @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
+        @PathVariable(value = "lang") @ApiParam(value = "Язык",  example = "RU")  String lang
+    ) {
+        return ResponseEntity.noContent()
+            .build();
+    }
+
     private Function<Long, Slice> findById;
     private Function<Slice, SliceDto> transformToDto;
     private Function<Slice, Slice> beforeTransform;

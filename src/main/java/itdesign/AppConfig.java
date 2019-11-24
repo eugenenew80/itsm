@@ -112,6 +112,7 @@ public class AppConfig {
         map.put("itdesign.web.SliceRestController.create",      new HashSet<>(asList("SLICE_ORDER")));
         map.put("itdesign.web.SliceRestController.send",        new HashSet<>(asList("SLICE_SEND_ON_APPROVE")));
         map.put("itdesign.web.SliceRestController.approve",     new HashSet<>(asList("SLICE_APPROVE")));
+        map.put("itdesign.web.SliceRestController.disapprove",  new HashSet<>(asList("SLICE_APPROVE")));
         map.put("itdesign.web.SliceRestController.delete",      new HashSet<>(asList("SLICE_DELETE")));
         map.put("itdesign.web.SliceRestController.confirm",     new HashSet<>(asList("SLICE_CONFIRM")));
         map.put("itdesign.web.SliceRestController.preliminary", new HashSet<>(asList("SLICE_SET_ON_PRELIMINARY")));
