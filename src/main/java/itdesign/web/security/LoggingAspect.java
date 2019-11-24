@@ -55,6 +55,7 @@ public class LoggingAspect {
         }
         else {
             logger.debug("user name: {}", userInfo.getUserName());
+            logger.debug("idn: {}", userInfo.getIdn());
             logger.debug("region: {}", userInfo.getRegion());
             logger.debug("organ: {}", userInfo.getOrgan());
             logger.debug("roles: {}", userInfo.getRoles());
@@ -88,10 +89,10 @@ public class LoggingAspect {
         return result;
     }
 
-
     private void imitateLogon() {
         UserInfo userInfo = new UserInfo();
         userInfo.setUserName("admin");
+        userInfo.setIdn("111111222222");
         userInfo.setRegion("19");
         userInfo.setOrgan("19");
         userInfo.setRoles(new HashSet<>(asList(
