@@ -103,23 +103,6 @@ public class AppConfig {
             .setPassword(redisPassword);
 
         RedissonClient redissonClient = Redisson.create(config);
-
-        UserInfo userInfo = new UserInfo();
-        userInfo.setUserName("admin");
-        userInfo.setRegion("19");
-        userInfo.setOrgan("19");
-        userInfo.setRoles(new HashSet<>(asList(
-            "SLICE_ORDER",
-            "SLICE_SEND_ON_APPROVE",
-            "SLICE_APPROVE",
-            "SLICE_DELETE",
-            "SLICE_CONFIRM",
-            "SLICE_SET_ON_PRELIMINARY"
-        )));
-
-        RBucket<UserInfo> temporarySessionKey = redissonClient.getBucket("temporarySessionKey");
-        temporarySessionKey.set(userInfo, 3, TimeUnit.MINUTES);
-
         return redissonClient;
     }
 
