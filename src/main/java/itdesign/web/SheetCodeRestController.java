@@ -8,6 +8,7 @@ import itdesign.repo.SheetCodeRepo;
 import itdesign.web.dto.SheetCodeDto;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -18,7 +19,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 public class SheetCodeRestController extends BaseController {
-    private static final String className = SheetCodeRestController.class.getName();
     private final SheetCodeRepo repo;
     private final DozerBeanMapper mapper;
 
@@ -30,14 +30,13 @@ public class SheetCodeRestController extends BaseController {
 
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/{lang}/slices/sheetCodes", produces = "application/json")
-    public List<SheetCodeDto> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
-        logger.debug(className + ".getAll()");
-        logger.trace("lang: " + lang);
-
-        return repo.findAllByLang(lang.toUpperCase())
+    public ResponseEntity<List<SheetCodeDto>> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
+        List<SheetCodeDto> list = repo.findAllByLang(lang.toUpperCase())
             .stream()
             .map(transformToDto::apply)
             .collect(Collectors.toList());
+
+        return ResponseEntity.ok(list);
     }
 
     private Function<SheetCode, SheetCodeDto> transformToDto;

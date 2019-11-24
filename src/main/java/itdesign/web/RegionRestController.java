@@ -9,6 +9,7 @@ import itdesign.web.dto.RegionDto;
 import itdesign.web.dto.RegionTreeDto;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -20,38 +21,32 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 public class RegionRestController extends BaseController {
-    private static final String className = RegionRestController.class.getName();
     private final RegionRepo repo;
     private final DozerBeanMapper mapper;
 
     @PostConstruct
     private void init() {
-        logger.debug(className + ".init()");
         transformToDto = t -> mapper.map(t, RegionDto.class);
     }
 
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/{lang}/slices/regs", produces = "application/json")
-    public List<RegionDto> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
-        logger.debug(className + ".getAll()");
-        logger.trace("lang: " + lang);
-
-        return repo.findAllByLang(lang.toUpperCase())
+    public ResponseEntity<List<RegionDto>> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
+        List<RegionDto> list = repo.findAllByLang(lang.toUpperCase())
             .stream()
             .map(transformToDto::apply)
             .collect(Collectors.toList());
+
+        return ResponseEntity.ok(list);
     }
 
     @ApiOperation(value="Получить список всех записей в виде дерева")
     @GetMapping(value = "/api/v1/{lang}/slices/regsTree", produces = "application/json")
-    public RegionTreeDto getTree(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
-        logger.debug(className + ".getTree()");
-        logger.trace("lang: " + lang);
-
+    public ResponseEntity<RegionTreeDto> getTree(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
         //Получаем список регионов
         List<Region> list = new ArrayList<>(repo.findAllByLang(lang));
         if (list.size() == 0)
-            return new RegionTreeDto();
+            return ResponseEntity.ok(new RegionTreeDto());
 
         //Корневой элемент
         Region rootEntity = list.stream()
@@ -98,7 +93,7 @@ public class RegionRestController extends BaseController {
             rd1.setChildren(childrenDtoLev2);
         }
 
-        return rootDto;
+        return ResponseEntity.ok(rootDto);
     }
 
     private Function<Region, RegionDto> transformToDto;

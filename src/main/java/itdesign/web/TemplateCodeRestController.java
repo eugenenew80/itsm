@@ -8,6 +8,7 @@ import itdesign.repo.TemplateCodeRepo;
 import itdesign.web.dto.TemplateCodeDto;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -18,7 +19,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 public class TemplateCodeRestController extends BaseController {
-    private static final String className = TemplateCodeRestController.class.getName();
     private final TemplateCodeRepo repo;
     private final DozerBeanMapper mapper;
 
@@ -30,14 +30,13 @@ public class TemplateCodeRestController extends BaseController {
 
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/{lang}/slices/templateCodes", produces = "application/json")
-    public List<TemplateCodeDto> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
-        logger.debug(className + ".getAll()");
-        logger.trace("lang: " + lang);
-
-        return repo.findAllByLang(lang.toUpperCase())
+    public ResponseEntity<List<TemplateCodeDto>> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
+        List<TemplateCodeDto> list = repo.findAllByLang(lang.toUpperCase())
             .stream()
             .map(transformToDto::apply)
             .collect(Collectors.toList());
+
+        return ResponseEntity.ok(list);
     }
 
     private Function<TemplateCode, TemplateCodeDto> transformToDto;

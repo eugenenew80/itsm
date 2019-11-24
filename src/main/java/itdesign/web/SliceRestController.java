@@ -4,9 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import itdesign.entity.*;
-import itdesign.repo.GroupRepo;
 import itdesign.repo.SliceRepo;
-import itdesign.repo.StatusRepo;
 import itdesign.service.CachedGroupService;
 import itdesign.service.CachedStatusService;
 import itdesign.web.dto.*;
@@ -27,22 +25,17 @@ import static java.util.stream.Collectors.*;
 @RestController
 @RequiredArgsConstructor
 public class SliceRestController extends BaseController {
-    private static final String className = SliceRestController.class.getName();
     private static final String DEFAULT_LANG = "RU";
     private static final String DEFAULT_STATUS = "6";
     private static final String DELETED_STATUS = "3";
     private static final String DEFAULT_REGION = "19";
     private final SliceRepo repo;
-    private final GroupRepo groupRepo;
-    private final StatusRepo statusRepo;
     private final DozerBeanMapper mapper;
     private final CachedGroupService groupService;
     private final CachedStatusService statusService;
 
     @PostConstruct
     private void init() {
-        logger.debug(getClass() .getName()+ ".init()");
-
         findById = repo::findOne;
         transformToDto = t -> mapper.map(t, SliceDto.class);
         transformToEntity = t -> mapper.map(t, Slice.class);
@@ -56,16 +49,12 @@ public class SliceRestController extends BaseController {
         };
     }
 
-    @ApiOperation(value="Получить список групп и статусов")
+    @ApiOperation(value="Получить список групп и статусов в виде древовидного списка")
     @GetMapping(value = "/api/v1/{lang}/slices/parents", produces = "application/json")
-    public List<GroupSliceDto> getParents(
+    public ResponseEntity<List<GroupSliceDto>> getParents(
         @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
-        logger.debug(className + ".getParents()");
-        logger.trace("deleted: " + deleted);
-        logger.trace("lang: " + lang);
-
         List<Slice> slices = repo.findAll();
         slices.forEach(t -> {
             t.setLang(lang);
@@ -99,28 +88,21 @@ public class SliceRestController extends BaseController {
             grDto.setChildren(listStDto);
         }
 
-        return listGrDto;
+        return ResponseEntity.ok(listGrDto);
     }
 
-    @ApiOperation(value="Получить список всех записей")
+    @ApiOperation(value="Получить список всех записей в виде древовидного списка для указанных статуса, группы и года")
     @GetMapping(value = "/api/v1/{lang}/slices/children", produces = "application/json")
-    public GroupSliceDto getChildren(
+    public ResponseEntity<GroupSliceDto> getChildren(
         @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
         @RequestParam(value = "groupCode")  @ApiParam(value = "Код группы отчетов",  example = "001") String groupCode,
         @RequestParam(value = "statusCode") @ApiParam(value = "Код статуса",  example = "0") String statusCode,
         @RequestParam(value = "year")       @ApiParam(value = "Год",  example = "2019") int year,
         @PathVariable(value = "lang")       @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
-        logger.debug(className + ".getChildren()");
-        logger.trace("deleted: " + deleted);
-        logger.trace("groupCode: " + groupCode);
-        logger.trace("statusCode: " + statusCode);
-        logger.trace("year: " + year);
-        logger.trace("lang: " + lang);
-
         //Ищем статус и группу
-        Group group = groupRepo.findByCodeAndLang(groupCode, lang.toUpperCase());
-        Status status = statusRepo.findByCodeAndLang(statusCode, lang.toUpperCase());
+        Group group = groupService.getGroup(groupCode, lang.toUpperCase());
+        Status status = statusService.getStatus(statusCode, lang.toUpperCase());
 
         //Список срезов
         List<SliceDto> list = repo.findAllByGroupCodeAndStatusCode(groupCode, statusCode)
@@ -144,70 +126,58 @@ public class SliceRestController extends BaseController {
         grDto.setChildren(asList(stDto));
 
         stDto.setChildren(list);
-        return grDto;
+        return ResponseEntity.ok(grDto);
     }
 
-    @ApiOperation(value="Получить список всех записей")
+    @ApiOperation(value="Получить список всех записей в виде простого списка для указанных статуса, группы и года")
     @GetMapping(value = "/api/v1/{lang}/slices", produces = "application/json")
-    public List<SliceDto> getAll(
+    public ResponseEntity<List<SliceDto>> getAll(
         @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
         @RequestParam(value = "groupCode")  @ApiParam(value = "Код группы отчетов",  example = "001") String groupCode,
         @RequestParam(value = "statusCode") @ApiParam(value = "Код статуса",  example = "0") String statusCode,
         @RequestParam(value = "year")       @ApiParam(value = "Год",  example = "2019") int year,
         @PathVariable(value = "lang")       @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
-        logger.debug(className + ".getAll()");
-        logger.trace("deleted: " + deleted);
-        logger.trace("groupCode: " + groupCode);
-        logger.trace("statusCode: " + statusCode);
-        logger.trace("year: " + year);
-        logger.trace("lang: " + lang);
-
-        return repo.findAllByGroupCodeAndStatusCode(groupCode, statusCode)
+        List<SliceDto> retList = repo.findAllByGroupCodeAndStatusCode(groupCode, statusCode)
             .stream()
             .filter(t -> deleted || t.getStatusCode() == null || !t.getStatusCode().equals(DELETED_STATUS))
             .filter(t -> t.getStartDate().getYear() == year)
             .map(t -> { t.setLang(lang); return t; })
-            .map(beforeTransform::apply)
-            .map(transformToDto::apply)
+            .map(beforeTransform)
+            .map(transformToDto)
             .collect(toList());
+
+        return ResponseEntity.ok(retList);
     }
 
     @ApiOperation(value="Получить масимальный номер записи в базе данных")
     @GetMapping(value = "/api/v1/{lang}/slices/max", produces = MediaType.APPLICATION_JSON_VALUE)
-    public LongDto getMax(@PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang) {
-        logger.debug(getClass().getName() + ".getMax()");
-        logger.trace("lang: " + lang);
-        return new LongDto(9999l);
+    public ResponseEntity<LongDto> getMax(@PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang) {
+        return ResponseEntity.ok(new LongDto(9999l));
     }
 
     @ApiOperation(value="Получить запись по идентификатору")
     @GetMapping(value = "/api/v1/{lang}/slices/{id}", produces = "application/json")
-    public SliceDto getById(
+    public ResponseEntity<SliceDto> getById(
         @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
-        logger.debug(className + ".getById()");
-        logger.trace("id: " + id);
-        logger.trace("lang: " + lang);
-
-        return first(findById)
-            .andThen(t ->  { t.setLang(lang); return t; } )
+        SliceDto retVal = first(findById)
+            .andThen(t -> { t.setLang(lang);return t; })
             .andThen(beforeTransform)
             .andThen(transformToDto)
             .apply(id);
+
+        return ResponseEntity.ok(retVal);
     }
 
     @ApiOperation(value="Заказать формирование срезов")
     @PostMapping(value = "/api/v1/{lang}/slices", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public List<SliceDto> create(
+    public ResponseEntity<List<SliceDto>> create(
         @RequestBody OrderSlicesDto orderSlicesDto,
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
-        logger.debug(className + ".create()");
-        logger.trace("lang: " + lang);
-
         List<Slice> slices = orderSlicesDto.list().stream()
             .map(transformToEntity::apply)
             .collect(toList());
@@ -220,27 +190,27 @@ public class SliceRestController extends BaseController {
         }
         repo.save(slices);
 
-        return slices.stream()
-            .map(t ->  { t.setLang(lang); return t; } )
-            .map(beforeTransform::apply)
-            .map(transformToDto::apply)
+        List<SliceDto> retList = slices.stream()
+            .map(t -> { t.setLang(lang); return t; })
+            .map(beforeTransform)
+            .map(transformToDto)
             .collect(toList());
+
+        return ResponseEntity.ok(retList);
     }
 
     @ApiOperation(value="Пометить срез с указанным идентификатором как удаленный")
     @DeleteMapping(value = "/api/v1/{lang}/slices/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(
+    public ResponseEntity<Void> delete(
         @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
         @PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang
     ) {
-        logger.debug(className + ".delete()");
-        logger.trace("id: " + id);
-        logger.trace("lang: " + lang);
-
         Slice slice = repo.findOne(id);
         slice.setStatusCode(DELETED_STATUS);
         repo.save(slice);
+
+        return ResponseEntity.noContent()
+            .build();
     }
 
     private Function<Long, Slice> findById;

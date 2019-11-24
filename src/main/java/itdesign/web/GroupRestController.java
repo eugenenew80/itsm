@@ -8,6 +8,7 @@ import itdesign.repo.GroupRepo;
 import itdesign.web.dto.GroupDto;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -24,20 +25,19 @@ public class GroupRestController extends BaseController {
 
     @PostConstruct
     private void init() {
-        logger.debug(getClass() .getName()+ ".init()");
         transformToDto = t -> mapper.map(t, GroupDto.class);
     }
 
     @ApiOperation(value="Получить список всех записей")
     @GetMapping(value = "/api/v1/{lang}/slices/groups", produces = "application/json")
-    public List<GroupDto> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
-        logger.debug(className + ".getAll()");
-        logger.trace("lang: " + lang);
-
-        return repo.findAllByLang(lang.toUpperCase())
+    public ResponseEntity<List<GroupDto>> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
+        List<GroupDto> list = repo.findAllByLang(lang.toUpperCase())
             .stream()
             .map(transformToDto::apply)
             .collect(Collectors.toList());
+
+        return ResponseEntity
+            .ok(list);
     }
 
     private Function<Group, GroupDto> transformToDto;
