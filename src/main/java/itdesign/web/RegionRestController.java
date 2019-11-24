@@ -1,8 +1,6 @@
 package itdesign.web;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import itdesign.entity.Region;
 import itdesign.repo.RegionRepo;
 import itdesign.web.dto.RegionDto;
@@ -30,6 +28,9 @@ public class RegionRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @GetMapping(value = "/api/v1/{lang}/slices/regs", produces = "application/json")
     public ResponseEntity<List<RegionDto>> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
         List<RegionDto> list = repo.findAllByLang(lang.toUpperCase())
@@ -41,6 +42,9 @@ public class RegionRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей в виде дерева")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @GetMapping(value = "/api/v1/{lang}/slices/regsTree", produces = "application/json")
     public ResponseEntity<RegionTreeDto> getTree(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
         //Получаем список регионов

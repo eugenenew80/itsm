@@ -1,9 +1,7 @@
 package itdesign.web;
 
 import com.google.common.base.Strings;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import itdesign.entity.GroupReport;
 import itdesign.entity.Organization;
 import itdesign.repo.GroupReportRepo;
@@ -32,6 +30,9 @@ public class OrganizationRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @GetMapping(value = "/api/v1/{lang}/slices/orgs", produces = "application/json")
     public ResponseEntity<List<OrganizationDto>> getAll(
         @RequestParam(value = "reportCode", defaultValue = "") @ApiParam(value = "Код отчёта", example = "001") String reportCode,

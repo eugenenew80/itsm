@@ -1,9 +1,7 @@
 package itdesign.web;
 
 import com.google.common.base.Strings;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import itdesign.entity.*;
 import itdesign.repo.*;
 import itdesign.web.dto.CreateReportDto;
@@ -56,6 +54,9 @@ public class ReportRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список отчетов, доступных для указанного среза")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @GetMapping(value = "/api/v1/{lang}/slices/reports", produces = "application/json")
     public ResponseEntity<List<ReportCodeDto2>> getAll(
         @PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang,
@@ -92,6 +93,9 @@ public class ReportRestController extends BaseController {
     }
 
     @ApiOperation(value="Сформировать список отчётов")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @PostMapping(value = "/api/v1/{lang}/slices/reports/createReports")
     public ResponseEntity<List<LongDto>> createReports(
         @PathVariable(value = "lang") @ApiParam(value = "Язык",  example = "RU")  String lang,
@@ -107,6 +111,9 @@ public class ReportRestController extends BaseController {
     }
 
     @ApiOperation(value="Сформировать отчёта")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @PostMapping(value = "/api/v1/{lang}/slices/reports/createReport")
     public ResponseEntity<LongDto> createReport(
         @PathVariable(value = "lang") @ApiParam(value = "Язык",  example = "RU")  String lang,
@@ -117,6 +124,9 @@ public class ReportRestController extends BaseController {
     }
 
     @ApiOperation(value="Выгрузить отчёт")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @GetMapping(value = "/api/v1/{lang}/slices/reports/{id}/download")
     public ResponseEntity<Resource> downloadReport(@PathVariable(value = "id") @ApiParam(value = "Идентификатор файла",  example = "1") long id) {
         //Ищем файл

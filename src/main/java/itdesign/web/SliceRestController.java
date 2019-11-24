@@ -1,8 +1,6 @@
 package itdesign.web;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import itdesign.entity.*;
 import itdesign.repo.SliceRepo;
 import itdesign.service.CachedGroupService;
@@ -52,7 +50,10 @@ public class SliceRestController extends BaseController {
         };
     }
 
-    @ApiOperation(value="Получить список групп и статусов в виде древовидного списка")
+    @ApiOperation(value="Получить список групп и статусов в виде плоского списка")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @GetMapping(value = "/api/v1/{lang}/slices/parents", produces = "application/json")
     public ResponseEntity<List<GroupSliceDto>> getParents(
         @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
@@ -95,6 +96,9 @@ public class SliceRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей в виде древовидного списка для указанных статуса, группы и года")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @GetMapping(value = "/api/v1/{lang}/slices/children", produces = "application/json")
     public ResponseEntity<GroupSliceDto> getChildren(
         @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
@@ -133,6 +137,9 @@ public class SliceRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей в виде простого списка для указанных статуса, группы и года")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @GetMapping(value = "/api/v1/{lang}/slices", produces = "application/json")
     public ResponseEntity<List<SliceDto>> getAll(
         @RequestParam(value = "deleted", defaultValue = "false") @ApiParam(value = "Показать удаленные записи",  example = "false") boolean deleted,
@@ -154,12 +161,18 @@ public class SliceRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить масимальный номер записи в базе данных")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @GetMapping(value = "/api/v1/{lang}/slices/max", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LongDto> getMax(@PathVariable(value = "lang")  @ApiParam(value = "Язык",  example = "RU")  String lang) {
         return ResponseEntity.ok(new LongDto(9999l));
     }
 
     @ApiOperation(value="Получить запись по идентификатору")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @GetMapping(value = "/api/v1/{lang}/slices/{id}", produces = "application/json")
     public ResponseEntity<SliceDto> getById(
         @PathVariable @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
@@ -175,6 +188,9 @@ public class SliceRestController extends BaseController {
     }
 
     @ApiOperation(value="Заказать формирование срезов")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @PostMapping(value = "/api/v1/{lang}/slices", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<List<SliceDto>> create(
@@ -203,6 +219,9 @@ public class SliceRestController extends BaseController {
     }
 
     @ApiOperation(value="Пометить срез с указанным идентификатором как удаленный")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @PutMapping(value = "/api/v1/{lang}/slices/{id}/delete")
     public ResponseEntity<Void> delete(
         @PathVariable(value = "id") @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
@@ -217,6 +236,9 @@ public class SliceRestController extends BaseController {
     }
 
     @ApiOperation(value="Пометить срез с указанным идентификатором как предварительный")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @PutMapping(value = "/api/v1/{lang}/slices/{id}/preliminary")
     public ResponseEntity<Void> preliminary(
         @PathVariable(value = "id") @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
@@ -231,6 +253,9 @@ public class SliceRestController extends BaseController {
     }
 
     @ApiOperation(value="Пометить срез с указанным идентификатором как окончательный")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @PutMapping(value = "/api/v1/{lang}/slices/{id}/confirm")
     public ResponseEntity<Void> confirm(
         @PathVariable(value = "id") @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
@@ -245,6 +270,9 @@ public class SliceRestController extends BaseController {
     }
 
     @ApiOperation(value="Пометить срез с указанным идентификатором как отмененный")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @PutMapping(value = "/api/v1/{lang}/slices/{id}/cancel")
     public ResponseEntity<Void> cancel(
         @PathVariable(value = "id") @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
@@ -259,6 +287,9 @@ public class SliceRestController extends BaseController {
     }
 
     @ApiOperation(value="Отправить срез с указанным идентификатором на согласование")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @PutMapping(value = "/api/v1/{lang}/slices/{id}/send")
     public ResponseEntity<Void> send(
         @PathVariable(value = "id") @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
@@ -269,6 +300,9 @@ public class SliceRestController extends BaseController {
     }
 
     @ApiOperation(value="Согласовать срез с указанным идентификатором")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @PutMapping(value = "/api/v1/{lang}/slices/{id}/approve")
     public ResponseEntity<Void> approve(
         @PathVariable(value = "id") @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,
@@ -279,6 +313,9 @@ public class SliceRestController extends BaseController {
     }
 
     @ApiOperation(value="Отказать в согласовании срез с указанным идентификатором")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @PutMapping(value = "/api/v1/{lang}/slices/{id}/disapprove")
     public ResponseEntity<Void> disapprove(
         @PathVariable(value = "id") @ApiParam(value = "Идентификатор записи", required = true, example = "1") Long id,

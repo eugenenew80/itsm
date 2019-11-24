@@ -1,8 +1,6 @@
 package itdesign.web;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import itdesign.entity.SheetCode;
 import itdesign.repo.SheetCodeRepo;
 import itdesign.web.dto.SheetCodeDto;
@@ -29,6 +27,9 @@ public class SheetCodeRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @GetMapping(value = "/api/v1/{lang}/slices/sheetCodes", produces = "application/json")
     public ResponseEntity<List<SheetCodeDto>> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
         List<SheetCodeDto> list = repo.findAllByLang(lang.toUpperCase())

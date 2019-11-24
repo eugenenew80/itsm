@@ -1,8 +1,6 @@
 package itdesign.web;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import itdesign.entity.ReportCode;
 import itdesign.repo.ReportCodeRepo;
 import itdesign.web.dto.ReportCodeDto;
@@ -28,6 +26,9 @@ public class ReportCodeRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @GetMapping(value = "/api/v1/{lang}/slices/reportCodes", produces = "application/json")
     public ResponseEntity<List<ReportCodeDto>> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
         List<ReportCodeDto> list = repo.findAllByLang(lang.toUpperCase())
