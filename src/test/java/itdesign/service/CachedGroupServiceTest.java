@@ -2,7 +2,6 @@ package itdesign.service;
 
 import itdesign.App;
 import itdesign.entity.Group;
-import itdesign.helper.EntitiesHelper;
 import itdesign.repo.GroupRepo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,11 +26,11 @@ public class CachedGroupServiceTest {
         long testedGroupId = 1l;
         when(mockRepo.findOne(testedGroupId)).thenReturn(newGroup(testedGroupId));
 
-        Group group = service.getGroup(EntitiesHelper.GROUP_CODE, "RU");
+        Group group = service.getGroup(GROUP_CODE, "RU");
         verify(mockRepo, times(1)).findOne(testedGroupId);
         assertGroup(group);
 
-        group = service.getGroup(EntitiesHelper.GROUP_CODE, "RU");
+        group = service.getGroup(GROUP_CODE, "RU");
         verify(mockRepo, times(1)).findOne(testedGroupId);
         assertGroup(group);
     }

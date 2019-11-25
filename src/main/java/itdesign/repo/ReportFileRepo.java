@@ -10,6 +10,6 @@ import javax.transaction.Transactional;
 @Transactional
 public interface ReportFileRepo extends JpaRepository<ReportFile, Long> {
 
-    @Query("select t from ReportFile t where t.reportCode = ?1 and t.orgCode = ?2  and t.regCode = ?3 and t.sliceId = ?4" )
-    ReportFile findExisting(String reportCode, String orgCode, String regCode, Long sliceId);
+    @Query("select t from ReportFile t where t.reportCode = ?1 and t.orgCode = ?2  and t.regCode = ?3 and t.sliceId = ?4 and t.lang = ?5" )
+    ReportFile findExisting(String reportCode, String orgCode, String regCode, Long sliceId, String lang);
 }

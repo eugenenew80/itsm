@@ -1,13 +1,12 @@
 package itdesign.web;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import itdesign.entity.Status;
 import itdesign.repo.StatusRepo;
 import itdesign.web.dto.StatusDto;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 public class StatusRestController extends BaseController {
-    private static final String className = StatusRestController.class.getName();
     private final StatusRepo repo;
     private final DozerBeanMapper mapper;
 
@@ -29,15 +27,17 @@ public class StatusRestController extends BaseController {
     }
 
     @ApiOperation(value="Получить список всех записей")
+    @ApiImplicitParams(
+        @ApiImplicitParam(name = "sessionKey", value = "Ключ сессии", paramType = "header", dataTypeClass = String.class, example = "admin")
+    )
     @GetMapping(value = "/api/v1/{lang}/slices/statuses", produces = "application/json")
-    public List<StatusDto> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
-        logger.debug(className + ".getAll()");
-        logger.trace("lang: " + lang);
-
-        return repo.findAllByLang(lang.toUpperCase())
+    public ResponseEntity<List<StatusDto>> getAll(@PathVariable(value = "lang") @ApiParam(value = "Язык", example = "RU") String lang) {
+        List<StatusDto> list = repo.findAllByLang(lang.toUpperCase())
             .stream()
             .map(transformToDto::apply)
             .collect(Collectors.toList());
+
+        return ResponseEntity.ok(list);
     }
 
     private Function<Status, StatusDto> transformToDto;

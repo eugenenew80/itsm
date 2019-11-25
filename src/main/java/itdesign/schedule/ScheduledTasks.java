@@ -16,8 +16,8 @@ public class ScheduledTasks implements ApplicationListener<ApplicationReadyEvent
 
     @Scheduled(cron = "0 */5 * * * *")
     public void startImport() {
-        logger.debug("GC started");
-        System.gc();
+        //logger.debug("GC started");
+        //System.gc();
     }
 
     @Override

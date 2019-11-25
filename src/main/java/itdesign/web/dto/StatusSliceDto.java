@@ -9,20 +9,20 @@ import lombok.EqualsAndHashCode;
 import java.util.ArrayList;
 import java.util.List;
 
-@EqualsAndHashCode(of= {"statusCode", "year"})
+@EqualsAndHashCode(of= {"code", "year"})
 @ApiModel(value = "Slice", description = "Срез")
 @Data
-@JsonPropertyOrder({ "statusCode", "statusName", "year", "children" })
+@JsonPropertyOrder({ "code", "name", "statusYear", "children" })
 public class StatusSliceDto {
 
     @ApiModelProperty(value = "Код статуса", example = "1", position = 0)
-    private String statusCode;
+    private String code;
 
     @ApiModelProperty(value = "Наименование статуса + год", example = "Статус 1 2019", position = 1)
-    private String statusName;
+    private String name;
 
     @ApiModelProperty(value = "Год", example = "2019", position = 2)
-    private Integer year;
+    private Integer statusYear;
 
     @ApiModelProperty(value = "Срезы", example = "", position = 3)
     private List<SliceDto> children = new ArrayList<>();

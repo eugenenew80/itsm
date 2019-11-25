@@ -28,11 +28,11 @@ public class CachedStatusServiceTest {
         long testedStatusId = 1l;
         when(mockRepo.findOne(testedStatusId)).thenReturn(newStatus(testedStatusId));
 
-        Status status = service.getStatus(EntitiesHelper.STATUS_CODE, "RU");
+        Status status = service.getStatus(STATUS_CODE, "RU");
         verify(mockRepo, times(1)).findOne(testedStatusId);
         assertStatus(status);
 
-        status = service.getStatus(EntitiesHelper.STATUS_CODE, "RU");
+        status = service.getStatus(STATUS_CODE, "RU");
         verify(mockRepo, times(1)).findOne(testedStatusId);
         assertStatus(status);
     }

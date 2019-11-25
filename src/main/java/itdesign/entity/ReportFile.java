@@ -15,8 +15,8 @@ import javax.persistence.*;
 public class ReportFile {
 
     @Id
-    @SequenceGenerator(name="report_files_ы", sequenceName = "report_files_ы", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "report_files_ы")
+    @SequenceGenerator(name="report_files_s", sequenceName = "report_files_s", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "report_files_s")
     private Long id;
 
     @Column(name = "report_code")

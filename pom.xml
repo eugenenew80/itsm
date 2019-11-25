@@ -31,6 +31,11 @@
 
         <profile>
             <id>test</id>
+
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
             <properties>
                 <activatedProperties>test</activatedProperties>
                 <driver>org.postgresql.Driver</driver>
@@ -42,12 +47,17 @@
 
         <profile>
             <id>prod</id>
+
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
             <properties>
                 <activatedProperties>prod</activatedProperties>
                 <driver>org.postgresql.Driver</driver>
                 <url>jdbc:postgresql://localhost:5432/prod</url>
-                <username>postgres</username>
-                <password>123456</password>
+                <username>reports</username>
+                <password>Qwerty123</password>
             </properties>
         </profile>
     </profiles>
@@ -143,13 +153,19 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.17</version>
+            <version>4.1.1</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.17</version>
+            <version>4.1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.3.0</version>
         </dependency>
 
         <dependency>
